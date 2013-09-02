@@ -63,9 +63,7 @@ public class Shell {
         java.lang.System.in));
     it = universe.nilObject;
 
-    // Checkstyle: stop
-    System.out.println("SOM Shell. Type \"quit\" to exit.\n");
-    // Checkstyle: resume
+    Universe.println("SOM Shell. Type \"quit\" to exit.\n");
 
     // Create a fake bootstrap frame
     currentFrame = interpreter.pushNewFrame(bootstrapMethod);
@@ -75,9 +73,7 @@ public class Shell {
 
     while (true) {
       try {
-        // Checkstyle: stop
-        System.out.print("---> ");
-        // Checkstyle: resume
+        Universe.print("---> ");
 
         // Read a statement from the keyboard
         stmt = in.readLine();
@@ -121,10 +117,8 @@ public class Shell {
           it = currentFrame.pop();
         }
       } catch (Exception e) {
-        // Checkstyle: stop
-        System.err.println("Caught exception: " + e.getMessage());
-        System.err.println("" + interpreter.getFrame().getPreviousFrame());
-        // Checkstyle: resume
+        Universe.errorPrintln("Caught exception: " + e.getMessage());
+        Universe.errorPrintln("" + interpreter.getFrame().getPreviousFrame());
       }
     }
   }

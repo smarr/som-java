@@ -304,12 +304,10 @@ public class Parser {
 
   private String identifier() {
     String s = new String(text);
-    if (accept(Primitive)) {
-      ; // text is set
-    } else {
+    boolean isPrimitive = accept(Primitive);
+    if (!isPrimitive) {
       expect(Identifier);
     }
-
     return s;
   }
 

@@ -81,11 +81,9 @@ public abstract class Primitive extends Object implements Invokable {
     return (new Primitive(signatureString, universe) {
 
       public void invoke(final Frame frame, final Interpreter interpreter) {
-        // Checkstyle: stop
         // Write a warning to the screen
-        System.out.println("Warning: undefined primitive "
+        Universe.println("Warning: undefined primitive "
             + this.getSignature().getString() + " called");
-        // Checkstyle: resume
       }
 
       public boolean isEmpty() {
