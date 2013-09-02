@@ -24,6 +24,8 @@
 
 package som.vmobjects;
 
+import som.vm.Universe;
+
 /**
  * Frame layout:
  * 
@@ -227,8 +229,8 @@ public class Frame extends Array {
 
   public void printStackTrace(Object nilObject) {
     // Print a stack trace starting in this frame
-    System.out.print(getMethod().getHolder().getName().getString());
-    System.out.print(getBytecodeIndex() + "@"
+    Universe.print(getMethod().getHolder().getName().getString());
+    Universe.print(getBytecodeIndex() + "@"
         + getMethod().getSignature().getString());
     if (hasPreviousFrame(nilObject)) {
       getPreviousFrame().printStackTrace(nilObject);

@@ -25,7 +25,6 @@
 package som.interpreter;
 
 import som.vm.Universe;
-import som.vmobjects.Array;
 import som.vmobjects.Block;
 import som.vmobjects.Class;
 import som.vmobjects.Frame;
@@ -313,7 +312,7 @@ public class Interpreter {
         }
 
         default:
-          System.out.println("Nasty bug in interpreter");
+          Universe.errorPrintln("Nasty bug in interpreter");
           break;
       }
     }

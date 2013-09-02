@@ -192,7 +192,7 @@ public class MethodGenerationContext {
     if (locals.contains(local)) {
       return false;
     }
-    
+
     locals.add(local);
     return true;
   }
@@ -217,7 +217,7 @@ public class MethodGenerationContext {
     if (literals.contains(lit)) {
       return false;
     }
-    
+
     literals.add(lit);
     return true;
   }
