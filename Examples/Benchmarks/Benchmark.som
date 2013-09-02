@@ -33,7 +33,7 @@ Benchmark = (
         iterations := elapsedTime := 0.
         minTime := 100000.
         
-        [ elapsedTime < 2000 or: [ iterations < 5 ] ]
+        [ elapsedTime < 3000 or: [ iterations < 30 ] ]
             whileTrue: [
                 system fullGC.
                 startTime  := system time.
