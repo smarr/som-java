@@ -99,6 +99,37 @@ public class Object {
     invokable.invoke(interpreter.getFrame(), interpreter);
   }
 
+  public void sendDoesNotUnderstand(final Symbol selector,
+      final Universe universe, final Interpreter interpreter) {
+    // Compute the number of arguments
+    int numberOfArguments = selector.getNumberOfSignatureArguments();
+
+    Frame frame = interpreter.getFrame();
+
+    // Allocate an array with enough room to hold all arguments
+    Array argumentsArray = universe.newArray(numberOfArguments);
+
+    // Remove all arguments and put them in the freshly allocated array
+    for (int i = numberOfArguments - 1; i >= 0; i--) {
+      argumentsArray.setIndexableField(i, frame.pop());
+    }
+
+    Object[] args = {selector, argumentsArray};
+    send("doesNotUnderstand:arguments:", args, universe, interpreter);
+  }
+
+  public void sendUnknownGlobal(final Symbol globalName,
+      final Universe universe, final Interpreter interpreter) {
+    Object[] arguments = {globalName};
+    send("unknownGlobal:", arguments, universe, interpreter);
+  }
+
+  public void sendEscapedBlock(final Block block, final Universe universe,
+      final Interpreter interpreter) {
+    Object[] arguments = {block};
+    send("escapedBlock:", arguments, universe, interpreter);
+  }
+
   public Object getField(int index) {
     // Get the field with the given index
     return fields[index];

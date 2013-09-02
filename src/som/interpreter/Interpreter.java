@@ -100,8 +100,7 @@ public class Interpreter {
       getFrame().push(global);
     } else {
       // Send 'unknownGlobal:' to self
-      Object[] arguments = {globalName};
-      getSelf().send("unknownGlobal:", arguments, universe, this);
+      getSelf().sendUnknownGlobal(globalName, universe, this);
     }
   }
 
@@ -152,17 +151,7 @@ public class Interpreter {
       // Compute the receiver
       Object receiver = getFrame().getStackElement(numberOfArguments - 1);
 
-      // Allocate an array with enough room to hold all arguments
-      Array argumentsArray = universe.newArray(numberOfArguments);
-
-      // Remove all arguments and put them in the freshly allocated array
-      for (int i = numberOfArguments - 1; i >= 0; i--) {
-        argumentsArray.setIndexableField(i, getFrame().pop());
-      }
-
-      // Send 'doesNotUnderstand:arguments:' to the receiver object
-      Object[] arguments = {signature, argumentsArray};
-      receiver.send("doesNotUnderstand:arguments:", arguments, universe, this);
+      receiver.sendDoesNotUnderstand(signature, universe, this);
     }
   }
 
@@ -186,18 +175,15 @@ public class Interpreter {
       // Try to recover by sending 'escapedBlock:' to the sending object
       // this can get a bit nasty when using nested blocks. In this case
       // the "sender" will be the surrounding block and not the object
-      // that
-      // acutally sent the 'value' message.
+      // that actually sent the 'value' message.
       Block block = (Block) getFrame().getArgument(0, 0);
       Object sender = getFrame().getPreviousFrame().getOuterContext(universe.nilObject).getArgument(0, 0);
-      Object[] arguments = {block};
 
       // pop the frame of the currently executing block...
       popFrame();
 
       // ... and execute the escapedBlock message instead
-      sender.send("escapedBlock:", arguments, universe, this);
-
+      sender.sendEscapedBlock(block, universe, this);
       return;
     }
 
@@ -356,31 +342,20 @@ public class Interpreter {
     return getFrame().getOuterContext(universe.nilObject).getArgument(0, 0);
   }
 
-  private void send(Symbol signature, Class receiverClass, int bytecodeIndex) {
+  private void send(Symbol selector, Class receiverClass, int bytecodeIndex) {
     // Lookup the invokable with the given signature
-    Invokable invokable = receiverClass.lookupInvokable(signature);
+    Invokable invokable = receiverClass.lookupInvokable(selector);
 
     if (invokable != null) {
       // Invoke the invokable in the current frame
       invokable.invoke(getFrame(), this);
     } else {
-      // Compute the number of arguments
-      int numberOfArguments = signature.getNumberOfSignatureArguments();
+      int numberOfArguments = selector.getNumberOfSignatureArguments();
 
       // Compute the receiver
-      Object receiver = getFrame().getStackElement(numberOfArguments - 1);
+      Object receiver = frame.getStackElement(numberOfArguments - 1);
 
-      // Allocate an array with enough room to hold all arguments
-      Array argumentsArray = universe.newArray(numberOfArguments);
-
-      // Remove all arguments and put them in the freshly allocated array
-      for (int i = numberOfArguments - 1; i >= 0; i--) {
-        argumentsArray.setIndexableField(i, getFrame().pop());
-      }
-
-      // Send 'doesNotUnderstand:arguments:' to the receiver object
-      Object[] arguments = {signature, argumentsArray};
-      receiver.send("doesNotUnderstand:arguments:", arguments, universe, this);
+      receiver.sendDoesNotUnderstand(selector, universe, this);
     }
   }
 
