@@ -101,7 +101,7 @@ public class Universe {
   }
 
   public void errorExit(java.lang.String message) {
-    System.out.println("Runtime Error: " + message);
+    errorPrintln("Runtime Error: " + message);
     exit(1);
   }
 

@@ -82,14 +82,14 @@ public class SystemPrimitives extends Primitives {
 
       public void invoke(final Frame frame, final Interpreter interpreter) {
         String argument = (String) frame.pop();
-        System.out.print(argument.getEmbeddedString());
+        Universe.print(argument.getEmbeddedString());
       }
     });
 
     installInstancePrimitive(new Primitive("printNewline", universe) {
 
       public void invoke(final Frame frame, final Interpreter interpreter) {
-        System.out.println("");
+        Universe.println("");
       }
     });
 
