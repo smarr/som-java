@@ -88,8 +88,9 @@ public class Object {
     interpreter.getFrame().push(this);
 
     // Push the arguments onto the stack
-    for (Object arg : arguments)
+    for (Object arg : arguments) {
       interpreter.getFrame().push(arg);
+    }
 
     // Lookup the invokable
     Invokable invokable = getSOMClass().lookupInvokable(selector);
@@ -106,6 +107,11 @@ public class Object {
   public void setField(int index, Object value) {
     // Set the field with the given index to the given value
     fields[index] = value;
+  }
+
+  @Override
+  public java.lang.String toString() {
+    return "a " + getSOMClass().getName().getString();
   }
 
   // Private array of fields

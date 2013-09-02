@@ -36,11 +36,15 @@ public class Disassembler {
   public static void dump(Class cl) {
     for (int i = 0; i < cl.getNumberOfInstanceInvokables(); i++) {
       Invokable inv = cl.getInstanceInvokable(i);
+      // Checkstyle: stop
       // output header and skip if the Invokable is a Primitive
       System.err.print(cl.getName().toString() + ">>"
           + inv.getSignature().toString() + " = ");
+      // Checkstyle: resume
       if (inv.isPrimitive()) {
+        // Checkstyle: stop
         System.err.println("<primitive>");
+        // Checkstyle: resume
         continue;
       }
       // output actual method
@@ -49,42 +53,65 @@ public class Disassembler {
   }
 
   public static void dumpMethod(Method m, java.lang.String indent) {
+    // Checkstyle: stop
     System.err.println("(");
+    // Checkstyle: resume
     // output stack information
+    // Checkstyle: stop
     System.err.println(indent + "<" + m.getNumberOfLocals() + " locals, "
         + m.getMaximumNumberOfStackElements() + " stack, "
         + m.getNumberOfBytecodes() + " bc_count>");
+    // Checkstyle: resume
     // output bytecodes
-    for (int b = 0; b < m.getNumberOfBytecodes(); b += Bytecodes
-        .getBytecodeLength(m.getBytecode(b))) {
+    for (int b = 0;
+         b < m.getNumberOfBytecodes();
+         b += Bytecodes.getBytecodeLength(m.getBytecode(b))) {
+      // Checkstyle: stop
       System.err.print(indent);
+      // Checkstyle: resume
+
       // bytecode index
+      // Checkstyle: stop
       if (b < 10) System.err.print(' ');
       if (b < 100) System.err.print(' ');
       System.err.print(" " + b + ":");
+      // Checkstyle: resume
+
       // mnemonic
       byte bytecode = m.getBytecode(b);
+      // Checkstyle: stop
       System.err.print(Bytecodes.bytecodeNames[bytecode] + "  ");
+      // Checkstyle: resume
       // parameters (if any)
       if (Bytecodes.getBytecodeLength(bytecode) == 1) {
+        // Checkstyle: stop
         System.err.println();
+        // Checkstyle: resume
         continue;
       }
       switch (bytecode) {
         case Bytecodes.push_local:
+          // Checkstyle: stop
           System.err.println("local: " + m.getBytecode(b + 1) + ", context: "
               + m.getBytecode(b + 2));
+          // Checkstyle: resume
           break;
         case Bytecodes.push_argument:
+          // Checkstyle: stop
           System.err.println("argument: " + m.getBytecode(b + 1) + ", context "
               + m.getBytecode(b + 2));
+          // Checkstyle: resume
           break;
         case Bytecodes.push_field:
+          // Checkstyle: stop
           System.err.println("(index: " + m.getBytecode(b + 1) + ") field: "
               + ((Symbol) m.getConstant(b)).toString());
+          // Checkstyle: resume
           break;
         case Bytecodes.push_block:
+          // Checkstyle: stop
           System.err.print("block: (index: " + m.getBytecode(b + 1) + ") ");
+          // Checkstyle: resume
           dumpMethod((Method) m.getConstant(b), indent + "\t");
           break;
         case Bytecodes.push_constant:
@@ -125,3 +152,4 @@ public class Disassembler {
   }
 
 }
+

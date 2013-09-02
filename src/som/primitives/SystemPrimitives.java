@@ -43,7 +43,7 @@ public class SystemPrimitives extends Primitives {
   public void installPrimitives() {
     installInstancePrimitive(new Primitive("load:", universe) {
 
-      public void invoke(Frame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         Symbol argument = (Symbol) frame.pop();
         frame.pop(); // not required
         Class result = universe.loadClass(argument);
@@ -53,7 +53,7 @@ public class SystemPrimitives extends Primitives {
 
     installInstancePrimitive(new Primitive("exit:", universe) {
 
-      public void invoke(Frame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         Integer error = (Integer) frame.pop();
         universe.exit(error.getEmbeddedInteger());
       }
@@ -61,7 +61,7 @@ public class SystemPrimitives extends Primitives {
 
     installInstancePrimitive(new Primitive("global:", universe) {
 
-      public void invoke(Frame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         Symbol argument = (Symbol) frame.pop();
         frame.pop(); // not required
         Object result = universe.getGlobal(argument);
@@ -71,7 +71,7 @@ public class SystemPrimitives extends Primitives {
 
     installInstancePrimitive(new Primitive("global:put:", universe) {
 
-      public void invoke(Frame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         Object value = frame.pop();
         Symbol argument = (Symbol) frame.pop();
         universe.setGlobal(argument, value);
@@ -80,7 +80,7 @@ public class SystemPrimitives extends Primitives {
 
     installInstancePrimitive(new Primitive("printString:", universe) {
 
-      public void invoke(Frame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         String argument = (String) frame.pop();
         System.out.print(argument.getEmbeddedString());
       }
@@ -88,7 +88,7 @@ public class SystemPrimitives extends Primitives {
 
     installInstancePrimitive(new Primitive("printNewline", universe) {
 
-      public void invoke(Frame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         System.out.println("");
       }
     });
@@ -97,7 +97,7 @@ public class SystemPrimitives extends Primitives {
     startTime = startMicroTime / 1000L;
     installInstancePrimitive(new Primitive("time", universe) {
 
-      public void invoke(Frame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         frame.pop(); // ignore
         int time = (int) (System.currentTimeMillis() - startTime);
         frame.push(universe.newInteger(time));
@@ -106,7 +106,7 @@ public class SystemPrimitives extends Primitives {
 
     installInstancePrimitive(new Primitive("ticks", universe) {
 
-      public void invoke(Frame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         frame.pop(); // ignore
         int time = (int) (System.nanoTime() / 1000L - startMicroTime);
         frame.push(universe.newInteger(time));
@@ -115,7 +115,7 @@ public class SystemPrimitives extends Primitives {
 
     installInstancePrimitive(new Primitive("fullGC", universe) {
 
-      public void invoke(Frame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         // naught - GC is entirely left to the JVM
       }
     });

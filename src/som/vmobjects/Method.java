@@ -76,14 +76,15 @@ public class Method extends Array implements Invokable {
   }
 
   public void setHolder(Class value) {
-    // Set the holder of this method by writing to the field with holder
-    // index
+    // Set the holder of this method by writing to the field with holder index
     setField(holderIndex, value);
 
     // Make sure all nested invokables have the same holder
-    for (int i = 0; i < getNumberOfIndexableFields(); i++)
-      if (getIndexableField(i) instanceof Invokable)
+    for (int i = 0; i < getNumberOfIndexableFields(); i++) {
+      if (getIndexableField(i) instanceof Invokable) {
         ((Invokable) getIndexableField(i)).setHolder(value);
+      }
+    }
   }
 
   public Object getConstant(int bytecodeIndex) {
@@ -129,7 +130,7 @@ public class Method extends Array implements Invokable {
     return invocationCount;
   }
 
-  public void invoke(Frame frame, final Interpreter interpreter) {
+  public void invoke(final Frame frame, final Interpreter interpreter) {
     // Increase the invocation counter
     invocationCount++;
     // Allocate and push a new frame on the interpreter stack
@@ -138,10 +139,11 @@ public class Method extends Array implements Invokable {
   }
 
   public void replaceBytecodes() {
-    byte newbc[] = new byte[bytecodes.length];
+    byte[] newbc = new byte[bytecodes.length];
     int idx = 0;
 
-    for (int i = 0; i < bytecodes.length;) {
+    int i = 0;
+    while (i < bytecodes.length) {
       byte bc1 = bytecodes[i];
       int len1 = Bytecodes.getBytecodeLength(bc1);
 
@@ -161,13 +163,12 @@ public class Method extends Array implements Invokable {
       }
 
       i += len1; // update i to point on bc2
-
     }
 
     // we copy the new array because it may be shorter, and we don't
     // want to upset whatever dependence there is on the length
     bytecodes = new byte[idx];
-    for (int i = 0; i < idx; ++i) {
+    for (i = 0; i < idx; ++i) {
       bytecodes[i] = newbc[i];
     }
   }
@@ -193,6 +194,11 @@ public class Method extends Array implements Invokable {
     return receiverClassIndex == 255;
   }
 
+  @Override
+  public java.lang.String toString() {
+    return "Method(" + getHolder().getName().getString() + ">>" + getSignature().toString() + ")";
+  }
+
   // Private variables for holding the last receiver class and invoked method
   private java.util.ArrayList<Class>     receiverClassTable                = new java.util.ArrayList<Class>();
   private java.util.ArrayList<Invokable> invokedMethods                    = new java.util.ArrayList<Invokable>();
@@ -210,4 +216,5 @@ public class Method extends Array implements Invokable {
   static final int                       signatureIndex                    = 1 + maximumNumberOfStackElementsIndex;
   static final int                       holderIndex                       = 1 + signatureIndex;
   static final int                       numberOfMethodFields              = 1 + holderIndex;
+
 }

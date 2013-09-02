@@ -39,25 +39,26 @@ public class DoublePrimitives extends Primitives {
   }
 
   private Double coerceToDouble(Object o) {
-    if (o instanceof Double) return (Double) o;
-    if (o instanceof Integer)
+    if (o instanceof Double) { return (Double) o; }
+    if (o instanceof Integer) {
       return universe.newDouble((double) ((Integer) o).getEmbeddedInteger());
+    }
     throw new ClassCastException("Cannot coerce to Double!");
   }
 
   public void installPrimitives() {
     installInstancePrimitive(new Primitive("asString", universe) {
 
-      public void invoke(Frame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         Double self = (Double) frame.pop();
-        frame.push(universe.newString(java.lang.Double.toString(self
-            .getEmbeddedDouble())));
+        frame.push(universe.newString(
+            java.lang.Double.toString(self.getEmbeddedDouble())));
       }
     });
 
     installInstancePrimitive(new Primitive("sqrt", universe) {
 
-      public void invoke(Frame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         Double self = (Double) frame.pop();
         frame.push(universe.newDouble(Math.sqrt(self.getEmbeddedDouble())));
       }
@@ -65,7 +66,7 @@ public class DoublePrimitives extends Primitives {
 
     installInstancePrimitive(new Primitive("+", universe) {
 
-      public void invoke(Frame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         Double op1 = coerceToDouble(frame.pop());
         Double op2 = (Double) frame.pop();
         frame.push(universe.newDouble(op1.getEmbeddedDouble()
@@ -75,7 +76,7 @@ public class DoublePrimitives extends Primitives {
 
     installInstancePrimitive(new Primitive("-", universe) {
 
-      public void invoke(Frame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         Double op1 = coerceToDouble(frame.pop());
         Double op2 = (Double) frame.pop();
         frame.push(universe.newDouble(op2.getEmbeddedDouble()
@@ -85,7 +86,7 @@ public class DoublePrimitives extends Primitives {
 
     installInstancePrimitive(new Primitive("*", universe) {
 
-      public void invoke(Frame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         Double op1 = coerceToDouble(frame.pop());
         Double op2 = (Double) frame.pop();
         frame.push(universe.newDouble(op2.getEmbeddedDouble()
@@ -95,7 +96,7 @@ public class DoublePrimitives extends Primitives {
 
     installInstancePrimitive(new Primitive("//", universe) {
 
-      public void invoke(Frame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         Double op1 = coerceToDouble(frame.pop());
         Double op2 = (Double) frame.pop();
         frame.push(universe.newDouble(op2.getEmbeddedDouble()
@@ -105,7 +106,7 @@ public class DoublePrimitives extends Primitives {
 
     installInstancePrimitive(new Primitive("%", universe) {
 
-      public void invoke(Frame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         Double op1 = coerceToDouble(frame.pop());
         Double op2 = (Double) frame.pop();
         frame.push(universe.newDouble(op2.getEmbeddedDouble()
@@ -115,13 +116,14 @@ public class DoublePrimitives extends Primitives {
 
     installInstancePrimitive(new Primitive("=", universe) {
 
-      public void invoke(Frame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         Double op1 = coerceToDouble(frame.pop());
         Double op2 = (Double) frame.pop();
-        if (op1.getEmbeddedDouble() == op2.getEmbeddedDouble())
+        if (op1.getEmbeddedDouble() == op2.getEmbeddedDouble()) {
           frame.push(universe.trueObject);
-        else
+        } else {
           frame.push(universe.falseObject);
+        }
       }
     });
 
@@ -130,10 +132,11 @@ public class DoublePrimitives extends Primitives {
       public void invoke(Frame frame, final Interpreter interpreter) {
         Double op1 = coerceToDouble(frame.pop());
         Double op2 = (Double) frame.pop();
-        if (op2.getEmbeddedDouble() < op1.getEmbeddedDouble())
+        if (op2.getEmbeddedDouble() < op1.getEmbeddedDouble()) {
           frame.push(universe.trueObject);
-        else
+        } else {
           frame.push(universe.falseObject);
+        }
       }
     });
   }

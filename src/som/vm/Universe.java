@@ -44,18 +44,18 @@ import som.vmobjects.String;
 import som.vmobjects.Symbol;
 
 public class Universe {
-  
+
   public static void main(java.lang.String[] arguments) {
     // Create Universe
     Universe u = new Universe();
-    
+
     // Start interpretation
     u.interpret(arguments);
-    
+
     // Exit with error code 0
     u.exit(0);
   }
-  
+
   public void interpret(java.lang.String[] arguments) {
     // Check for command line switches
     arguments = handleArguments(arguments);
@@ -75,7 +75,7 @@ public class Universe {
     this.avoidExit    = false;
     this.lastExitCode = 0;
   }
-  
+
   public Universe(boolean avoidExit) {
     this.interpreter  = new Interpreter(this);
     this.symbolTable  = new SymbolTable();
@@ -91,12 +91,11 @@ public class Universe {
     // Exit from the Java system
     if (!avoidExit) {
       System.exit(errorCode);
-    }
-    else {
+    } else {
       lastExitCode = errorCode;
     }
   }
-  
+
   public int lastExitCode() {
     return lastExitCode;
   }
@@ -113,15 +112,15 @@ public class Universe {
 
     for (int i = 0; i < arguments.length; i++) {
       if (arguments[i].equals("-cp")) {
-        if (i + 1 >= arguments.length) printUsageAndExit();
+        if (i + 1 >= arguments.length) {
+          printUsageAndExit();
+        }
         setupClassPath(arguments[i + 1]);
         ++i; // skip class path
         gotClasspath = true;
-      }
-      else if (arguments[i].equals("-d")) {
+      } else if (arguments[i].equals("-d")) {
         dumpBytecodes = true;
-      }
-      else {
+      } else {
         remainingArgs[cnt++] = arguments[i];
       }
     }
@@ -173,7 +172,9 @@ public class Universe {
     tokenizer = new java.util.StringTokenizer(file, ".");
 
     if (tokenizer.countTokens() > 2) {
+      // Checkstyle: stop
       System.out.println("Class with . in its name?");
+      // Checkstyle: resume
       exit(1);
     }
 
@@ -192,7 +193,7 @@ public class Universe {
     // Get the default class path of the appropriate size
     classPath = setupDefaultClassPath(tokenizer.countTokens());
 
-    // Get the dictories and put them into the class path array
+    // Get the directories and put them into the class path array
     for (int i = 0; tokenizer.hasMoreTokens(); i++) {
       classPath[i] = tokenizer.nextToken();
     }
@@ -222,17 +223,15 @@ public class Universe {
 
   private void printUsageAndExit() {
     // Print the usage
-    System.out
-        .println("Usage: som [-options] [args...]                          ");
-    System.out
-        .println("                                                         ");
-    System.out
-        .println("where options include:                                   ");
+    // Checkstyle: stop
+    System.out.println("Usage: som [-options] [args...]                          ");
+    System.out.println("                                                         ");
+    System.out.println("where options include:                                   ");
     System.out.println("    -cp <directories separated by " + pathSeparator
         + ">");
-    System.out
-        .println("                  set search path for application classes");
+    System.out.println("                  set search path for application classes");
     System.out.println("    -d            enable disassembling");
+    // Checkstyle: resume
 
     // Exit
     System.exit(0);
@@ -246,36 +245,36 @@ public class Universe {
     metaclassClass = newMetaclassClass();
 
     // Allocate the rest of the system classes
-    objectClass = newSystemClass();
-    nilClass = newSystemClass();
-    classClass = newSystemClass();
-    arrayClass = newSystemClass();
-    symbolClass = newSystemClass();
-    methodClass = newSystemClass();
-    integerClass = newSystemClass();
+    objectClass     = newSystemClass();
+    nilClass        = newSystemClass();
+    classClass      = newSystemClass();
+    arrayClass      = newSystemClass();
+    symbolClass     = newSystemClass();
+    methodClass     = newSystemClass();
+    integerClass    = newSystemClass();
     bigintegerClass = newSystemClass();
-    frameClass = newSystemClass();
-    primitiveClass = newSystemClass();
-    stringClass = newSystemClass();
-    doubleClass = newSystemClass();
+    frameClass      = newSystemClass();
+    primitiveClass  = newSystemClass();
+    stringClass     = newSystemClass();
+    doubleClass     = newSystemClass();
 
     // Setup the class reference for the nil object
     nilObject.setClass(nilClass);
 
     // Initialize the system classes.
-    initializeSystemClass(objectClass, null, "Object");
-    initializeSystemClass(classClass, objectClass, "Class");
-    initializeSystemClass(metaclassClass, classClass, "Metaclass");
-    initializeSystemClass(nilClass, objectClass, "Nil");
-    initializeSystemClass(arrayClass, objectClass, "Array");
-    initializeSystemClass(methodClass, arrayClass, "Method");
-    initializeSystemClass(symbolClass, objectClass, "Symbol");
-    initializeSystemClass(integerClass, objectClass, "Integer");
+    initializeSystemClass(objectClass,            null, "Object");
+    initializeSystemClass(classClass,      objectClass, "Class");
+    initializeSystemClass(metaclassClass,   classClass, "Metaclass");
+    initializeSystemClass(nilClass,        objectClass, "Nil");
+    initializeSystemClass(arrayClass,      objectClass, "Array");
+    initializeSystemClass(methodClass,      arrayClass, "Method");
+    initializeSystemClass(symbolClass,     objectClass, "Symbol");
+    initializeSystemClass(integerClass,    objectClass, "Integer");
     initializeSystemClass(bigintegerClass, objectClass, "BigInteger");
-    initializeSystemClass(frameClass, arrayClass, "Frame");
-    initializeSystemClass(primitiveClass, objectClass, "Primitive");
-    initializeSystemClass(stringClass, objectClass, "String");
-    initializeSystemClass(doubleClass, objectClass, "Double");
+    initializeSystemClass(frameClass,       arrayClass, "Frame");
+    initializeSystemClass(primitiveClass,  objectClass, "Primitive");
+    initializeSystemClass(stringClass,     objectClass, "String");
+    initializeSystemClass(doubleClass,     objectClass, "Double");
 
     // Load methods and fields into the system classes
     loadSystemClass(objectClass);
@@ -296,7 +295,7 @@ public class Universe {
     blockClass = loadClass(symbolFor("Block"));
 
     // Setup the true and false objects
-    trueObject = newInstance(loadClass(symbolFor("True")));
+    trueObject  = newInstance(loadClass(symbolFor("True")));
     falseObject = newInstance(loadClass(symbolFor("False")));
 
     // Load the system class and create an instance of it
@@ -304,12 +303,12 @@ public class Universe {
     Object systemObject = newInstance(systemClass);
 
     // Put special objects and classes into the dictionary of globals
-    setGlobal(symbolFor("nil"), nilObject);
-    setGlobal(symbolFor("true"), trueObject);
-    setGlobal(symbolFor("false"), falseObject);
+    setGlobal(symbolFor("nil"),    nilObject);
+    setGlobal(symbolFor("true"),   trueObject);
+    setGlobal(symbolFor("false"),  falseObject);
     setGlobal(symbolFor("system"), systemObject);
     setGlobal(symbolFor("System"), systemClass);
-    setGlobal(symbolFor("Block"), blockClass);
+    setGlobal(symbolFor("Block"),  blockClass);
 
     // Create a fake bootstrap method to simplify later frame traversal
     Method bootstrapMethod = newMethod(symbolFor("bootstrap"), 1, 0);
@@ -335,8 +334,7 @@ public class Universe {
     bootstrapFrame.push(argumentsArray);
 
     // Lookup the initialize invokable on the system class
-    Invokable initialize = systemClass
-        .lookupInvokable(symbolFor("initialize:"));
+    Invokable initialize = systemClass.lookupInvokable(symbolFor("initialize:"));
 
     // Invoke the initialize invokable
     initialize.invoke(bootstrapFrame, interpreter);
@@ -348,7 +346,7 @@ public class Universe {
   public Symbol symbolFor(java.lang.String string) {
     // Lookup the symbol in the symbol table
     Symbol result = symbolTable.lookup(string);
-    if (result != null) return result;
+    if (result != null) { return result; }
 
     // Create a new symbol and return it
     result = newSymbol(string);
@@ -431,7 +429,9 @@ public class Universe {
 
     // Set the method of the frame and the previous frame
     result.setMethod(method);
-    if (previousFrame != null) result.setPreviousFrame(previousFrame);
+    if (previousFrame != null) {
+      result.setPreviousFrame(previousFrame);
+    }
 
     // Reset the stack pointer and the bytecode index
     result.resetStackPointer();
@@ -572,8 +572,7 @@ public class Universe {
     if (superClass != null) {
       systemClass.setSuperClass(superClass);
       systemClass.getSOMClass().setSuperClass(superClass.getSOMClass());
-    }
-    else {
+    } else {
       systemClass.getSOMClass().setSuperClass(classClass);
     }
 
@@ -596,7 +595,7 @@ public class Universe {
   public Object getGlobal(Symbol name) {
     // Return the global with the given name if it's in the dictionary of
     // globals
-    if (hasGlobal(name)) return (Object) globals.get(name);
+    if (hasGlobal(name)) { return (Object) globals.get(name); }
 
     // Global not found
     return null;
@@ -625,7 +624,7 @@ public class Universe {
 
     // Lookup the specific block class in the dictionary of globals and
     // return it
-    if (hasGlobal(name)) return (Class) getGlobal(name);
+    if (hasGlobal(name)) { return (Class) getGlobal(name); }
 
     // Get the block class for blocks with the given number of arguments
     Class result = loadClass(name, null);
@@ -643,13 +642,13 @@ public class Universe {
 
   public Class loadClass(Symbol name) {
     // Check if the requested class is already in the dictionary of globals
-    if (hasGlobal(name)) return (Class) getGlobal(name);
+    if (hasGlobal(name)) { return (Class) getGlobal(name); }
 
     // Load the class
     Class result = loadClass(name, null);
 
     // Load primitives (if necessary) and return the resulting class
-    if (result != null && result.hasPrimitives()) result.loadPrimitives();
+    if (result != null && result.hasPrimitives()) { result.loadPrimitives(); }
     return result;
   }
 
@@ -658,7 +657,7 @@ public class Universe {
     Class result = loadClass(systemClass.getName(), systemClass);
 
     // Load primitives if necessary
-    if (result.hasPrimitives()) result.loadPrimitives();
+    if (result.hasPrimitives()) { result.loadPrimitives(); }
   }
 
   public Class loadClass(Symbol name, Class systemClass) {
@@ -674,8 +673,7 @@ public class Universe {
         }
         return result;
 
-      }
-      catch (IOException e) {
+      } catch (IOException e) {
         // Continue trying different paths
       }
     }
@@ -691,7 +689,7 @@ public class Universe {
     // Load the class from a stream and return the loaded class
     Class result = som.compiler.SourcecodeCompiler.compileClass(stmt, null,
         this);
-    if (dumpBytecodes) Disassembler.dump(result);
+    if (dumpBytecodes) { Disassembler.dump(result); }
     return result;
   }
 

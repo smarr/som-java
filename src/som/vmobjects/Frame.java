@@ -102,8 +102,9 @@ public class Frame extends Array {
     Frame frame = this;
 
     // Iterate through the context chain until null is reached
-    while (frame.hasContext(nilObject))
+    while (frame.hasContext(nilObject)) {
       frame = frame.getContext();
+    }
 
     // Return the outer context
     return frame;
@@ -229,8 +230,9 @@ public class Frame extends Array {
     System.out.print(getMethod().getHolder().getName().getString());
     System.out.print(getBytecodeIndex() + "@"
         + getMethod().getSignature().getString());
-    if (hasPreviousFrame(nilObject))
+    if (hasPreviousFrame(nilObject)) {
       getPreviousFrame().printStackTrace(nilObject);
+    }
   }
 
   // Private variables holding the stack pointer and the bytecode index

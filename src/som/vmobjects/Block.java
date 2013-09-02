@@ -49,9 +49,8 @@ public class Block extends Object {
     return (Frame) getField(contextIndex);
   }
 
-  public void setContext(Frame value) {
-    // Set the context of this block by writing to the field with context
-    // index
+  public void setContext(final Frame value) {
+    // Set the context of this block by writing to the field with context index
     setField(contextIndex, value);
   }
 
@@ -72,7 +71,7 @@ public class Block extends Object {
       this.numberOfArguments = numberOfArguments;
     }
 
-    public void invoke(Frame frame, final Interpreter interpreter) {
+    public void invoke(final Frame frame, final Interpreter interpreter) {
       // Get the block (the receiver) from the stack
       Block self = (Block) frame.getStackElement(numberOfArguments - 1);
 
@@ -89,11 +88,12 @@ public class Block extends Object {
     private static java.lang.String computeSignatureString(int numberOfArguments) {
       // Compute the signature string
       java.lang.String signatureString = "value";
-      if (numberOfArguments > 1) signatureString += ":";
+      if (numberOfArguments > 1) { signatureString += ":"; }
 
       // Add extra value: selector elements if necessary
-      for (int i = 2; i < numberOfArguments; i++)
+      for (int i = 2; i < numberOfArguments; i++) {
         signatureString += "with:";
+      }
 
       // Return the signature string
       return signatureString;

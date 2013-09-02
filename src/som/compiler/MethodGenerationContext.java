@@ -76,18 +76,19 @@ public class MethodGenerationContext {
     int numLocals = locals.size();
     meth.setNumberOfLocals(universe.newInteger(numLocals));
 
-    meth.setMaximumNumberOfStackElements(universe
-        .newInteger(computeStackDepth()));
+    meth.setMaximumNumberOfStackElements(universe.newInteger(computeStackDepth()));
 
     // copy literals into the method
     int i = 0;
-    for (som.vmobjects.Object l : literals)
+    for (som.vmobjects.Object l : literals) {
       meth.setIndexableField(i++, l);
+    }
 
     // copy bytecodes into method
     i = 0;
-    for (byte bc : bytecode)
+    for (byte bc : bytecode) {
       meth.setBytecode(i++, bc);
+    }
 
     // return the method - the holder field is to be set later on!
     return meth;
@@ -136,8 +137,8 @@ public class MethodGenerationContext {
         case super_send: {
           // these are special: they need to look at the number of
           // arguments (extractable from the signature)
-          som.vmobjects.Symbol sig = (som.vmobjects.Symbol) literals
-              .get(bytecode.elementAt(i + 1));
+          som.vmobjects.Symbol sig = (som.vmobjects.Symbol) literals.
+               get(bytecode.elementAt(i + 1));
 
           depth -= sig.getNumberOfSignatureArguments();
 
@@ -154,7 +155,9 @@ public class MethodGenerationContext {
               + bytecode.elementAt(i));
       }
 
-      if (depth > maxDepth) maxDepth = depth;
+      if (depth > maxDepth) {
+        maxDepth = depth;
+      }
     }
 
     return maxDepth;
@@ -169,7 +172,10 @@ public class MethodGenerationContext {
   }
 
   public boolean addArgumentIfAbsent(String arg) {
-    if (locals.indexOf(arg) != -1) return false;
+    if (locals.contains(arg)) {
+      return false;
+    }
+
     arguments.add(arg);
     return true;
   }
@@ -183,7 +189,10 @@ public class MethodGenerationContext {
   }
 
   public boolean addLocalIfAbsent(String local) {
-    if (locals.indexOf(local) != -1) return false;
+    if (locals.contains(local)) {
+      return false;
+    }
+    
     locals.add(local);
     return true;
   }
@@ -205,7 +214,10 @@ public class MethodGenerationContext {
   }
 
   public boolean addLiteralIfAbsent(som.vmobjects.Object lit) {
-    if (literals.indexOf(lit) != -1) return false;
+    if (literals.contains(lit)) {
+      return false;
+    }
+    
     literals.add(lit);
     return true;
   }
@@ -232,22 +244,22 @@ public class MethodGenerationContext {
     if (tri.getX() == -1) {
       tri.setX((byte) arguments.indexOf(var));
       if (tri.getX() == -1) {
-        if (outerGenc == null)
+        if (outerGenc == null) {
           return false;
-        else {
+        } else {
           tri.setY((byte) (tri.getY() + 1));
           return outerGenc.findVar(var, tri);
         }
-      }
-      else
+      } else {
         tri.setZ(true);
+      }
     }
 
     return true;
   }
 
-  public boolean findField(String field) {
-    return holderGenc.findField(field);
+  public boolean hasField(Symbol field) {
+    return holderGenc.hasField(field);
   }
 
   public int getNumberOfArguments() {

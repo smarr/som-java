@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2013 Stefan Marr,   stefan.marr@vub.ac.be
  * Copyright (c) 2009 Michael Haupt, michael.haupt@hpi.uni-potsdam.de
  * Software Architecture Group, Hasso Plattner Institute, Potsdam, Germany
  * http://www.hpi.uni-potsdam.de/swa/
@@ -41,7 +42,7 @@ public class StringPrimitives extends Primitives {
   public void installPrimitives() {
     installInstancePrimitive(new Primitive("concatenate:", universe) {
 
-      public void invoke(Frame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         String argument = (String) frame.pop();
         String self = (String) frame.pop();
         frame.push(universe.newString(self.getEmbeddedString()
@@ -51,7 +52,7 @@ public class StringPrimitives extends Primitives {
 
     installInstancePrimitive(new Primitive("asSymbol", universe) {
 
-      public void invoke(Frame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         String self = (String) frame.pop();
         frame.push(universe.symbolFor(self.getEmbeddedString()));
       }
@@ -59,7 +60,7 @@ public class StringPrimitives extends Primitives {
 
     installInstancePrimitive(new Primitive("length", universe) {
 
-      public void invoke(Frame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         String self = (String) frame.pop();
         frame.push(universe.newInteger(self.getEmbeddedString().length()));
       }
@@ -67,7 +68,7 @@ public class StringPrimitives extends Primitives {
 
     installInstancePrimitive(new Primitive("=", universe) {
 
-      public void invoke(Frame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         Object op1 = frame.pop();
         String op2 = (String) frame.pop(); // self
         if (op1.getSOMClass() == universe.stringClass) {
@@ -84,8 +85,8 @@ public class StringPrimitives extends Primitives {
 
     installInstancePrimitive(new Primitive("primSubstringFrom:to:", universe) {
 
-      public void invoke(Frame frame, final Interpreter interpreter) {
-        Integer end = (Integer) frame.pop();
+      public void invoke(final Frame frame, final Interpreter interpreter) {
+        Integer end   = (Integer) frame.pop();
         Integer start = (Integer) frame.pop();
 
         String self = (String) frame.pop();
@@ -93,8 +94,7 @@ public class StringPrimitives extends Primitives {
         try {
           frame.push(universe.newString(self.getEmbeddedString().substring(
               start.getEmbeddedInteger(), end.getEmbeddedInteger() + 1)));
-        }
-        catch (IndexOutOfBoundsException e) {
+        } catch (IndexOutOfBoundsException e) {
           frame.push(universe.newString(new java.lang.String(
               "Error - index out of bounds")));
         }
@@ -103,7 +103,7 @@ public class StringPrimitives extends Primitives {
 
     installInstancePrimitive(new Primitive("hashcode", universe) {
 
-      public void invoke(Frame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         String self = (String) frame.pop();
         frame.push(universe.newInteger(self.getEmbeddedString().hashCode()));
       }

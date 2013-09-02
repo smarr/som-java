@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2013 Stefan Marr,   stefan.marr@vub.ac.be
  * Copyright (c) 2009 Michael Haupt, michael.haupt@hpi.uni-potsdam.de
  * Software Architecture Group, Hasso Plattner Institute, Potsdam, Germany
  * http://www.hpi.uni-potsdam.de/swa/
@@ -21,7 +22,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package som.compiler;
 
 import java.util.ArrayList;
@@ -46,15 +46,15 @@ public class ClassGenerationContext {
   private List<som.vmobjects.Object>    classFields     = new ArrayList<som.vmobjects.Object>();
   private List<som.vmobjects.Invokable> classMethods    = new ArrayList<som.vmobjects.Invokable>();
 
-  public void setName(Symbol name) {
+  public void setName(final Symbol name) {
     this.name = name;
   }
 
-  public void setSuperName(Symbol superName) {
+  public void setSuperName(final Symbol superName) {
     this.superName = superName;
   }
 
-  public void addInstanceMethod(som.vmobjects.Invokable meth) {
+  public void addInstanceMethod(final som.vmobjects.Invokable meth) {
     instanceMethods.add(meth);
   }
 
@@ -62,21 +62,20 @@ public class ClassGenerationContext {
     classSide = b;
   }
 
-  public void addClassMethod(som.vmobjects.Invokable meth) {
+  public void addClassMethod(final som.vmobjects.Invokable meth) {
     classMethods.add(meth);
   }
 
-  public void addInstanceField(Symbol field) {
+  public void addInstanceField(final Symbol field) {
     instanceFields.add(field);
   }
 
-  public void addClassField(Symbol field) {
+  public void addClassField(final Symbol field) {
     classFields.add(field);
   }
 
-  public boolean findField(String field) {
-    return (isClassSide() ? classFields : instanceFields).indexOf(universe
-        .symbolFor(field)) != -1;
+  public boolean hasField(final Symbol field) {
+    return (isClassSide() ? classFields : instanceFields).contains(field);
   }
 
   public boolean isClassSide() {
@@ -91,8 +90,7 @@ public class ClassGenerationContext {
     som.vmobjects.Class superClass = universe.loadClass(superName);
 
     // Allocate the class of the resulting class
-    som.vmobjects.Class resultClass = universe
-        .newClass(universe.metaclassClass);
+    som.vmobjects.Class resultClass = universe.newClass(universe.metaclassClass);
 
     // Initialize the class of the resulting class
     resultClass.setInstanceFields(universe.newArray(classFields));
@@ -114,7 +112,7 @@ public class ClassGenerationContext {
     return result;
   }
 
-  public void assembleSystemClass(som.vmobjects.Class systemClass) {
+  public void assembleSystemClass(final som.vmobjects.Class systemClass) {
     systemClass.setInstanceInvokables(universe.newArray(instanceMethods));
     systemClass.setInstanceFields(universe.newArray(instanceFields));
     // class-bound == class-instance-bound

@@ -38,7 +38,7 @@ public class BlockPrimitives extends Primitives {
   public void installPrimitives() {
     installInstancePrimitive(new Primitive("restart", universe) {
 
-      public void invoke(Frame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         frame.setBytecodeIndex(0);
         frame.resetStackPointer();
       }

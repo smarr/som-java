@@ -98,10 +98,9 @@ public class Interpreter {
     if (global != null) {
       // Push the global onto the stack
       getFrame().push(global);
-    }
-    else {
+    } else {
       // Send 'unknownGlobal:' to self
-      Object arguments[] = { globalName };
+      Object[] arguments = {globalName};
       getSelf().send("unknownGlobal:", arguments, universe, this);
     }
   }
@@ -141,15 +140,12 @@ public class Interpreter {
 
     // Send the message
     // Lookup the invokable with the given signature
-    Invokable invokable = getMethod().getHolder().getSuperClass()
-        .lookupInvokable(signature);
+    Invokable invokable = getMethod().getHolder().getSuperClass().lookupInvokable(signature);
 
     if (invokable != null) {
       // Invoke the invokable in the current frame
       invokable.invoke(getFrame(), this);
-
-    }
-    else {
+    } else {
       // Compute the number of arguments
       int numberOfArguments = signature.getNumberOfSignatureArguments();
 
@@ -165,7 +161,7 @@ public class Interpreter {
       }
 
       // Send 'doesNotUnderstand:arguments:' to the receiver object
-      Object[] arguments = { signature, argumentsArray };
+      Object[] arguments = {signature, argumentsArray};
       receiver.send("doesNotUnderstand:arguments:", arguments, universe, this);
     }
   }
@@ -193,9 +189,8 @@ public class Interpreter {
       // that
       // acutally sent the 'value' message.
       Block block = (Block) getFrame().getArgument(0, 0);
-      Object sender = getFrame().getPreviousFrame()
-          .getOuterContext(universe.nilObject).getArgument(0, 0);
-      Object[] arguments = { block };
+      Object sender = getFrame().getPreviousFrame().getOuterContext(universe.nilObject).getArgument(0, 0);
+      Object[] arguments = {block};
 
       // pop the frame of the currently executing block...
       popFrame();
@@ -368,9 +363,7 @@ public class Interpreter {
     if (invokable != null) {
       // Invoke the invokable in the current frame
       invokable.invoke(getFrame(), this);
-
-    }
-    else {
+    } else {
       // Compute the number of arguments
       int numberOfArguments = signature.getNumberOfSignatureArguments();
 
@@ -386,7 +379,7 @@ public class Interpreter {
       }
 
       // Send 'doesNotUnderstand:arguments:' to the receiver object
-      Object[] arguments = { signature, argumentsArray };
+      Object[] arguments = {signature, argumentsArray};
       receiver.send("doesNotUnderstand:arguments:", arguments, universe, this);
     }
   }

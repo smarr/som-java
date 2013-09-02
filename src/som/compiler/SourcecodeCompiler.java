@@ -60,9 +60,10 @@ public class SourcecodeCompiler {
     som.vmobjects.Symbol cname = result.getName();
     String cnameC = cname.getString();
 
-    if (file != cnameC)
+    if (file != cnameC) {
       throw new IllegalStateException("File name " + file
           + " does not match class name " + cnameC);
+    }
 
     return result;
   }
@@ -82,10 +83,11 @@ public class SourcecodeCompiler {
     som.vmobjects.Class result = systemClass;
     parser.classdef(cgc);
 
-    if (systemClass == null)
+    if (systemClass == null) {
       result = cgc.assemble();
-    else
+    } else {
       cgc.assembleSystemClass(result);
+    }
 
     return result;
   }

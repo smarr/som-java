@@ -45,76 +45,76 @@ import som.vmobjects.Symbol;
 public class BytecodeGenerator {
 
   public void emitPOP(MethodGenerationContext mgenc) {
-    EMIT1(mgenc, pop);
+    emit1(mgenc, pop);
   }
 
   public void emitPUSHARGUMENT(MethodGenerationContext mgenc, byte idx, byte ctx) {
-    EMIT3(mgenc, push_argument, idx, ctx);
+    emit3(mgenc, push_argument, idx, ctx);
   }
 
   public void emitRETURNLOCAL(MethodGenerationContext mgenc) {
-    EMIT1(mgenc, return_local);
+    emit1(mgenc, return_local);
   }
 
   public void emitRETURNNONLOCAL(MethodGenerationContext mgenc) {
-    EMIT1(mgenc, return_non_local);
+    emit1(mgenc, return_non_local);
   }
 
   public void emitDUP(MethodGenerationContext mgenc) {
-    EMIT1(mgenc, dup);
+    emit1(mgenc, dup);
   }
 
   public void emitPUSHBLOCK(MethodGenerationContext mgenc, Method blockMethod) {
-    EMIT2(mgenc, push_block, mgenc.findLiteralIndex(blockMethod));
+    emit2(mgenc, push_block, mgenc.findLiteralIndex(blockMethod));
   }
 
   public void emitPUSHLOCAL(MethodGenerationContext mgenc, byte idx, byte ctx) {
-    EMIT3(mgenc, push_local, idx, ctx);
+    emit3(mgenc, push_local, idx, ctx);
   }
 
   public void emitPUSHFIELD(MethodGenerationContext mgenc, Symbol fieldName) {
-    EMIT2(mgenc, push_field, mgenc.findLiteralIndex(fieldName));
+    emit2(mgenc, push_field, mgenc.findLiteralIndex(fieldName));
   }
 
   public void emitPUSHGLOBAL(MethodGenerationContext mgenc, Symbol global) {
-    EMIT2(mgenc, push_global, mgenc.findLiteralIndex(global));
+    emit2(mgenc, push_global, mgenc.findLiteralIndex(global));
   }
 
   public void emitPOPARGUMENT(MethodGenerationContext mgenc, byte idx, byte ctx) {
-    EMIT3(mgenc, pop_argument, idx, ctx);
+    emit3(mgenc, pop_argument, idx, ctx);
   }
 
   public void emitPOPLOCAL(MethodGenerationContext mgenc, byte idx, byte ctx) {
-    EMIT3(mgenc, pop_local, idx, ctx);
+    emit3(mgenc, pop_local, idx, ctx);
   }
 
   public void emitPOPFIELD(MethodGenerationContext mgenc, Symbol fieldName) {
-    EMIT2(mgenc, pop_field, mgenc.findLiteralIndex(fieldName));
+    emit2(mgenc, pop_field, mgenc.findLiteralIndex(fieldName));
   }
 
   public void emitSUPERSEND(MethodGenerationContext mgenc, Symbol msg) {
-    EMIT2(mgenc, super_send, mgenc.findLiteralIndex(msg));
+    emit2(mgenc, super_send, mgenc.findLiteralIndex(msg));
   }
 
   public void emitSEND(MethodGenerationContext mgenc, Symbol msg) {
-    EMIT2(mgenc, send, mgenc.findLiteralIndex(msg));
+    emit2(mgenc, send, mgenc.findLiteralIndex(msg));
   }
 
   public void emitPUSHCONSTANT(MethodGenerationContext mgenc,
       som.vmobjects.Object lit) {
-    EMIT2(mgenc, push_constant, mgenc.findLiteralIndex(lit));
+    emit2(mgenc, push_constant, mgenc.findLiteralIndex(lit));
   }
 
-  private void EMIT1(MethodGenerationContext mgenc, byte code) {
+  private void emit1(MethodGenerationContext mgenc, byte code) {
     mgenc.addBytecode(code);
   }
 
-  private void EMIT2(MethodGenerationContext mgenc, byte code, byte idx) {
+  private void emit2(MethodGenerationContext mgenc, byte code, byte idx) {
     mgenc.addBytecode(code);
     mgenc.addBytecode(idx);
   }
 
-  private void EMIT3(MethodGenerationContext mgenc, byte code, byte idx,
+  private void emit3(MethodGenerationContext mgenc, byte code, byte idx,
       byte ctx) {
     mgenc.addBytecode(code);
     mgenc.addBytecode(idx);

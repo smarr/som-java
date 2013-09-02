@@ -51,9 +51,11 @@ public class Shell {
 
     java.io.BufferedReader in;
     java.lang.String stmt;
-    int counter, bytecodeIndex;
+    int counter;
+    int bytecodeIndex;
     Class myClass;
-    Object myObject, it;
+    Object myObject;
+    Object it;
     Frame currentFrame;
 
     counter = 0;
@@ -61,7 +63,9 @@ public class Shell {
         java.lang.System.in));
     it = universe.nilObject;
 
+    // Checkstyle: stop
     System.out.println("SOM Shell. Type \"quit\" to exit.\n");
+    // Checkstyle: resume
 
     // Create a fake bootstrap frame
     currentFrame = interpreter.pushNewFrame(bootstrapMethod);
@@ -71,10 +75,15 @@ public class Shell {
 
     while (true) {
       try {
+        // Checkstyle: stop
         System.out.print("---> ");
+        // Checkstyle: resume
+
         // Read a statement from the keyboard
         stmt = in.readLine();
-        if (stmt.equals("quit")) return;
+        if (stmt.equals("quit")) {
+          return;
+        }
 
         // Generate a temporary class with a run method
         stmt = "Shell_Class_" + counter++ + " = ( run: it = ( | tmp | tmp := ("
@@ -99,8 +108,8 @@ public class Shell {
           currentFrame.push(it);
 
           // Lookup the run: method
-          Invokable initialize = myClass.lookupInvokable(universe
-              .symbolFor("run:"));
+          Invokable initialize = myClass.lookupInvokable(
+              universe.symbolFor("run:"));
 
           // Invoke the run method
           initialize.invoke(currentFrame, interpreter);
@@ -111,10 +120,11 @@ public class Shell {
           // Save the result of the run method
           it = currentFrame.pop();
         }
-      }
-      catch (Exception e) {
-        System.out.println("Caught exception: " + e.getMessage());
-        System.out.println("" + interpreter.getFrame().getPreviousFrame());
+      } catch (Exception e) {
+        // Checkstyle: stop
+        System.err.println("Caught exception: " + e.getMessage());
+        System.err.println("" + interpreter.getFrame().getPreviousFrame());
+        // Checkstyle: resume
       }
     }
   }

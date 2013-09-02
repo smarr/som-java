@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2013 Stefan Marr,   stefan.marr@vub.ac.be
  * Copyright (c) 2009 Michael Haupt, michael.haupt@hpi.uni-potsdam.de
  * Software Architecture Group, Hasso Plattner Institute, Potsdam, Germany
  * http://www.hpi.uni-potsdam.de/swa/
@@ -79,10 +80,12 @@ public abstract class Primitive extends Object implements Invokable {
     // Return an empty primitive with the given signature
     return (new Primitive(signatureString, universe) {
 
-      public void invoke(Frame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
+        // Checkstyle: stop
         // Write a warning to the screen
         System.out.println("Warning: undefined primitive "
             + this.getSignature().getString() + " called");
+        // Checkstyle: resume
       }
 
       public boolean isEmpty() {

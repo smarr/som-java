@@ -39,7 +39,7 @@ public class ClassPrimitives extends Primitives {
   public void installPrimitives() {
     installInstancePrimitive(new Primitive("new", universe) {
 
-      public void invoke(Frame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         Class self = (Class) frame.pop();
         frame.push(universe.newInstance(self));
       }

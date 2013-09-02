@@ -41,7 +41,7 @@ public class ArrayPrimitives extends Primitives {
   public void installPrimitives() {
     installInstancePrimitive(new Primitive("at:", universe) {
 
-      public void invoke(Frame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         Integer index = (Integer) frame.pop();
         Array self = (Array) frame.pop();
         frame.push(self.getIndexableField(index.getEmbeddedInteger() - 1));
@@ -50,7 +50,7 @@ public class ArrayPrimitives extends Primitives {
 
     installInstancePrimitive(new Primitive("at:put:", universe) {
 
-      public void invoke(Frame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         Object value = frame.pop();
         Integer index = (Integer) frame.pop();
         Array self = (Array) frame.getStackElement(0);
@@ -60,7 +60,7 @@ public class ArrayPrimitives extends Primitives {
 
     installInstancePrimitive(new Primitive("length", universe) {
 
-      public void invoke(Frame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         Array self = (Array) frame.pop();
         frame.push(universe.newInteger(self.getNumberOfIndexableFields()));
       }
@@ -68,7 +68,7 @@ public class ArrayPrimitives extends Primitives {
 
     installClassPrimitive(new Primitive("new:", universe) {
 
-      public void invoke(Frame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         Integer length = (Integer) frame.pop();
         frame.pop(); // not required
         frame.push(universe.newArray(length.getEmbeddedInteger()));

@@ -29,17 +29,17 @@ import som.interpreter.Interpreter;
 public interface Invokable {
 
   // Tells whether this is a primitive
-  public boolean isPrimitive();
+  boolean isPrimitive();
 
   // Invoke this invokable object in a given frame
-  public void invoke(Frame frame, final Interpreter interpreter);
+  void invoke(final Frame frame, final Interpreter interpreter);
 
   // Get the signature for this invokable object
-  public Symbol getSignature();
+  Symbol getSignature();
 
   // Get the holder for this invokable object
-  public Class getHolder();
+  Class getHolder();
 
   // Set the holder for this invokable object
-  public void setHolder(Class value);
+  void setHolder(final Class value);
 }
