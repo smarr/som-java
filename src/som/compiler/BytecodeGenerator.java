@@ -73,7 +73,7 @@ public class BytecodeGenerator {
   }
 
   public void emitPUSHFIELD(MethodGenerationContext mgenc, Symbol fieldName) {
-    emit2(mgenc, push_field, mgenc.findLiteralIndex(fieldName));
+    emit2(mgenc, push_field, mgenc.getFieldIndex(fieldName));
   }
 
   public void emitPUSHGLOBAL(MethodGenerationContext mgenc, Symbol global) {
@@ -89,7 +89,7 @@ public class BytecodeGenerator {
   }
 
   public void emitPOPFIELD(MethodGenerationContext mgenc, Symbol fieldName) {
-    emit2(mgenc, pop_field, mgenc.findLiteralIndex(fieldName));
+    emit2(mgenc, pop_field, mgenc.getFieldIndex(fieldName));
   }
 
   public void emitSUPERSEND(MethodGenerationContext mgenc, Symbol msg) {

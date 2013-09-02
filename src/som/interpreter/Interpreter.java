@@ -62,10 +62,7 @@ public class Interpreter {
 
   private void doPushField(int bytecodeIndex) {
     // Handle the push field bytecode
-    Symbol fieldName = (Symbol) getMethod().getConstant(bytecodeIndex);
-
-    // Get the field index from the field name
-    int fieldIndex = getSelf().getFieldIndex(fieldName);
+    int fieldIndex = getMethod().getBytecode(bytecodeIndex + 1);
 
     // Push the field with the computed index onto the stack
     getFrame().push(getSelf().getField(fieldIndex));
@@ -122,13 +119,9 @@ public class Interpreter {
 
   private void doPopField(int bytecodeIndex) {
     // Handle the pop field bytecode
-    Symbol fieldName = (Symbol) getMethod().getConstant(bytecodeIndex);
+    int fieldIndex = getMethod().getBytecode(bytecodeIndex + 1);
 
-    // Get the field index from the field name
-    int fieldIndex = getSelf().getFieldIndex(fieldName);
-
-    // Set the field with the computed index to the value popped from the
-    // stack
+    // Set the field with the computed index to the value popped from the stack
     getSelf().setField(fieldIndex, getFrame().pop());
   }
 

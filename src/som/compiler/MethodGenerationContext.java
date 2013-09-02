@@ -258,8 +258,12 @@ public class MethodGenerationContext {
     return true;
   }
 
-  public boolean hasField(Symbol field) {
+  public boolean hasField(final Symbol field) {
     return holderGenc.hasField(field);
+  }
+
+  public byte getFieldIndex(final Symbol field) {
+    return holderGenc.getFieldIndex(field);
   }
 
   public int getNumberOfArguments() {
