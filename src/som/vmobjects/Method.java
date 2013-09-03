@@ -109,7 +109,9 @@ public class Method extends Array implements Invokable {
 
   public void setNumberOfBytecodes(int value) {
     // Set the number of bytecodes in this method
-    bytecodes = new byte[value];
+    bytecodes            = new byte[value];
+    inlineCacheClass     = new Class[value];
+    inlineCacheInvokable = new Invokable[value];
   }
 
   public byte getBytecode(int index) {
@@ -199,6 +201,20 @@ public class Method extends Array implements Invokable {
     return "Method(" + getHolder().getName().getString() + ">>" + getSignature().toString() + ")";
   }
 
+  public Class getInlineCacheClass(int bytecodeIndex) {
+    return inlineCacheClass[bytecodeIndex];
+  }
+
+  public Invokable getInlineCacheInvokable(int bytecodeIndex) {
+    return inlineCacheInvokable[bytecodeIndex];
+  }
+
+  public void setInlineCache(int bytecodeIndex, Class receiverClass, Invokable invokable) {
+    inlineCacheClass[bytecodeIndex]     = receiverClass;
+    inlineCacheInvokable[bytecodeIndex] = invokable;
+  }
+
+
   // Private variables for holding the last receiver class and invoked method
   private java.util.ArrayList<Class>     receiverClassTable                = new java.util.ArrayList<Class>();
   private java.util.ArrayList<Invokable> invokedMethods                    = new java.util.ArrayList<Invokable>();
@@ -209,6 +225,8 @@ public class Method extends Array implements Invokable {
 
   // Private variable holding byte array of bytecodes
   private byte[]                         bytecodes;
+  private Class[]                        inlineCacheClass;
+  private Invokable[]                    inlineCacheInvokable;
 
   // Static field indices and number of method fields
   static final int                       numberOfLocalsIndex               = 1 + classIndex;

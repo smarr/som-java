@@ -335,8 +335,30 @@ public class Interpreter {
   }
 
   private void send(Symbol selector, Class receiverClass, int bytecodeIndex) {
-    // Lookup the invokable with the given signature
-    Invokable invokable = receiverClass.lookupInvokable(selector);
+    // First try the inline cache
+    Invokable invokable;
+
+    Method m = getMethod();
+    Class cachedClass = m.getInlineCacheClass(bytecodeIndex);
+    if (cachedClass == receiverClass) {
+      invokable = m.getInlineCacheInvokable(bytecodeIndex);
+    } else {
+      if (cachedClass == null) {
+        // Lookup the invokable with the given signature
+        invokable = receiverClass.lookupInvokable(selector);
+        m.setInlineCache(bytecodeIndex, receiverClass, invokable);
+      } else {
+        cachedClass = m.getInlineCacheClass(bytecodeIndex + 1); // the bytecode index after the send is used by the selector constant, and can be used safely as another cache item
+        if (cachedClass == receiverClass) {
+          invokable = m.getInlineCacheInvokable(bytecodeIndex + 1);
+        } else {
+          invokable = receiverClass.lookupInvokable(selector);
+          if (cachedClass == null) {
+            m.setInlineCache(bytecodeIndex + 1, receiverClass, invokable);
+          }
+        }
+      }
+    }
 
     if (invokable != null) {
       // Invoke the invokable in the current frame
