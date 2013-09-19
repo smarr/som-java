@@ -49,13 +49,11 @@ public class SourcecodeCompiler {
   private som.vmobjects.Class compile(String path, String file,
       som.vmobjects.Class systemClass, final Universe universe)
       throws IOException {
-    som.vmobjects.Class result = systemClass;
-
     String fname = path + Universe.fileSeparator + file + ".som";
 
     parser = new Parser(new FileReader(fname), universe);
 
-    result = compile(systemClass, universe);
+    som.vmobjects.Class result = compile(systemClass, universe);
 
     som.vmobjects.Symbol cname = result.getName();
     String cnameC = cname.getString();

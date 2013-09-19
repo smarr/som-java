@@ -64,21 +64,21 @@ public class Bytecodes {
 
   static {
     // set up the lengths of the "native" bytecodes
-    bytecodeLength[halt] = 1;
-    bytecodeLength[dup] = 1;
-    bytecodeLength[push_local] = 3;
-    bytecodeLength[push_argument] = 3;
-    bytecodeLength[push_field] = 2;
-    bytecodeLength[push_block] = 2;
-    bytecodeLength[push_constant] = 2;
-    bytecodeLength[push_global] = 2;
-    bytecodeLength[pop] = 1;
-    bytecodeLength[pop_local] = 3;
-    bytecodeLength[pop_argument] = 3;
-    bytecodeLength[pop_field] = 2;
-    bytecodeLength[send] = 2;
-    bytecodeLength[super_send] = 2;
-    bytecodeLength[return_local] = 1;
+    bytecodeLength[halt]             = 1;
+    bytecodeLength[dup]              = 1;
+    bytecodeLength[push_local]       = 3;
+    bytecodeLength[push_argument]    = 3;
+    bytecodeLength[push_field]       = 2;
+    bytecodeLength[push_block]       = 2;
+    bytecodeLength[push_constant]    = 2;
+    bytecodeLength[push_global]      = 2;
+    bytecodeLength[pop]              = 1;
+    bytecodeLength[pop_local]        = 3;
+    bytecodeLength[pop_argument]     = 3;
+    bytecodeLength[pop_field]        = 2;
+    bytecodeLength[send]             = 2;
+    bytecodeLength[super_send]       = 2;
+    bytecodeLength[return_local]     = 1;
     bytecodeLength[return_non_local] = 1;
   }
 
