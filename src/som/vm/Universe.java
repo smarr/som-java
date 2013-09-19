@@ -656,7 +656,7 @@ public class Universe {
     if (result.hasPrimitives()) { result.loadPrimitives(); }
   }
 
-  public Class loadClass(Symbol name, Class systemClass) {
+  private Class loadClass(Symbol name, Class systemClass) {
     // Try loading the class from all different paths
     for (java.lang.String cpEntry : classPath) {
       try {
