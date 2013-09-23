@@ -39,23 +39,23 @@ public class Method extends Array implements Invokable {
 
   public Integer getNumberOfLocals() {
     // Get the number of locals (converted to a Java integer)
-    return (Integer) getField(numberOfLocalsIndex);
+    return numberOfLocals;
   }
 
   public void setNumberOfLocals(Integer value) {
     // Set the number of locals
-    setField(numberOfLocalsIndex, value);
+    numberOfLocals = value;
   }
 
   public Integer getMaximumNumberOfStackElements() {
     // Get the maximum number of stack elements (converted to a Java
     // integer)
-    return (Integer) getField(maximumNumberOfStackElementsIndex);
+    return maximumNumberOfStackElements;
   }
 
   public void setMaximumNumberOfStackElements(Integer value) {
     // Set the maximum number of stack elements
-    setField(maximumNumberOfStackElementsIndex, value);
+    maximumNumberOfStackElements = value;
   }
 
   public Symbol getSignature() {
@@ -228,11 +228,13 @@ public class Method extends Array implements Invokable {
   private Class[]                        inlineCacheClass;
   private Invokable[]                    inlineCacheInvokable;
 
+  // Meta information
+  private Integer                        numberOfLocals;
+  private Integer                        maximumNumberOfStackElements;
+
   // Static field indices and number of method fields
-  static final int                       numberOfLocalsIndex               = 1 + classIndex;
-  static final int                       maximumNumberOfStackElementsIndex = 1 + numberOfLocalsIndex;
-  static final int                       signatureIndex                    = 1 + maximumNumberOfStackElementsIndex;
-  static final int                       holderIndex                       = 1 + signatureIndex;
-  static final int                       numberOfMethodFields              = 1 + holderIndex;
+  static final int                       signatureIndex               = 1 + classIndex;
+  static final int                       holderIndex                  = 1 + signatureIndex;
+  static final int                       numberOfMethodFields         = 1 + holderIndex;
 
 }
