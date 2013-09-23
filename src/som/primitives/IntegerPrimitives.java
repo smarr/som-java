@@ -327,5 +327,17 @@ public class IntegerPrimitives extends Primitives {
         }
       }
     });
+
+    installClassPrimitive(new Primitive("fromString:", universe) {
+
+      public void invoke(Frame frame, Interpreter interpreter) {
+        String param = (String) frame.pop();
+        frame.pop();
+
+        long result = java.lang.Long.parseLong(param.getEmbeddedString());
+
+        pushLongResult(frame, result);
+      }
+    });
   }
 }

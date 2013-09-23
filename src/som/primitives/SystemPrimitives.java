@@ -116,7 +116,9 @@ public class SystemPrimitives extends Primitives {
     installInstancePrimitive(new Primitive("fullGC", universe) {
 
       public void invoke(final Frame frame, final Interpreter interpreter) {
-        // naught - GC is entirely left to the JVM
+        frame.pop();
+        System.gc();
+        frame.push(universe.trueObject);
       }
     });
 
