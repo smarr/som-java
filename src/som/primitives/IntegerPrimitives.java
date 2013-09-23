@@ -31,6 +31,7 @@ import som.vmobjects.Frame;
 import som.vmobjects.Integer;
 import som.vmobjects.Object;
 import som.vmobjects.Primitive;
+import som.vmobjects.String;
 import som.interpreter.Interpreter;
 
 public class IntegerPrimitives extends Primitives {
@@ -82,8 +83,14 @@ public class IntegerPrimitives extends Primitives {
 
       public void invoke(final Frame frame, final Interpreter interpreter) {
         Integer self = (Integer) frame.pop();
-        frame.push(universe.newDouble(
-            Math.sqrt((double) self.getEmbeddedInteger())));
+
+        double result = Math.sqrt((double) self.getEmbeddedInteger());
+
+        if (result == Math.rint(result)) {
+          pushLongResult(frame, (long) result);
+        } else {
+          frame.push(universe.newDouble(result));
+        }
       }
     });
 
