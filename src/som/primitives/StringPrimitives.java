@@ -93,7 +93,7 @@ public class StringPrimitives extends Primitives {
 
         try {
           frame.push(universe.newString(self.getEmbeddedString().substring(
-              start.getEmbeddedInteger(), end.getEmbeddedInteger() + 1)));
+              start.getEmbeddedInteger() - 1, end.getEmbeddedInteger())));
         } catch (IndexOutOfBoundsException e) {
           frame.push(universe.newString(new java.lang.String(
               "Error - index out of bounds")));
