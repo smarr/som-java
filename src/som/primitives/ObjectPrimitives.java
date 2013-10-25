@@ -94,7 +94,7 @@ public class ObjectPrimitives extends Primitives {
       public void invoke(final Frame frame, final Interpreter interpreter) {
         Object arg2 = frame.pop();
         Object arg  = frame.pop();
-        Object self = frame.getStackElement(0);
+        // Object self = frame.getStackElement(0);
 
         Symbol selector = (Symbol) arg;
         Class  clazz    = (Class) arg2;
@@ -145,6 +145,14 @@ public class ObjectPrimitives extends Primitives {
         Integer idx = (Integer) arg;
 
         self.setField(idx.getEmbeddedInteger() - 1, val);
+      }
+    });
+
+    installInstancePrimitive(new Primitive("class", universe) {
+      @Override
+      public void invoke(final Frame frame, final Interpreter interpreter) {
+        Object self  = frame.pop();
+        frame.push(self.getSOMClass());
       }
     });
   }

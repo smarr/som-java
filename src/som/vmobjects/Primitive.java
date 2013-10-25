@@ -101,7 +101,7 @@ public abstract class Primitive extends Object implements Invokable {
   }
 
   // Static field indices and number of primitive fields
-  static final int signatureIndex          = 1 + classIndex;
+  static final int signatureIndex          = numberOfObjectFields;
   static final int holderIndex             = 1 + signatureIndex;
   static final int numberOfPrimitiveFields = 1 + holderIndex;
 }

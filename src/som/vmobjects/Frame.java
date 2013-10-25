@@ -40,28 +40,24 @@ import som.vm.Universe;
  */
 public class Frame extends Array {
 
-  public Frame(final Object nilObject) {
+  public Frame(final Object nilObject, final Frame previousFrame,
+      final Object context, final Method method) {
     super(nilObject);
+    this.previousFrame = previousFrame;
+    this.context       = context;
+    this.method        = method;
   }
 
   public Frame getPreviousFrame() {
-    // Get the previous frame by reading the field with previous frame index
-    return (Frame) getField(previousFrameIndex);
-  }
-
-  public void setPreviousFrame(Frame value) {
-    // Set the previous frame by writing to the field with previous frame
-    // index
-    setField(previousFrameIndex, value);
+    return (Frame) previousFrame;
   }
 
   public void clearPreviousFrame(Object nilObject) {
-    // Set the previous frame to nil
-    setField(previousFrameIndex, nilObject);
+    previousFrame = nilObject;
   }
 
   public boolean hasPreviousFrame(Object nilObject) {
-    return getField(previousFrameIndex) != nilObject;
+    return previousFrame != nilObject;
   }
 
   public boolean isBootstrapFrame(Object nilObject) {
@@ -69,17 +65,11 @@ public class Frame extends Array {
   }
 
   public Frame getContext() {
-    // Get the context by reading the field with context index
-    return (Frame) getField(contextIndex);
-  }
-
-  public void setContext(Frame value) {
-    // Set the context by writing to the field with context index
-    setField(contextIndex, value);
+    return (Frame) context;
   }
 
   public boolean hasContext(Object nilObject) {
-    return getField(contextIndex) != nilObject;
+    return context != nilObject;
   }
 
   public Frame getContext(int level) {
@@ -113,13 +103,7 @@ public class Frame extends Array {
   }
 
   public Method getMethod() {
-    // Get the method by reading the field with method index
-    return (Method) getField(methodIndex);
-  }
-
-  public void setMethod(Method value) {
-    // Set the method by writing to the field with method index
-    setField(methodIndex, value);
+    return method;
   }
 
   @Override
@@ -245,9 +229,10 @@ public class Frame extends Array {
   // the offset at which local variables start
   private int      localOffset;
 
+  private final Method method;
+  private final Object context;
+  private       Object previousFrame;
+
   // Static field indices and number of frame fields
-  static final int previousFrameIndex  = 1 + classIndex;
-  static final int contextIndex        = 1 + previousFrameIndex;
-  static final int methodIndex         = 1 + contextIndex;
-  static final int numberOfFrameFields = 1 + methodIndex;
+  static final int numberOfFrameFields = numberOfObjectFields;
 }

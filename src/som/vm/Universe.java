@@ -391,12 +391,8 @@ public class Universe {
 
   public Block newBlock(Method method, Frame context, int arguments) {
     // Allocate a new block and set its class to be the block class
-    Block result = new Block(nilObject);
+    Block result = new Block(nilObject, method, context);
     result.setClass(getBlockClass(arguments));
-
-    // Set the method and context of block
-    result.setMethod(method);
-    result.setContext(context);
 
     // Return the freshly allocated block
     return result;
@@ -411,9 +407,10 @@ public class Universe {
     return result;
   }
 
-  public Frame newFrame(Frame previousFrame, Method method) {
+  public Frame newFrame(final Frame previousFrame, final Method method,
+      final Object context) {
     // Allocate a new frame and set its class to be the frame class
-    Frame result = new Frame(nilObject);
+    Frame result = new Frame(nilObject, previousFrame, context, method);
     result.setClass(frameClass);
 
     // Compute the maximum number of stack locations (including arguments,
@@ -424,12 +421,6 @@ public class Universe {
         + method.getNumberOfLocals().getEmbeddedInteger()
         + method.getMaximumNumberOfStackElements().getEmbeddedInteger() + 2;
     result.setNumberOfIndexableFieldsAndClear(length, nilObject);
-
-    // Set the method of the frame and the previous frame
-    result.setMethod(method);
-    if (previousFrame != null) {
-      result.setPreviousFrame(previousFrame);
-    }
 
     // Reset the stack pointer and the bytecode index
     result.resetStackPointer();

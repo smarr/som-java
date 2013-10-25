@@ -297,7 +297,7 @@ public class Class extends Object {
   private final HashMap<Symbol, Invokable> invokablesTable;
 
   // Static field indices and number of class fields
-  static final int                             superClassIndex         = 1 + classIndex;
+  static final int                             superClassIndex         = numberOfObjectFields;
   static final int                             nameIndex               = 1 + superClassIndex;
   static final int                             instanceFieldsIndex     = 1 + nameIndex;
   static final int                             instanceInvokablesIndex = 1 + instanceFieldsIndex;

@@ -29,29 +29,19 @@ import som.vm.Universe;
 
 public class Block extends Object {
 
-  public Block(final Object nilObject) {
+  public Block(final Object nilObject, final Method method,
+      final Frame context) {
     super(nilObject);
+    this.method  = method;
+    this.context = context;
   }
 
   public Method getMethod() {
-    // Get the method of this block by reading the field with method index
-    return (Method) getField(methodIndex);
-  }
-
-  public void setMethod(Method value) {
-    // Set the method of this block by writing to the field with method
-    // index
-    setField(methodIndex, value);
+    return method;
   }
 
   public Frame getContext() {
-    // Get the context of this block by reading the field with context index
-    return (Frame) getField(contextIndex);
-  }
-
-  public void setContext(final Frame value) {
-    // Set the context of this block by writing to the field with context index
-    setField(contextIndex, value);
+    return context;
   }
 
   @Override
@@ -82,9 +72,8 @@ public class Block extends Object {
 
       // Push a new frame and set its context to be the one specified in
       // the block
-      Frame newFrame = interpreter.pushNewFrame(self.getMethod());
+      Frame newFrame = interpreter.pushNewFrame(self.getMethod(), context);
       newFrame.copyArgumentsFrom(frame);
-      newFrame.setContext(context);
     }
 
     private static java.lang.String computeSignatureString(int numberOfArguments) {
@@ -104,8 +93,9 @@ public class Block extends Object {
     private final int numberOfArguments;
   }
 
+  private final Method method;
+  private final Frame  context;
+
   // Static field indices and number of block fields
-  static final int methodIndex         = 1 + classIndex;
-  static final int contextIndex        = 1 + methodIndex;
-  static final int numberOfBlockFields = 1 + contextIndex;
+  static final int numberOfBlockFields = numberOfObjectFields;
 }

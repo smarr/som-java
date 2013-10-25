@@ -41,12 +41,12 @@ public class Object {
 
   public Class getSOMClass() {
     // Get the class of this object by reading the field with class index
-    return (Class) getField(classIndex);
+    return clazz;
   }
 
   public void setClass(Class value) {
     // Set the class of this object by writing to the field with class index
-    setField(classIndex, value);
+    clazz = value;
   }
 
   public Symbol getFieldName(int index) {
@@ -147,8 +147,8 @@ public class Object {
 
   // Private array of fields
   private Object[] fields;
+  private Class    clazz;
 
   // Static field indices and number of object fields
-  static final int classIndex           = 0;
-  static final int numberOfObjectFields = 1 + classIndex;
+  static final int numberOfObjectFields = 0;
 }

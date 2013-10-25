@@ -311,12 +311,16 @@ public class Interpreter {
     }
   }
 
-  public Frame pushNewFrame(Method method) {
+  public Frame pushNewFrame(final Method method, final Object contextFrame) {
     // Allocate a new frame and make it the current one
-    frame = universe.newFrame(frame, method);
+    frame = universe.newFrame(frame, method, contextFrame);
 
     // Return the freshly allocated and pushed frame
     return frame;
+  }
+
+  public Frame pushNewFrame(final Method method) {
+    return pushNewFrame(method, universe.nilObject);
   }
 
   public Frame getFrame() {
