@@ -116,7 +116,9 @@ public class Universe {
           printUsageAndExit();
         }
         setupClassPath(arguments[i + 1]);
+        // Checkstyle: stop
         ++i; // skip class path
+        // Checkstyle: resume
         gotClasspath = true;
       } else if (arguments[i].equals("-d")) {
         dumpBytecodes = true;
