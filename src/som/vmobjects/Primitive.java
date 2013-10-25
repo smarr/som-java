@@ -25,11 +25,12 @@
 
 package som.vmobjects;
 
-import som.vm.Universe;
 import som.interpreter.Interpreter;
+import som.vm.Universe;
 
 public abstract class Primitive extends Object implements Invokable {
 
+  @Override
   public boolean isPrimitive() {
     return true;
   }
@@ -44,6 +45,7 @@ public abstract class Primitive extends Object implements Invokable {
     setSignature(universe.symbolFor(signatureString));
   }
 
+  @Override
   public Symbol getSignature() {
     // Get the signature by reading the field with signature index
     return (Symbol) getField(signatureIndex);
@@ -54,17 +56,20 @@ public abstract class Primitive extends Object implements Invokable {
     setField(signatureIndex, value);
   }
 
+  @Override
   public Class getHolder() {
     // Get the holder of this method by reading the field with holder index
     return (Class) getField(holderIndex);
   }
 
+  @Override
   public void setHolder(Class value) {
     // Set the holder of this method by writing to the field with holder
     // index
     setField(holderIndex, value);
   }
 
+  @Override
   public int getDefaultNumberOfFields() {
     // Return the default number of fields for a primitive
     return numberOfPrimitiveFields;
@@ -80,12 +85,14 @@ public abstract class Primitive extends Object implements Invokable {
     // Return an empty primitive with the given signature
     return (new Primitive(signatureString, universe) {
 
+      @Override
       public void invoke(final Frame frame, final Interpreter interpreter) {
         // Write a warning to the screen
         Universe.println("Warning: undefined primitive "
             + this.getSignature().getString() + " called");
       }
 
+      @Override
       public boolean isEmpty() {
         // The empty primitives are empty
         return true;

@@ -24,6 +24,7 @@
 
 package som.primitives;
 
+import som.interpreter.Interpreter;
 import som.vm.Universe;
 import som.vmobjects.Array;
 import som.vmobjects.Class;
@@ -33,7 +34,6 @@ import som.vmobjects.Invokable;
 import som.vmobjects.Object;
 import som.vmobjects.Primitive;
 import som.vmobjects.Symbol;
-import som.interpreter.Interpreter;
 
 public class ObjectPrimitives extends Primitives {
 
@@ -41,9 +41,11 @@ public class ObjectPrimitives extends Primitives {
     super(universe);
   }
 
+  @Override
   public void installPrimitives() {
 
     installInstancePrimitive(new Primitive("==", universe) {
+      @Override
       public void invoke(final Frame frame, final Interpreter interpreter) {
         Object op1 = frame.pop();
         Object op2 = frame.pop();
@@ -56,6 +58,7 @@ public class ObjectPrimitives extends Primitives {
     });
 
     installInstancePrimitive(new Primitive("hashcode", universe) {
+      @Override
       public void invoke(final Frame frame, final Interpreter interpreter) {
         Object self = frame.pop();
         frame.push(universe.newInteger(self.hashCode()));
@@ -63,6 +66,7 @@ public class ObjectPrimitives extends Primitives {
     });
 
     installInstancePrimitive(new Primitive("objectSize", universe) {
+      @Override
       public void invoke(final Frame frame, final Interpreter interpreter) {
         Object self = frame.pop();
         int size = self.getNumberOfFields();
@@ -74,6 +78,7 @@ public class ObjectPrimitives extends Primitives {
     });
 
     installInstancePrimitive(new Primitive("perform:", universe) {
+      @Override
       public void invoke(final Frame frame, final Interpreter interpreter) {
         Object arg  = frame.pop();
         Object self = frame.getStackElement(0);
@@ -85,6 +90,7 @@ public class ObjectPrimitives extends Primitives {
     });
 
     installInstancePrimitive(new Primitive("perform:inSuperclass:", universe) {
+      @Override
       public void invoke(final Frame frame, final Interpreter interpreter) {
         Object arg2 = frame.pop();
         Object arg  = frame.pop();
@@ -99,6 +105,7 @@ public class ObjectPrimitives extends Primitives {
     });
 
     installInstancePrimitive(new Primitive("perform:withArguments:", universe) {
+      @Override
       public void invoke(final Frame frame, final Interpreter interpreter) {
         Object arg2 = frame.pop();
         Object arg  = frame.pop();
@@ -117,6 +124,7 @@ public class ObjectPrimitives extends Primitives {
     });
 
     installInstancePrimitive(new Primitive("instVarAt:", universe) {
+      @Override
       public void invoke(final Frame frame, final Interpreter interpreter) {
         Object arg  = frame.pop();
         Object self = frame.pop();
@@ -128,6 +136,7 @@ public class ObjectPrimitives extends Primitives {
     });
 
     installInstancePrimitive(new Primitive("instVarAt:put:", universe) {
+      @Override
       public void invoke(final Frame frame, final Interpreter interpreter) {
         Object val  = frame.pop();
         Object arg  = frame.pop();

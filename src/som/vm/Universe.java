@@ -591,7 +591,7 @@ public class Universe {
   public Object getGlobal(Symbol name) {
     // Return the global with the given name if it's in the dictionary of
     // globals
-    if (hasGlobal(name)) { return (Object) globals.get(name); }
+    if (hasGlobal(name)) { return globals.get(name); }
 
     // Global not found
     return null;
@@ -746,7 +746,7 @@ public class Universe {
   public Class                                  blockClass;
   public Class                                  doubleClass;
 
-  private HashMap<Symbol, som.vmobjects.Object> globals = new HashMap<Symbol, som.vmobjects.Object>();
+  private final HashMap<Symbol, som.vmobjects.Object> globals = new HashMap<Symbol, som.vmobjects.Object>();
   private java.lang.String[]                    classPath;
   private boolean                               dumpBytecodes;
 
@@ -757,6 +757,6 @@ public class Universe {
 
   // TODO: this is not how it is supposed to be... it is just a hack to cope
   //       with the use of system.exit in SOM to enable testing
-  private boolean                               avoidExit;
+  private final boolean                         avoidExit;
   private int                                   lastExitCode;
 }

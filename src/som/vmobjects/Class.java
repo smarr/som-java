@@ -125,6 +125,7 @@ public class Class extends Object {
     getInstanceInvokables().setIndexableField(index, (Object) value);
   }
 
+  @Override
   public int getDefaultNumberOfFields() {
     // Return the default number of fields in a class
     return numberOfClassFields;
@@ -134,7 +135,7 @@ public class Class extends Object {
     Invokable invokable;
 
     // Lookup invokable and return if found
-    invokable = (Invokable) invokablesTable.get(signature);
+    invokable = invokablesTable.get(signature);
     if (invokable != null) { return invokable; }
 
     // Lookup invokable with given signature in array of instance invokables
@@ -293,7 +294,7 @@ public class Class extends Object {
   }
 
   // Mapping of symbols to invokables
-  private java.util.HashMap<Symbol, Invokable> invokablesTable;
+  private final HashMap<Symbol, Invokable> invokablesTable;
 
   // Static field indices and number of class fields
   static final int                             superClassIndex         = 1 + classIndex;

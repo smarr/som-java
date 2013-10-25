@@ -24,6 +24,8 @@
 
 package som.vmobjects;
 
+import java.util.ArrayList;
+
 import som.interpreter.Bytecodes;
 import som.interpreter.Interpreter;
 
@@ -33,6 +35,7 @@ public class Method extends Array implements Invokable {
     super(nilObject);
   }
 
+  @Override
   public boolean isPrimitive() {
     return false;
   }
@@ -58,6 +61,7 @@ public class Method extends Array implements Invokable {
     maximumNumberOfStackElements = value;
   }
 
+  @Override
   public Symbol getSignature() {
     // Get the signature of this method by reading the field with signature
     // index
@@ -70,11 +74,13 @@ public class Method extends Array implements Invokable {
     setField(signatureIndex, value);
   }
 
+  @Override
   public Class getHolder() {
     // Get the holder of this method by reading the field with holder index
     return (Class) getField(holderIndex);
   }
 
+  @Override
   public void setHolder(Class value) {
     // Set the holder of this method by writing to the field with holder index
     setField(holderIndex, value);
@@ -97,6 +103,7 @@ public class Method extends Array implements Invokable {
     return getSignature().getNumberOfSignatureArguments();
   }
 
+  @Override
   public int getDefaultNumberOfFields() {
     // Return the default number of fields in a method
     return numberOfMethodFields;
@@ -132,6 +139,7 @@ public class Method extends Array implements Invokable {
     return invocationCount;
   }
 
+  @Override
   public void invoke(final Frame frame, final Interpreter interpreter) {
     // Increase the invocation counter
     invocationCount++;
@@ -216,8 +224,8 @@ public class Method extends Array implements Invokable {
 
 
   // Private variables for holding the last receiver class and invoked method
-  private java.util.ArrayList<Class>     receiverClassTable                = new java.util.ArrayList<Class>();
-  private java.util.ArrayList<Invokable> invokedMethods                    = new java.util.ArrayList<Invokable>();
+  private final ArrayList<Class>         receiverClassTable                = new ArrayList<Class>();
+  private final ArrayList<Invokable>     invokedMethods                    = new ArrayList<Invokable>();
   private int                            receiverClassIndex                = 0;
 
   // Private variable holding number of invocations and back edges

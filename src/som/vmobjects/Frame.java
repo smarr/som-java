@@ -28,7 +28,7 @@ import som.vm.Universe;
 
 /**
  * Frame layout:
- * 
+ *
  * +-----------------+
  * | Arguments       | 0
  * +-----------------+
@@ -122,6 +122,7 @@ public class Frame extends Array {
     setField(methodIndex, value);
   }
 
+  @Override
   public int getDefaultNumberOfFields() {
     // Return the default number of fields in a frame
     return numberOfFrameFields;

@@ -54,6 +54,7 @@ public class Block extends Object {
     setField(contextIndex, value);
   }
 
+  @Override
   public int getDefaultNumberOfFields() {
     // Return the default number of fields for a block
     return numberOfBlockFields;
@@ -71,6 +72,7 @@ public class Block extends Object {
       this.numberOfArguments = numberOfArguments;
     }
 
+    @Override
     public void invoke(final Frame frame, final Interpreter interpreter) {
       // Get the block (the receiver) from the stack
       Block self = (Block) frame.getStackElement(numberOfArguments - 1);
@@ -99,7 +101,7 @@ public class Block extends Object {
       return signatureString;
     }
 
-    private int numberOfArguments;
+    private final int numberOfArguments;
   }
 
   // Static field indices and number of block fields
