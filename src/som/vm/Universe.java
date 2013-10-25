@@ -293,8 +293,13 @@ public class Universe {
     blockClass = loadClass(symbolFor("Block"));
 
     // Setup the true and false objects
-    trueObject  = newInstance(loadClass(symbolFor("True")));
-    falseObject = newInstance(loadClass(symbolFor("False")));
+    Symbol trueSymbol = symbolFor("True");
+    trueClass   = loadClass(trueSymbol);
+    trueObject  = newInstance(trueClass);
+
+    Symbol falseSymbol = symbolFor("False");
+    falseClass  = loadClass(falseSymbol);
+    falseObject = newInstance(falseClass);
 
     // Load the system class and create an instance of it
     systemClass = loadClass(symbolFor("System"));
@@ -307,6 +312,9 @@ public class Universe {
     setGlobal(symbolFor("system"), systemObject);
     setGlobal(symbolFor("System"), systemClass);
     setGlobal(symbolFor("Block"),  blockClass);
+
+    setGlobal(trueSymbol,  trueClass);
+    setGlobal(falseSymbol, falseClass);
 
     // Create a fake bootstrap method to simplify later frame traversal
     Method bootstrapMethod = newMethod(symbolFor("bootstrap"), 1, 0);
@@ -738,6 +746,9 @@ public class Universe {
   public Class                                  systemClass;
   public Class                                  blockClass;
   public Class                                  doubleClass;
+
+  public Class                                  trueClass;
+  public Class                                  falseClass;
 
   private final HashMap<Symbol, som.vmobjects.Object> globals = new HashMap<Symbol, som.vmobjects.Object>();
   private java.lang.String[]                    classPath;
