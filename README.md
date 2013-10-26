@@ -18,7 +18,7 @@ Hello = (
 )
 ```
 
-This repository contains a plain Java implementation of SOM, including an implementation of the SOM standard library. Please see the [main project page][SOM] for links to the VM implementation.
+This repository contains a plain Java implementation of SOM, including an implementation of the SOM standard library. Please see the [main project page][SOMst] for links to the VM implementation.
 
 
 SOM can be build with Ant:
@@ -34,7 +34,6 @@ A simple Hello World program is executed with:
     ./som.sh -cp Smalltalk Examples/Hello/Hello.som
 
 
-
 Information on previous authors are included in the AUTHORS file. This code is
 distributed under the MIT License. Please see the LICENSE file for details.
 
@@ -42,7 +41,7 @@ Build Status
 ------------
 
 Thanks to Travis CI, all commits of this repository are tested.
-The current build status is: [![Build Status](https://travis-ci.org/smarr/som-java.png)](https://travis-ci.org/smarr/som-java)
+The current build status is: [![Build Status](https://travis-ci.org/SOM-st/som-java.png?branch=master)](https://travis-ci.org/SOM-st/som-java)
 
  [SOM]: http://www.hpi.uni-potsdam.de/hirschfeld/projects/som/
-
+ [SOMst]: https://travis-ci.org/SOM-st/
