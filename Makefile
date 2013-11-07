@@ -1,6 +1,6 @@
 #!/usr/bin/env make -f
 
-all:
+all: compile
 
 clean:
 	ant clean
