@@ -74,14 +74,14 @@ public class Universe {
 
   public Universe() {
     this.interpreter  = new Interpreter(this);
-    this.symbolTable  = new SymbolTable();
+    this.symbolTable  = new HashMap<String, SSymbol>();
     this.avoidExit    = false;
     this.lastExitCode = 0;
   }
 
   public Universe(boolean avoidExit) {
     this.interpreter  = new Interpreter(this);
-    this.symbolTable  = new SymbolTable();
+    this.symbolTable  = new HashMap<String, SSymbol>();
     this.avoidExit    = avoidExit;
     this.lastExitCode = 0;
   }
@@ -354,7 +354,7 @@ public class Universe {
 
   public SSymbol symbolFor(String string) {
     // Lookup the symbol in the symbol table
-    SSymbol result = symbolTable.lookup(string);
+    SSymbol result = symbolTable.get(string);
     if (result != null) { return result; }
 
     // Create a new symbol and return it
@@ -548,7 +548,7 @@ public class Universe {
     result.setString(string);
 
     // Insert the new symbol into the symbol table
-    symbolTable.insert(result);
+    symbolTable.put(string, result);
 
     // Return the freshly allocated symbol
     return result;
@@ -759,7 +759,7 @@ public class Universe {
   public static final java.lang.String          pathSeparator;
   public static final java.lang.String          fileSeparator;
   private final Interpreter                     interpreter;
-  private final SymbolTable                     symbolTable;
+  private final HashMap<String, SSymbol>        symbolTable;
 
   // TODO: this is not how it is supposed to be... it is just a hack to cope
   //       with the use of system.exit in SOM to enable testing
