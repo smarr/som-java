@@ -52,8 +52,8 @@ public class Shell {
 
   public void start() {
 
-    java.io.BufferedReader in;
-    java.lang.String stmt;
+    BufferedReader in;
+    String stmt;
     int counter;
     int bytecodeIndex;
     SClass myClass;

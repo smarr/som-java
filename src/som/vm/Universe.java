@@ -77,6 +77,8 @@ public class Universe {
     this.symbolTable  = new HashMap<String, SSymbol>();
     this.avoidExit    = false;
     this.lastExitCode = 0;
+
+    current = this;
   }
 
   public Universe(boolean avoidExit) {
@@ -84,6 +86,12 @@ public class Universe {
     this.symbolTable  = new HashMap<String, SSymbol>();
     this.avoidExit    = avoidExit;
     this.lastExitCode = 0;
+
+    current = this;
+  }
+
+  public static Universe current() {
+    return current;
   }
 
   public Interpreter getInterpreter() {
@@ -240,7 +248,7 @@ public class Universe {
 
   private void initialize(java.lang.String[] arguments) {
     // Allocate the nil object
-    nilObject = new SAbstractObject(null);
+    nilObject = new SObject(null);
 
     // Allocate the Metaclass classes
     metaclassClass = newMetaclassClass();
@@ -670,9 +678,9 @@ public class Universe {
     // Checkstyle: resume
   }
 
-  public SAbstractObject                                 nilObject;
-  public SAbstractObject                                 trueObject;
-  public SAbstractObject                                 falseObject;
+  public SObject                                 nilObject;
+  public SObject                                 trueObject;
+  public SObject                                 falseObject;
 
   public SClass                                  objectClass;
   public SClass                                  classClass;
@@ -693,12 +701,12 @@ public class Universe {
   public SClass                                  trueClass;
   public SClass                                  falseClass;
 
-  private final HashMap<SSymbol, som.vmobjects.SAbstractObject> globals = new HashMap<SSymbol, som.vmobjects.SAbstractObject>();
-  private java.lang.String[]                    classPath;
+  private final HashMap<SSymbol, SAbstractObject> globals = new HashMap<SSymbol, SAbstractObject>();
+  private String[]                              classPath;
   private boolean                               dumpBytecodes;
 
-  public static final java.lang.String          pathSeparator;
-  public static final java.lang.String          fileSeparator;
+  public static final String                    pathSeparator;
+  public static final String                    fileSeparator;
   private final Interpreter                     interpreter;
   private final HashMap<String, SSymbol>        symbolTable;
 
@@ -706,4 +714,6 @@ public class Universe {
   //       with the use of system.exit in SOM to enable testing
   private final boolean                         avoidExit;
   private int                                   lastExitCode;
+
+  private static Universe current;
 }
