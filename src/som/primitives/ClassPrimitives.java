@@ -46,5 +46,41 @@ public class ClassPrimitives extends Primitives {
         frame.push(universe.newInstance(self));
       }
     });
+
+    installInstancePrimitive(new SPrimitive("name", universe) {
+
+      @Override
+      public void invoke(final Frame frame, final Interpreter interpreter) {
+        SClass self = (SClass) frame.pop();
+        frame.push(self.getName());
+      }
+    });
+
+    installInstancePrimitive(new SPrimitive("superclass", universe) {
+
+      @Override
+      public void invoke(final Frame frame, final Interpreter interpreter) {
+        SClass self = (SClass) frame.pop();
+        frame.push(self.getSuperClass());
+      }
+    });
+
+    installInstancePrimitive(new SPrimitive("fields", universe) {
+
+      @Override
+      public void invoke(final Frame frame, final Interpreter interpreter) {
+        SClass self = (SClass) frame.pop();
+        frame.push(self.getInstanceFields());
+      }
+    });
+
+    installInstancePrimitive(new SPrimitive("methods", universe) {
+
+      @Override
+      public void invoke(final Frame frame, final Interpreter interpreter) {
+        SClass self = (SClass) frame.pop();
+        frame.push(self.getInstanceInvokables());
+      }
+    });
   }
 }
