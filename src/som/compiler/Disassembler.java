@@ -101,7 +101,7 @@ public class Disassembler {
         case Bytecodes.push_constant:
           SAbstractObject constant = m.getConstant(b);
           Universe.errorPrintln("(index: " + m.getBytecode(b + 1) + ") value: "
-              + "(" + constant.getSOMClass().getName().toString() + ") "
+              + "(" + constant.getSOMClass(Universe.current()).getName().toString() + ") "
               + constant.toString());
           break;
         case Bytecodes.push_global:

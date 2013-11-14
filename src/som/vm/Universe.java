@@ -360,15 +360,7 @@ public class Universe {
   }
 
   public SArray newArray(int length) {
-    // Allocate a new array and set its class to be the array class
-    SArray result = new SArray(nilObject);
-    result.setClass(arrayClass);
-
-    // Set the number of indexable fields to the given value (length)
-    result.setNumberOfIndexableFieldsAndClear(length, nilObject);
-
-    // Return the freshly allocated array
-    return result;
+    return new SArray(nilObject, length);
   }
 
   public SArray newArray(List<?> list) {
@@ -399,10 +391,7 @@ public class Universe {
 
   public SBlock newBlock(SMethod method, Frame context, int arguments) {
     // Allocate a new block and set its class to be the block class
-    SBlock result = new SBlock(nilObject, method, context);
-    result.setClass(getBlockClass(arguments));
-
-    // Return the freshly allocated block
+    SBlock result = new SBlock(method, context, getBlockClass(arguments));
     return result;
   }
 
@@ -436,23 +425,17 @@ public class Universe {
   }
 
   public SMethod newMethod(SSymbol signature, int numberOfBytecodes,
-      int numberOfLiterals) {
+      int numberOfLiterals, final SInteger numberOfLocals,
+      final SInteger maxNumStackElements, final List<SAbstractObject> literals) {
     // Allocate a new method and set its class to be the method class
-    SMethod result = new SMethod(nilObject);
-    result.setClass(methodClass);
-
-    // Set the signature and the number of bytecodes
-    result.setSignature(signature);
-    result.setNumberOfBytecodes(numberOfBytecodes);
-    result.setNumberOfIndexableFieldsAndClear(numberOfLiterals, nilObject);
-
-    // Return the freshly allocated method
+    SMethod result = new SMethod(nilObject, signature, numberOfBytecodes,
+        numberOfLocals, maxNumStackElements, numberOfLiterals, literals);
     return result;
   }
 
-  public SAbstractObject newInstance(SClass instanceClass) {
+  public SObject newInstance(SClass instanceClass) {
     // Allocate a new instance and set its class to be the given class
-    SAbstractObject result = new SAbstractObject(instanceClass.getNumberOfInstanceFields(),
+    SObject result = new SObject(instanceClass.getNumberOfInstanceFields(),
         nilObject);
     result.setClass(instanceClass);
 
@@ -461,51 +444,23 @@ public class Universe {
   }
 
   public SInteger newInteger(int value) {
-    // Allocate a new integer and set its class to be the integer class
-    SInteger result = new SInteger(nilObject);
-    result.setClass(integerClass);
-
-    // Set the embedded integer of the newly allocated integer
-    result.setEmbeddedInteger(value);
-
-    // Return the freshly allocated integer
+    SInteger result = new SInteger(value);
     return result;
   }
 
   public SBigInteger newBigInteger(java.math.BigInteger value) {
-    // Allocate a new integer and set its class to be the integer class
-    SBigInteger result = new SBigInteger(nilObject);
-    result.setClass(bigintegerClass);
-
-    // Set the embedded integer of the newly allocated integer
-    result.setEmbeddedBiginteger(value);
-
-    // Return the freshly allocated integer
+    SBigInteger result = new SBigInteger(value);
     return result;
   }
 
   public SBigInteger newBigInteger(long value) {
-    // Allocate a new integer and set its class to be the integer class
-    SBigInteger result = new SBigInteger(nilObject);
-    result.setClass(bigintegerClass);
-
-    // Set the embedded integer of the newly allocated integer
-    result.setEmbeddedBiginteger(new java.math.BigInteger(new java.lang.Long(
+    SBigInteger result = new SBigInteger(new BigInteger(new Long(
         value).toString()));
-
-    // Return the freshly allocated integer
     return result;
   }
 
   public SDouble newDouble(double value) {
-    // Allocate a new integer and set its class to be the double class
-    SDouble result = new SDouble(nilObject);
-    result.setClass(doubleClass);
-
-    // Set the embedded double of the newly allocated double
-    result.setEmbeddedDouble(value);
-
-    // Return the freshly allocated double
+    SDouble result = new SDouble(value);
     return result;
   }
 
@@ -523,11 +478,7 @@ public class Universe {
 
   public SString newString(String embeddedString) {
     // Allocate a new string and set its class to be the string class
-    SString result = new SString(nilObject);
-    result.setClass(stringClass);
-
-    // Put the embedded string into the new string
-    result.setEmbeddedString(embeddedString);
+    SString result = new SString(embeddedString);
 
     // Return the freshly allocated string
     return result;
@@ -535,11 +486,7 @@ public class Universe {
 
   public SSymbol newSymbol(String string) {
     // Allocate a new symbol and set its class to be the symbol class
-    SSymbol result = new SSymbol(nilObject);
-    result.setClass(symbolClass);
-
-    // Put the string into the symbol
-    result.setString(string);
+    SSymbol result = new SSymbol(string);
 
     // Insert the new symbol into the symbol table
     symbolTable.put(string, result);
@@ -660,7 +607,7 @@ public class Universe {
       try {
         // Load the class from a file and return the loaded class
         SClass result = som.compiler.SourcecodeCompiler.compileClass(cpEntry,
-            name.getString(), systemClass, this);
+            name.getEmbeddedString(), systemClass, this);
         if (dumpBytecodes) {
           Disassembler.dump(result.getSOMClass());
           Disassembler.dump(result);

@@ -25,6 +25,7 @@
 
 package som.vmobjects;
 
+import som.interpreter.Frame;
 import som.interpreter.Interpreter;
 import som.vm.Universe;
 
@@ -35,49 +36,33 @@ public abstract class SPrimitive extends SAbstractObject implements SInvokable {
     return true;
   }
 
-  public SPrimitive(java.lang.String signatureString, final Universe universe) {
-    super(universe.nilObject);
-
-    // Set the class of this primitive to be the universal primitive class
-    setClass(universe.primitiveClass);
-
-    // Set the signature of this primitive
-    setSignature(universe.symbolFor(signatureString));
+  public SPrimitive(String signatureString, final Universe universe) {
+    signature = universe.symbolFor(signatureString);
   }
 
   @Override
   public SSymbol getSignature() {
-    // Get the signature by reading the field with signature index
-    return (SSymbol) getField(signatureIndex);
-  }
-
-  public void setSignature(SSymbol value) {
-    // Set the signature by writing to the field with signature index
-    setField(signatureIndex, value);
+    return signature;
   }
 
   @Override
   public SClass getHolder() {
-    // Get the holder of this method by reading the field with holder index
-    return (SClass) getField(holderIndex);
+    return holder;
   }
 
   @Override
   public void setHolder(SClass value) {
-    // Set the holder of this method by writing to the field with holder
-    // index
-    setField(holderIndex, value);
-  }
-
-  @Override
-  public int getDefaultNumberOfFields() {
-    // Return the default number of fields for a primitive
-    return numberOfPrimitiveFields;
+    holder = value;
   }
 
   public boolean isEmpty() {
     // By default a primitive is not empty
     return false;
+  }
+
+  @Override
+  public SClass getSOMClass(final Universe universe) {
+    return universe.primitiveClass;
   }
 
   public static SPrimitive getEmptyPrimitive(java.lang.String signatureString,
@@ -86,10 +71,10 @@ public abstract class SPrimitive extends SAbstractObject implements SInvokable {
     return (new SPrimitive(signatureString, universe) {
 
       @Override
-      public void invoke(final SFrame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         // Write a warning to the screen
         Universe.println("Warning: undefined primitive "
-            + this.getSignature().getString() + " called");
+            + this.getSignature().getEmbeddedString() + " called");
       }
 
       @Override
@@ -100,8 +85,6 @@ public abstract class SPrimitive extends SAbstractObject implements SInvokable {
     });
   }
 
-  // Static field indices and number of primitive fields
-  static final int signatureIndex          = numberOfObjectFields;
-  static final int holderIndex             = 1 + signatureIndex;
-  static final int numberOfPrimitiveFields = 1 + holderIndex;
+  private final SSymbol signature;
+  private       SClass  holder;
 }

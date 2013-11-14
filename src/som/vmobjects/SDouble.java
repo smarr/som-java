@@ -24,10 +24,12 @@
 
 package som.vmobjects;
 
+import som.vm.Universe;
+
 public class SDouble extends SAbstractObject {
 
-  public SDouble(final SAbstractObject nilObject) {
-    super(nilObject);
+  public SDouble(final double value) {
+    embeddedDouble = value;
   }
 
   public double getEmbeddedDouble() {
@@ -35,11 +37,11 @@ public class SDouble extends SAbstractObject {
     return embeddedDouble;
   }
 
-  public void setEmbeddedDouble(double value) {
-    // Set the embedded double to the given value
-    embeddedDouble = value;
+  @Override
+  public SClass getSOMClass(final Universe universe) {
+    return universe.doubleClass;
   }
 
   // Private variable holding the embedded double
-  private double embeddedDouble;
+  private final double embeddedDouble;
 }

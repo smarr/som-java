@@ -26,20 +26,22 @@ package som.vmobjects;
 
 import java.math.BigInteger;
 
+import som.vm.Universe;
+
 public class SBigInteger extends SAbstractObject {
 
-  public SBigInteger(final SAbstractObject nilObject) {
-    super(nilObject);
+  public SBigInteger(final BigInteger value) {
+    embeddedBiginteger = value;
   }
 
-  public java.math.BigInteger getEmbeddedBiginteger() {
+  public BigInteger getEmbeddedBiginteger() {
     // Get the embedded big integer
     return embeddedBiginteger;
   }
 
-  public void setEmbeddedBiginteger(java.math.BigInteger value) {
-    // Set the embedded big integer to the given value
-    embeddedBiginteger = value;
+  @Override
+  public SClass getSOMClass(final Universe universe) {
+    return universe.bigintegerClass;
   }
 
   // Private variable holding the embedded big integer

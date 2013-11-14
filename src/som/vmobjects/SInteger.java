@@ -24,10 +24,12 @@
 
 package som.vmobjects;
 
+import som.vm.Universe;
+
 public class SInteger extends SAbstractObject {
 
-  public SInteger(final SAbstractObject nilObject) {
-    super(nilObject);
+  public SInteger(final int value) {
+    embeddedInteger = value;
   }
 
   public int getEmbeddedInteger() {
@@ -35,15 +37,16 @@ public class SInteger extends SAbstractObject {
     return embeddedInteger;
   }
 
-  public void setEmbeddedInteger(int value) {
-    // Set the embedded integer to the given value
-    embeddedInteger = value;
+  @Override
+  public String toString() {
+    return "" + embeddedInteger;
+  }
+
+  @Override
+  public SClass getSOMClass(final Universe universe) {
+    return universe.integerClass;
   }
 
   // Private variable holding the embedded integer
-  private int embeddedInteger;
-
-  public java.lang.String toString() {
-    return "" + embeddedInteger;
-  }
+  private final int embeddedInteger;
 }

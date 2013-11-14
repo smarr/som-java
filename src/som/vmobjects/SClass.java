@@ -30,7 +30,7 @@ import java.util.HashMap;
 import som.primitives.Primitives;
 import som.vm.Universe;
 
-public class SClass extends SAbstractObject {
+public class SClass extends SObject {
 
   private final Universe universe;
 
@@ -55,51 +55,51 @@ public class SClass extends SAbstractObject {
 
   public SClass getSuperClass() {
     // Get the super class by reading the field with super class index
-    return (Class) getField(superClassIndex);
+    return superclass;
   }
 
   public void setSuperClass(SClass value) {
     // Set the super class by writing to the field with super class index
-    setField(superClassIndex, value);
+    superclass = value;
   }
 
   public boolean hasSuperClass() {
     // Check whether or not this class has a super class
-    return getField(superClassIndex) != universe.nilObject;
+    return superclass != null;
   }
 
   public SSymbol getName() {
     // Get the name of this class by reading the field with name index
-    return (Symbol) getField(nameIndex);
+    return name;
   }
 
   public void setName(SSymbol value) {
     // Set the name of this class by writing to the field with name index
-    setField(nameIndex, value);
+    name = value;
   }
 
   public SArray getInstanceFields() {
     // Get the instance fields by reading the field with the instance fields
     // index
-    return (Array) getField(instanceFieldsIndex);
+    return instanceFields;
   }
 
   public void setInstanceFields(SArray value) {
     // Set the instance fields by writing to the field with the instance
     // fields index
-    setField(instanceFieldsIndex, value);
+    instanceFields = value;
   }
 
   public SArray getInstanceInvokables() {
     // Get the instance invokables by reading the field with the instance
     // invokables index
-    return (Array) getField(instanceInvokablesIndex);
+    return instanceInvokables;
   }
 
   public void setInstanceInvokables(SArray value) {
     // Set the instance invokables by writing to the field with the instance
     // invokables index
-    setField(instanceInvokablesIndex, value);
+    instanceInvokables = value;
 
     // Make sure this class is the holder of all invokables in the array
     for (int i = 0; i < getNumberOfInstanceInvokables(); i++) {
@@ -195,9 +195,9 @@ public class SClass extends SAbstractObject {
 
   public void addInstancePrimitive(SPrimitive value) {
     if (addInstanceInvokable(value)) {
-      Universe.print("Warning: Primitive " + value.getSignature().getString());
+      Universe.print("Warning: Primitive " + value.getSignature().getEmbeddedString());
       Universe.println(" is not in class definition for class "
-          + getName().getString());
+          + getName().getEmbeddedString());
     }
   }
 
@@ -259,12 +259,12 @@ public class SClass extends SAbstractObject {
   public void loadPrimitives() {
     // Compute the class name of the Java(TM) class containing the
     // primitives
-    java.lang.String className = "som.primitives." + getName().getString()
+    String className = "som.primitives." + getName().getEmbeddedString()
         + "Primitives";
 
     // Try loading the primitives
     try {
-      java.lang.Class<?> primitivesClass = java.lang.Class.forName(className);
+      Class<?> primitivesClass = Class.forName(className);
       try {
         Constructor<?> ctor = primitivesClass.getConstructor(Universe.class);
         ((Primitives) ctor.newInstance(universe)).installPrimitivesIn(this);
@@ -277,29 +277,21 @@ public class SClass extends SAbstractObject {
     }
   }
 
-  public void replaceBytecodes() {
-    int cnt = getNumberOfInstanceInvokables();
-    for (int index = 0; index < cnt; ++index) {
-      SInvokable inv = getInstanceInvokable(index);
-      if (!inv.isPrimitive()) {
-        SMethod met = (SMethod) inv;
-        met.replaceBytecodes();
-      }
-    }
-  }
-
   @Override
   public java.lang.String toString() {
-    return "Class(" + getName().getString() + ")";
+    return "Class(" + getName().getEmbeddedString() + ")";
   }
+
+  // Implementation specific fields
+  private SClass  superclass;
+  private SSymbol name;
+  private SArray  instanceInvokables;
+  private SArray  instanceFields;
+
 
   // Mapping of symbols to invokables
   private final HashMap<SSymbol, SInvokable> invokablesTable;
 
   // Static field indices and number of class fields
-  static final int                             superClassIndex         = numberOfObjectFields;
-  static final int                             nameIndex               = 1 + superClassIndex;
-  static final int                             instanceFieldsIndex     = 1 + nameIndex;
-  static final int                             instanceInvokablesIndex = 1 + instanceFieldsIndex;
-  static final int                             numberOfClassFields     = 1 + instanceInvokablesIndex;
+  static final int  numberOfClassFields = numberOfObjectFields;
 }

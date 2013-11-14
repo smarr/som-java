@@ -25,11 +25,12 @@
 package som.interpreter;
 
 import som.vm.Universe;
+import som.vmobjects.SAbstractObject;
 import som.vmobjects.SBlock;
 import som.vmobjects.SClass;
 import som.vmobjects.SInvokable;
 import som.vmobjects.SMethod;
-import som.vmobjects.SAbstractObject;
+import som.vmobjects.SObject;
 import som.vmobjects.SSymbol;
 
 public class Interpreter {
@@ -64,7 +65,7 @@ public class Interpreter {
     int fieldIndex = getMethod().getBytecode(bytecodeIndex + 1);
 
     // Push the field with the computed index onto the stack
-    getFrame().push(getSelf().getField(fieldIndex));
+    getFrame().push(((SObject) getSelf()).getField(fieldIndex));
   }
 
   private void doPushBlock(int bytecodeIndex) {
@@ -121,7 +122,7 @@ public class Interpreter {
     int fieldIndex = getMethod().getBytecode(bytecodeIndex + 1);
 
     // Set the field with the computed index to the value popped from the stack
-    getSelf().setField(fieldIndex, getFrame().pop());
+    ((SObject) getSelf()).setField(fieldIndex, getFrame().pop());
   }
 
   private void doSuperSend(int bytecodeIndex) {
@@ -198,7 +199,7 @@ public class Interpreter {
     SAbstractObject receiver = getFrame().getStackElement(numberOfArguments - 1);
 
     // Send the message
-    send(signature, receiver.getSOMClass(), bytecodeIndex);
+    send(signature, receiver.getSOMClass(universe), bytecodeIndex);
   }
 
   public void start() {

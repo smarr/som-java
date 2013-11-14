@@ -24,16 +24,16 @@
 
 package som.vmobjects;
 
+import som.interpreter.Frame;
 import som.interpreter.Interpreter;
 import som.vm.Universe;
 
 public class SBlock extends SAbstractObject {
 
-  public SBlock(final SAbstractObject nilObject, final SMethod method,
-      final SFrame context) {
-    super(nilObject);
+  public SBlock(final SMethod method, final Frame context, final SClass blockClass) {
     this.method  = method;
     this.context = context;
+    this.blockClass = blockClass;
   }
 
   public SMethod getMethod() {
@@ -45,9 +45,8 @@ public class SBlock extends SAbstractObject {
   }
 
   @Override
-  public int getDefaultNumberOfFields() {
-    // Return the default number of fields for a block
-    return numberOfBlockFields;
+  public SClass getSOMClass(final Universe universe) {
+    return blockClass;
   }
 
   public static SPrimitive getEvaluationPrimitive(int numberOfArguments,

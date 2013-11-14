@@ -24,26 +24,28 @@
 
 package som.vmobjects;
 
+import som.vm.Universe;
+
 public class SString extends SAbstractObject {
 
-  public SString(final SAbstractObject nilObject) {
-    super(nilObject);
-  }
-
-  public java.lang.String getEmbeddedString() {
-    // Get the string associated to this symbol
-    return string;
-  }
-
-  public void setEmbeddedString(java.lang.String value) {
-    // Set the string associated to this symbol
+  public SString(final String value) {
     string = value;
   }
 
-  public java.lang.String toString() {
+  public String getEmbeddedString() {
+    return string;
+  }
+
+  @Override
+  public String toString() {
     return "\"" + string + "\"";
   }
 
+  @Override
+  public SClass getSOMClass(final Universe universe) {
+    return universe.stringClass;
+  }
+
   // Private variable holding the string associated to this symbol
-  private java.lang.String string;
+  private final String string;
 }

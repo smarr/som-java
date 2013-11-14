@@ -78,30 +78,21 @@ public class MethodGenerationContext {
   }
 
   public SInvokable assemblePrimitive(final Universe universe) {
-    return SPrimitive.getEmptyPrimitive(signature.getString(), universe);
+    return SPrimitive.getEmptyPrimitive(signature.getEmbeddedString(), universe);
   }
 
   public SMethod assemble(final Universe universe) {
     // create a method instance with the given number of bytecodes and
     // literals
     int numLiterals = literals.size();
-
-    SMethod meth = universe.newMethod(signature, bytecode.size(), numLiterals);
-
-    // populate the fields that are immediately available
     int numLocals = locals.size();
-    meth.setNumberOfLocals(universe.newInteger(numLocals));
 
-    meth.setMaximumNumberOfStackElements(universe.newInteger(computeStackDepth()));
-
-    // copy literals into the method
-    int i = 0;
-    for (som.vmobjects.SAbstractObject l : literals) {
-      meth.setIndexableField(i++, l);
-    }
+    SMethod meth = universe.newMethod(signature, bytecode.size(), numLiterals,
+        universe.newInteger(numLocals), universe.newInteger(computeStackDepth()),
+        literals);
 
     // copy bytecodes into method
-    i = 0;
+    int i = 0;
     for (byte bc : bytecode) {
       meth.setBytecode(i++, bc);
     }

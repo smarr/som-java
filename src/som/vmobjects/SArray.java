@@ -28,34 +28,25 @@ import som.vm.Universe;
 
 public class SArray extends SAbstractObject {
 
-  public SArray(final SAbstractObject nilObject) {
-    super(nilObject);
-  }
-
-  public SAbstractObject getIndexableField(int index) {
-    // Get the indexable field with the given index
-    return indexableFields[index];
-  }
-
-  public void setIndexableField(int index, SAbstractObject value) {
-    // Set the indexable field with the given index to the given value
-    indexableFields[index] = value;
-  }
-
-  public int getNumberOfIndexableFields() {
-    // Get the number of indexable fields in this array
-    return indexableFields.length;
-  }
-
-  public void setNumberOfIndexableFieldsAndClear(int value,
-      final SAbstractObject nilObject) {
-    // Allocate a new array of indexable fields
-    indexableFields = new SAbstractObject[value];
+  public SArray(final SObject nilObject, int numElements) {
+    indexableFields = new SAbstractObject[numElements];
 
     // Clear each and every field by putting nil into them
     for (int i = 0; i < getNumberOfIndexableFields(); i++) {
       setIndexableField(i, nilObject);
     }
+  }
+
+  public SAbstractObject getIndexableField(int index) {
+    return indexableFields[index];
+  }
+
+  public void setIndexableField(int index, SAbstractObject value) {
+    indexableFields[index] = value;
+  }
+
+  public int getNumberOfIndexableFields() {
+    return indexableFields.length;
   }
 
   public SArray copyAndExtendWith(SAbstractObject value, final Universe universe) {
@@ -69,7 +60,6 @@ public class SArray extends SAbstractObject {
     // Insert the given object as the last indexable field in the new array
     result.setIndexableField(getNumberOfIndexableFields(), value);
 
-    // Return the new array
     return result;
   }
 
@@ -80,6 +70,11 @@ public class SArray extends SAbstractObject {
     }
   }
 
+  @Override
+  public SClass getSOMClass(final Universe universe) {
+    return universe.arrayClass;
+  }
+
   // Private array of indexable fields
-  public SAbstractObject[] indexableFields;
+  private final SAbstractObject[] indexableFields;
 }

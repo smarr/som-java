@@ -101,7 +101,7 @@ public class ClassGenerationContext {
 
   public som.vmobjects.SClass assemble() {
     // build class class name
-    String ccname = name.getString() + " class";
+    String ccname = name.getEmbeddedString() + " class";
 
     // Load the super class
     som.vmobjects.SClass superClass = universe.loadClass(superName);

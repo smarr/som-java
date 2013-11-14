@@ -56,7 +56,7 @@ public class SourcecodeCompiler {
     som.vmobjects.SClass result = compile(systemClass, universe);
 
     som.vmobjects.SSymbol cname = result.getName();
-    String cnameC = cname.getString();
+    String cnameC = cname.getEmbeddedString();
 
     if (file != cnameC) {
       throw new IllegalStateException("File name " + file

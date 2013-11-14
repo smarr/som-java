@@ -120,7 +120,7 @@ public class Parser {
     cgenc.setSuperName(superName);
 
     // Load the super class
-    if (superName.getString().equals("nil")) {    // Break the dependency cycle by hard coding the values for Object
+    if (superName.getEmbeddedString().equals("nil")) {    // Break the dependency cycle by hard coding the values for Object
       cgenc.setNumberOfInstanceFieldsOfSuper(0);  // Object's super class is nil, has no fields
       cgenc.setNumberOfClassFieldsOfSuper(4);     // Object's class has the fields of Class
     } else {

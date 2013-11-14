@@ -70,9 +70,12 @@ public class ObjectPrimitives extends Primitives {
       @Override
       public void invoke(final Frame frame, final Interpreter interpreter) {
         SAbstractObject self = frame.pop();
-        int size = self.getNumberOfFields();
+        int size = 0;
         if (self instanceof SArray) {
           size += ((SArray) self).getNumberOfIndexableFields();
+        }
+        if (self instanceof SObject) {
+          size += ((SObject) self).getNumberOfFields();
         }
         frame.push(universe.newInteger(size));
       }
@@ -128,8 +131,7 @@ public class ObjectPrimitives extends Primitives {
       @Override
       public void invoke(final Frame frame, final Interpreter interpreter) {
         SAbstractObject arg  = frame.pop();
-        SAbstractObject self = frame.pop();
-
+        SObject self = (SObject) frame.pop();
         SInteger idx = (SInteger) arg;
 
         frame.push(self.getField(idx.getEmbeddedInteger() - 1));
@@ -141,7 +143,7 @@ public class ObjectPrimitives extends Primitives {
       public void invoke(final Frame frame, final Interpreter interpreter) {
         SAbstractObject val  = frame.pop();
         SAbstractObject arg  = frame.pop();
-        SAbstractObject self = frame.getStackElement(0);
+        SObject self = (SObject) frame.getStackElement(0);
 
         SInteger idx = (SInteger) arg;
 
@@ -153,7 +155,7 @@ public class ObjectPrimitives extends Primitives {
       @Override
       public void invoke(final Frame frame, final Interpreter interpreter) {
         SAbstractObject self  = frame.pop();
-        frame.push(self.getSOMClass());
+        frame.push(self.getSOMClass(universe));
       }
     });
   }

@@ -24,43 +24,36 @@
 
 package som.vmobjects;
 
-public class SSymbol extends SAbstractObject {
+import som.vm.Universe;
 
-  public SSymbol(final SAbstractObject nilObject) {
-    super(nilObject);
+public class SSymbol extends SString {
+
+  public SSymbol(final String value) {
+    super(value);
+    numberOfSignatureArguments = determineNumberOfSignatureArguments();
   }
 
-  public java.lang.String getString() {
-    // Get the string associated to this symbol
-    return string;
-  }
-
-  public void setString(java.lang.String value) {
-    // Set the string associated to this symbol
-    string = value;
-    determineNumberOfSignatureArguments();
-  }
-
-  private void determineNumberOfSignatureArguments() {
+  private int determineNumberOfSignatureArguments() {
     // Check for binary signature
     if (isBinarySignature()) {
-      numberOfSignatureArguments = 2;
+      return 2;
     } else {
       // Count the colons in the signature string
       int numberOfColons = 0;
 
       // Iterate through every character in the signature string
-      for (char c : string.toCharArray()) {
+      for (char c : getEmbeddedString().toCharArray()) {
         if (c == ':') { numberOfColons++; }
       }
 
       // The number of arguments is equal to the number of colons plus one
-      numberOfSignatureArguments = numberOfColons + 1;
+      return numberOfColons + 1;
     }
   }
 
-  public java.lang.String toString() {
-    return "#" + string;
+  @Override
+  public String toString() {
+    return "#" + getEmbeddedString();
   }
 
   public int getNumberOfSignatureArguments() {
@@ -69,7 +62,7 @@ public class SSymbol extends SAbstractObject {
 
   public boolean isBinarySignature() {
     // Check the individual characters of the string
-    for (char c : string.toCharArray()) {
+    for (char c : getEmbeddedString().toCharArray()) {
       if (c != '~' && c != '&' && c != '|' && c != '*' && c != '/' && c != '@'
           && c != '+' && c != '-' && c != '=' && c != '>' && c != '<'
           && c != ',' && c != '%' && c != '\\') { return false; }
@@ -77,7 +70,10 @@ public class SSymbol extends SAbstractObject {
     return true;
   }
 
-  // Private variable holding the string associated to this symbol
-  private java.lang.String string;
-  private int              numberOfSignatureArguments;
+  @Override
+  public SClass getSOMClass(final Universe universe) {
+    return universe.symbolClass;
+  }
+
+  private final int numberOfSignatureArguments;
 }

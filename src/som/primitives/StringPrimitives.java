@@ -28,8 +28,8 @@ package som.primitives;
 import som.interpreter.Frame;
 import som.interpreter.Interpreter;
 import som.vm.Universe;
-import som.vmobjects.SInteger;
 import som.vmobjects.SAbstractObject;
+import som.vmobjects.SInteger;
 import som.vmobjects.SPrimitive;
 import som.vmobjects.SString;
 
@@ -76,7 +76,7 @@ public class StringPrimitives extends Primitives {
       public void invoke(final Frame frame, final Interpreter interpreter) {
         SAbstractObject op1 = frame.pop();
         SString op2 = (SString) frame.pop(); // self
-        if (op1.getSOMClass() == universe.stringClass) {
+        if (op1.getSOMClass(universe) == universe.stringClass) {
           SString s = (SString) op1;
           if (s.getEmbeddedString().equals(op2.getEmbeddedString())) {
             frame.push(universe.trueObject);

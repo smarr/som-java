@@ -36,13 +36,14 @@ public class SymbolPrimitives extends Primitives {
     super(universe);
   }
 
+  @Override
   public void installPrimitives() {
     installInstancePrimitive(new SPrimitive("asString", universe) {
 
       @Override
       public void invoke(final Frame frame, final Interpreter interpreter) {
         SSymbol self = (SSymbol) frame.pop();
-        frame.push(universe.newString(self.getString()));
+        frame.push(universe.newString(self.getEmbeddedString()));
       }
     });
   }
