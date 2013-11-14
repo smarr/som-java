@@ -24,6 +24,8 @@
 
 package som.vmobjects;
 
+import java.math.BigInteger;
+
 public class SBigInteger extends SAbstractObject {
 
   public SBigInteger(final SAbstractObject nilObject) {
@@ -41,5 +43,5 @@ public class SBigInteger extends SAbstractObject {
   }
 
   // Private variable holding the embedded big integer
-  private java.math.BigInteger embeddedBiginteger;
+  private final BigInteger embeddedBiginteger;
 }

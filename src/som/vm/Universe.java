@@ -25,7 +25,10 @@
 package som.vm;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.HashMap;
+import java.util.List;
+import java.util.StringTokenizer;
 
 import som.compiler.Disassembler;
 import som.interpreter.Bytecodes;
@@ -45,7 +48,7 @@ import som.vmobjects.SSymbol;
 
 public class Universe {
 
-  public static void main(java.lang.String[] arguments) {
+  public static void main(String[] arguments) {
     // Create Universe
     Universe u = new Universe();
 
@@ -56,7 +59,7 @@ public class Universe {
     u.exit(0);
   }
 
-  public void interpret(java.lang.String[] arguments) {
+  public SAbstractObject interpret(String[] arguments) {
     // Check for command line switches
     arguments = handleArguments(arguments);
 
@@ -100,14 +103,14 @@ public class Universe {
     return lastExitCode;
   }
 
-  public void errorExit(java.lang.String message) {
+  public void errorExit(String message) {
     errorPrintln("Runtime Error: " + message);
     exit(1);
   }
 
-  private java.lang.String[] handleArguments(java.lang.String[] arguments) {
+  private String[] handleArguments(String[] arguments) {
     boolean gotClasspath = false;
-    java.lang.String[] remainingArgs = new java.lang.String[arguments.length];
+    String[] remainingArgs = new String[arguments.length];
     int cnt = 0;
 
     for (int i = 0; i < arguments.length; i++) {
@@ -134,15 +137,15 @@ public class Universe {
 
     // Copy the remaining elements from the original array into the new
     // array
-    arguments = new java.lang.String[cnt];
+    arguments = new String[cnt];
     System.arraycopy(remainingArgs, 0, arguments, 0, cnt);
 
     // check remaining args for class paths, and strip file extension
     for (int i = 0; i < arguments.length; i++) {
-      java.lang.String[] split = getPathClassExt(arguments[i]);
+      String[] split = getPathClassExt(arguments[i]);
 
       if (!("".equals(split[0]))) { // there was a path
-        java.lang.String[] tmp = new java.lang.String[classPath.length + 1];
+        String[] tmp = new String[classPath.length + 1];
         System.arraycopy(classPath, 0, tmp, 1, classPath.length);
         tmp[0] = split[0];
         classPath = tmp;
@@ -155,12 +158,12 @@ public class Universe {
 
   // take argument of the form "../foo/Test.som" and return
   // "../foo", "Test", "som"
-  private java.lang.String[] getPathClassExt(java.lang.String arg) {
+  private String[] getPathClassExt(String arg) {
     // Create a new tokenizer to split up the string of dirs
-    java.util.StringTokenizer tokenizer = new java.util.StringTokenizer(arg,
+    StringTokenizer tokenizer = new StringTokenizer(arg,
         fileSeparator, true);
 
-    java.lang.String cp = "";
+    String cp = "";
 
     while (tokenizer.countTokens() > 2) {
       cp = cp + tokenizer.nextToken();
@@ -169,25 +172,25 @@ public class Universe {
       tokenizer.nextToken(); // throw out delimiter
     }
 
-    java.lang.String file = tokenizer.nextToken();
+    String file = tokenizer.nextToken();
 
-    tokenizer = new java.util.StringTokenizer(file, ".");
+    tokenizer = new StringTokenizer(file, ".");
 
     if (tokenizer.countTokens() > 2) {
       println("Class with . in its name?");
       exit(1);
     }
 
-    java.lang.String[] result = new java.lang.String[3];
+    String[] result = new String[3];
     result[0] = cp;
     result[1] = tokenizer.nextToken();
     result[2] = tokenizer.hasMoreTokens() ? tokenizer.nextToken() : "";
     return result;
   }
 
-  private void setupClassPath(java.lang.String cp) {
+  public void setupClassPath(String cp) {
     // Create a new tokenizer to split up the string of directories
-    java.util.StringTokenizer tokenizer = new java.util.StringTokenizer(cp,
+    StringTokenizer tokenizer = new StringTokenizer(cp,
         pathSeparator);
 
     // Get the default class path of the appropriate size
@@ -199,15 +202,15 @@ public class Universe {
     }
   }
 
-  private java.lang.String[] setupDefaultClassPath(int directories) {
+  private String[] setupDefaultClassPath(int directories) {
     // Get the default system class path
-    java.lang.String systemClassPath = System.getProperty("system.class.path");
+    String systemClassPath = System.getProperty("system.class.path");
 
     // Compute the number of defaults
     int defaults = (systemClassPath != null) ? 2 : 1;
 
     // Allocate an array with room for the directories and the defaults
-    java.lang.String[] result = new java.lang.String[directories + defaults];
+    String[] result = new String[directories + defaults];
 
     // Insert the system class path into the defaults section
     if (systemClassPath != null) {
@@ -349,7 +352,7 @@ public class Universe {
     interpreter.start();
   }
 
-  public SSymbol symbolFor(java.lang.String string) {
+  public SSymbol symbolFor(String string) {
     // Lookup the symbol in the symbol table
     SSymbol result = symbolTable.lookup(string);
     if (result != null) { return result; }
@@ -371,7 +374,7 @@ public class Universe {
     return result;
   }
 
-  public SArray newArray(java.util.List<?> list) {
+  public SArray newArray(List<?> list) {
     // Allocate a new array with the same length as the list
     SArray result = newArray(list.size());
 
@@ -384,7 +387,7 @@ public class Universe {
     return result;
   }
 
-  public SArray newArray(java.lang.String[] stringArray) {
+  public SArray newArray(String[] stringArray) {
     // Allocate a new array with the same length as the string array
     SArray result = newArray(stringArray.length);
 
@@ -524,7 +527,7 @@ public class Universe {
     return result;
   }
 
-  public SString newString(java.lang.String embeddedString) {
+  public SString newString(String embeddedString) {
     // Allocate a new string and set its class to be the string class
     SString result = new SString(nilObject);
     result.setClass(stringClass);
@@ -536,7 +539,7 @@ public class Universe {
     return result;
   }
 
-  public SSymbol newSymbol(java.lang.String string) {
+  public SSymbol newSymbol(String string) {
     // Allocate a new symbol and set its class to be the symbol class
     SSymbol result = new SSymbol(nilObject);
     result.setClass(symbolClass);
@@ -564,7 +567,7 @@ public class Universe {
   }
 
   public void initializeSystemClass(SClass systemClass, SClass superClass,
-      java.lang.String name) {
+      String name) {
     // Initialize the superclass hierarchy
     if (superClass != null) {
       systemClass.setSuperClass(superClass);
@@ -617,7 +620,7 @@ public class Universe {
     // Compute the name of the block class with the given number of
     // arguments
     SSymbol name = symbolFor("Block"
-        + java.lang.Integer.toString(numberOfArguments));
+        + Integer.toString(numberOfArguments));
 
     // Lookup the specific block class in the dictionary of globals and
     // return it
@@ -659,7 +662,7 @@ public class Universe {
 
   private SClass loadClass(SSymbol name, SClass systemClass) {
     // Try loading the class from all different paths
-    for (java.lang.String cpEntry : classPath) {
+    for (String cpEntry : classPath) {
       try {
         // Load the class from a file and return the loaded class
         SClass result = som.compiler.SourcecodeCompiler.compileClass(cpEntry,
@@ -679,7 +682,7 @@ public class Universe {
     return null;
   }
 
-  public SClass loadShellClass(java.lang.String stmt) throws IOException {
+  public SClass loadShellClass(String stmt) throws IOException {
     // java.io.ByteArrayInputStream in = new
     // java.io.ByteArrayInputStream(stmt.getBytes());
 
@@ -690,13 +693,13 @@ public class Universe {
     return result;
   }
 
-  public static void errorPrint(java.lang.String msg) {
+  public static void errorPrint(String msg) {
     // Checkstyle: stop
     System.err.print(msg);
     // Checkstyle: resume
   }
 
-  public static void errorPrintln(java.lang.String msg) {
+  public static void errorPrintln(String msg) {
     // Checkstyle: stop
     System.err.println(msg);
     // Checkstyle: resume
@@ -708,13 +711,13 @@ public class Universe {
     // Checkstyle: resume
   }
 
-  public static void print(java.lang.String msg) {
+  public static void print(String msg) {
     // Checkstyle: stop
     System.err.print(msg);
     // Checkstyle: resume
   }
 
-  public static void println(java.lang.String msg) {
+  public static void println(String msg) {
     // Checkstyle: stop
     System.err.println(msg);
     // Checkstyle: resume

@@ -24,30 +24,46 @@
 
 package som.compiler;
 
+import static som.interpreter.Bytecodes.dup;
+import static som.interpreter.Bytecodes.halt;
+import static som.interpreter.Bytecodes.pop;
+import static som.interpreter.Bytecodes.pop_argument;
+import static som.interpreter.Bytecodes.pop_field;
+import static som.interpreter.Bytecodes.pop_local;
+import static som.interpreter.Bytecodes.push_argument;
+import static som.interpreter.Bytecodes.push_block;
+import static som.interpreter.Bytecodes.push_constant;
+import static som.interpreter.Bytecodes.push_field;
+import static som.interpreter.Bytecodes.push_global;
+import static som.interpreter.Bytecodes.push_local;
+import static som.interpreter.Bytecodes.return_local;
+import static som.interpreter.Bytecodes.return_non_local;
+import static som.interpreter.Bytecodes.send;
+import static som.interpreter.Bytecodes.super_send;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
 import som.vm.Universe;
+import som.vmobjects.SAbstractObject;
 import som.vmobjects.SInvokable;
 import som.vmobjects.SMethod;
 import som.vmobjects.SPrimitive;
 import som.vmobjects.SSymbol;
-
-import static som.interpreter.Bytecodes.*;
 
 public class MethodGenerationContext {
 
   private ClassGenerationContext     holderGenc;
   private MethodGenerationContext    outerGenc;
   private boolean                    blockMethod;
-  private som.vmobjects.SSymbol       signature;
-  private List<String>               arguments = new ArrayList<String>();
+  private som.vmobjects.SSymbol      signature;
+  private final List<String>         arguments = new ArrayList<String>();
   private boolean                    primitive;
-  private List<String>               locals    = new ArrayList<String>();
-  private List<som.vmobjects.SAbstractObject> literals  = new ArrayList<som.vmobjects.SAbstractObject>();
+  private final List<String>         locals    = new ArrayList<String>();
+  private final List<SAbstractObject> literals  = new ArrayList<SAbstractObject>();
   private boolean                    finished;
-  private Vector<Byte>               bytecode  = new Vector<Byte>();
+  private final Vector<Byte>         bytecode  = new Vector<Byte>();
 
   public void setHolder(ClassGenerationContext cgenc) {
     holderGenc = cgenc;

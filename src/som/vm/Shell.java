@@ -24,6 +24,9 @@
 
 package som.vm;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+
 import som.interpreter.Interpreter;
 import som.vmobjects.SClass;
 import som.vmobjects.SFrame;
@@ -59,8 +62,7 @@ public class Shell {
     SFrame currentFrame;
 
     counter = 0;
-    in = new java.io.BufferedReader(new java.io.InputStreamReader(
-        java.lang.System.in));
+    in = new BufferedReader(new InputStreamReader(System.in));
     it = universe.nilObject;
 
     Universe.println("SOM Shell. Type \"quit\" to exit.\n");

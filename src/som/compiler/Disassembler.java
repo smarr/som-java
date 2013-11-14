@@ -52,7 +52,7 @@ public class Disassembler {
     }
   }
 
-  public static void dumpMethod(SMethod m, java.lang.String indent) {
+  public static void dumpMethod(SMethod m, String indent) {
     Universe.errorPrintln("(");
 
     // output stack information

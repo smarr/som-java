@@ -28,6 +28,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import som.vm.Universe;
+import som.vmobjects.SAbstractObject;
+import som.vmobjects.SInvokable;
 import som.vmobjects.SSymbol;
 
 public class ClassGenerationContext {
@@ -38,15 +40,15 @@ public class ClassGenerationContext {
     this.universe = universe;
   }
 
-  private som.vmobjects.SSymbol          name;
-  private som.vmobjects.SSymbol          superName;
+  private SSymbol                       name;
+  private SSymbol                       superName;
   private boolean                       classSide;
   private int                           numberOfInstanceFieldsOfSuper;
   private int                           numberOfClassFieldsOfSuper;
-  private List<som.vmobjects.SAbstractObject>    instanceFields  = new ArrayList<som.vmobjects.SAbstractObject>();
-  private List<som.vmobjects.SInvokable> instanceMethods = new ArrayList<som.vmobjects.SInvokable>();
-  private List<som.vmobjects.SAbstractObject>    classFields     = new ArrayList<som.vmobjects.SAbstractObject>();
-  private List<som.vmobjects.SInvokable> classMethods    = new ArrayList<som.vmobjects.SInvokable>();
+  private final List<SAbstractObject>   instanceFields  = new ArrayList<SAbstractObject>();
+  private final List<SInvokable>        instanceMethods = new ArrayList<SInvokable>();
+  private final List<SAbstractObject>   classFields     = new ArrayList<SAbstractObject>();
+  private final List<SInvokable>        classMethods    = new ArrayList<SInvokable>();
 
   public void setName(final SSymbol name) {
     this.name = name;
