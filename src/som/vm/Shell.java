@@ -27,9 +27,9 @@ package som.vm;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
+import som.interpreter.Frame;
 import som.interpreter.Interpreter;
 import som.vmobjects.SClass;
-import som.vmobjects.SFrame;
 import som.vmobjects.SInvokable;
 import som.vmobjects.SMethod;
 import som.vmobjects.SAbstractObject;
@@ -59,7 +59,7 @@ public class Shell {
     SClass myClass;
     SAbstractObject myObject;
     SAbstractObject it;
-    SFrame currentFrame;
+    Frame currentFrame;
 
     counter = 0;
     in = new BufferedReader(new InputStreamReader(System.in));

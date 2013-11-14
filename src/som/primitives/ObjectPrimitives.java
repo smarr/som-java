@@ -24,14 +24,15 @@
 
 package som.primitives;
 
+import som.interpreter.Frame;
 import som.interpreter.Interpreter;
 import som.vm.Universe;
+import som.vmobjects.SAbstractObject;
 import som.vmobjects.SArray;
 import som.vmobjects.SClass;
-import som.vmobjects.SFrame;
 import som.vmobjects.SInteger;
 import som.vmobjects.SInvokable;
-import som.vmobjects.SAbstractObject;
+import som.vmobjects.SObject;
 import som.vmobjects.SPrimitive;
 import som.vmobjects.SSymbol;
 
@@ -46,7 +47,7 @@ public class ObjectPrimitives extends Primitives {
 
     installInstancePrimitive(new SPrimitive("==", universe) {
       @Override
-      public void invoke(final SFrame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         SAbstractObject op1 = frame.pop();
         SAbstractObject op2 = frame.pop();
         if (op1 == op2) {
@@ -59,7 +60,7 @@ public class ObjectPrimitives extends Primitives {
 
     installInstancePrimitive(new SPrimitive("hashcode", universe) {
       @Override
-      public void invoke(final SFrame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         SAbstractObject self = frame.pop();
         frame.push(universe.newInteger(self.hashCode()));
       }
@@ -67,7 +68,7 @@ public class ObjectPrimitives extends Primitives {
 
     installInstancePrimitive(new SPrimitive("objectSize", universe) {
       @Override
-      public void invoke(final SFrame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         SAbstractObject self = frame.pop();
         int size = self.getNumberOfFields();
         if (self instanceof SArray) {
@@ -79,19 +80,19 @@ public class ObjectPrimitives extends Primitives {
 
     installInstancePrimitive(new SPrimitive("perform:", universe) {
       @Override
-      public void invoke(final SFrame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         SAbstractObject arg  = frame.pop();
         SAbstractObject self = frame.getStackElement(0);
         SSymbol selector = (SSymbol) arg;
 
-        SInvokable invokable = self.getSOMClass().lookupInvokable(selector);
+        SInvokable invokable = self.getSOMClass(universe).lookupInvokable(selector);
         invokable.invoke(frame, interpreter);
       }
     });
 
     installInstancePrimitive(new SPrimitive("perform:inSuperclass:", universe) {
       @Override
-      public void invoke(final SFrame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         SAbstractObject arg2 = frame.pop();
         SAbstractObject arg  = frame.pop();
         // Object self = frame.getStackElement(0);
@@ -106,7 +107,7 @@ public class ObjectPrimitives extends Primitives {
 
     installInstancePrimitive(new SPrimitive("perform:withArguments:", universe) {
       @Override
-      public void invoke(final SFrame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         SAbstractObject arg2 = frame.pop();
         SAbstractObject arg  = frame.pop();
         SAbstractObject self = frame.getStackElement(0);
@@ -118,14 +119,14 @@ public class ObjectPrimitives extends Primitives {
           frame.push(args.getIndexableField(i));
         }
 
-        SInvokable invokable = self.getSOMClass().lookupInvokable(selector);
+        SInvokable invokable = self.getSOMClass(universe).lookupInvokable(selector);
         invokable.invoke(frame, interpreter);
       }
     });
 
     installInstancePrimitive(new SPrimitive("instVarAt:", universe) {
       @Override
-      public void invoke(final SFrame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         SAbstractObject arg  = frame.pop();
         SAbstractObject self = frame.pop();
 
@@ -137,7 +138,7 @@ public class ObjectPrimitives extends Primitives {
 
     installInstancePrimitive(new SPrimitive("instVarAt:put:", universe) {
       @Override
-      public void invoke(final SFrame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         SAbstractObject val  = frame.pop();
         SAbstractObject arg  = frame.pop();
         SAbstractObject self = frame.getStackElement(0);
@@ -150,7 +151,7 @@ public class ObjectPrimitives extends Primitives {
 
     installInstancePrimitive(new SPrimitive("class", universe) {
       @Override
-      public void invoke(final SFrame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         SAbstractObject self  = frame.pop();
         frame.push(self.getSOMClass());
       }

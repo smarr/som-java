@@ -40,7 +40,7 @@ public class SBlock extends SAbstractObject {
     return method;
   }
 
-  public SFrame getContext() {
+  public Frame getContext() {
     return context;
   }
 
@@ -63,16 +63,16 @@ public class SBlock extends SAbstractObject {
     }
 
     @Override
-    public void invoke(final SFrame frame, final Interpreter interpreter) {
+    public void invoke(final Frame frame, final Interpreter interpreter) {
       // Get the block (the receiver) from the stack
       SBlock self = (SBlock) frame.getStackElement(numberOfArguments - 1);
 
       // Get the context of the block...
-      SFrame context = self.getContext();
+      Frame context = self.getContext();
 
       // Push a new frame and set its context to be the one specified in
       // the block
-      SFrame newFrame = interpreter.pushNewFrame(self.getMethod(), context);
+      Frame newFrame = interpreter.pushNewFrame(self.getMethod(), context);
       newFrame.copyArgumentsFrom(frame);
     }
 
@@ -94,8 +94,6 @@ public class SBlock extends SAbstractObject {
   }
 
   private final SMethod method;
-  private final SFrame  context;
-
-  // Static field indices and number of block fields
-  static final int numberOfBlockFields = numberOfObjectFields;
+  private final Frame   context;
+  private final SClass  blockClass;
 }

@@ -27,12 +27,12 @@ package som.primitives;
 import som.vm.Universe;
 import som.vmobjects.SBigInteger;
 import som.vmobjects.SDouble;
-import som.vmobjects.SFrame;
 import som.vmobjects.SInteger;
 import som.vmobjects.SAbstractObject;
 import som.vmobjects.SPrimitive;
 import som.vmobjects.SString;
 import som.interpreter.Interpreter;
+import som.interpreter.Frame;
 
 public class IntegerPrimitives extends Primitives {
 
@@ -40,7 +40,7 @@ public class IntegerPrimitives extends Primitives {
     super(universe);
   }
 
-  private void pushLongResult(final SFrame frame, long result) {
+  private void pushLongResult(final Frame frame, long result) {
     // Check with integer bounds and push:
     if (result > java.lang.Integer.MAX_VALUE
         || result < java.lang.Integer.MIN_VALUE) {
@@ -72,7 +72,7 @@ public class IntegerPrimitives extends Primitives {
   public void installPrimitives() {
     installInstancePrimitive(new SPrimitive("asString", universe) {
 
-      public void invoke(final SFrame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         SInteger self = (SInteger) frame.pop();
         frame.push(universe.newString(
             java.lang.Integer.toString(self.getEmbeddedInteger())));
@@ -81,7 +81,7 @@ public class IntegerPrimitives extends Primitives {
 
     installInstancePrimitive(new SPrimitive("sqrt", universe) {
 
-      public void invoke(final SFrame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         SInteger self = (SInteger) frame.pop();
 
         double result = Math.sqrt((double) self.getEmbeddedInteger());
@@ -96,7 +96,7 @@ public class IntegerPrimitives extends Primitives {
 
     installInstancePrimitive(new SPrimitive("atRandom", universe) {
 
-      public void invoke(final SFrame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         SInteger self = (SInteger) frame.pop();
         frame.push(universe.newInteger(
             (int) ((double) self.getEmbeddedInteger() * Math.random())));
@@ -105,7 +105,7 @@ public class IntegerPrimitives extends Primitives {
 
     installInstancePrimitive(new SPrimitive("+", universe) {
 
-      public void invoke(final SFrame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         SAbstractObject rightObj = frame.pop();
         SInteger left = (SInteger) frame.pop();
 
@@ -128,7 +128,7 @@ public class IntegerPrimitives extends Primitives {
 
     installInstancePrimitive(new SPrimitive("-", universe) {
 
-      public void invoke(final SFrame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         SAbstractObject rightObj = frame.pop();
         SInteger left = (SInteger) frame.pop();
 
@@ -151,7 +151,7 @@ public class IntegerPrimitives extends Primitives {
 
     installInstancePrimitive(new SPrimitive("*", universe) {
 
-      public void invoke(final SFrame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         SAbstractObject rightObj = frame.pop();
         SInteger left = (SInteger) frame.pop();
 
@@ -174,7 +174,7 @@ public class IntegerPrimitives extends Primitives {
 
     installInstancePrimitive(new SPrimitive("//", universe) {
 
-      public void invoke(final SFrame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         /*
          * Integer op1 = (Integer) frame.pop(); Integer op2 = (Integer)
          * frame.pop();
@@ -203,7 +203,7 @@ public class IntegerPrimitives extends Primitives {
 
     installInstancePrimitive(new SPrimitive("/", universe) {
 
-      public void invoke(final SFrame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         SAbstractObject rightObj = frame.pop();
         SInteger left = (SInteger) frame.pop();
 
@@ -226,7 +226,7 @@ public class IntegerPrimitives extends Primitives {
 
     installInstancePrimitive(new SPrimitive("%", universe) {
 
-      public void invoke(final SFrame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         SAbstractObject rightObj = frame.pop();
         SInteger left = (SInteger) frame.pop();
 
@@ -255,7 +255,7 @@ public class IntegerPrimitives extends Primitives {
 
     installInstancePrimitive(new SPrimitive("&", universe) {
 
-      public void invoke(final SFrame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         SAbstractObject rightObj = frame.pop();
         SInteger left = (SInteger) frame.pop();
 
@@ -278,7 +278,7 @@ public class IntegerPrimitives extends Primitives {
 
     installInstancePrimitive(new SPrimitive("=", universe) {
 
-      public void invoke(final SFrame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         SAbstractObject rightObj = frame.pop();
         SInteger left = (SInteger) frame.pop();
 
@@ -312,7 +312,7 @@ public class IntegerPrimitives extends Primitives {
 
     installInstancePrimitive(new SPrimitive("<", universe) {
 
-      public void invoke(final SFrame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         SAbstractObject rightObj = frame.pop();
         SInteger left = (SInteger) frame.pop();
 
@@ -337,7 +337,7 @@ public class IntegerPrimitives extends Primitives {
 
     installClassPrimitive(new SPrimitive("fromString:", universe) {
 
-      public void invoke(SFrame frame, Interpreter interpreter) {
+      public void invoke(Frame frame, Interpreter interpreter) {
         SString param = (SString) frame.pop();
         frame.pop();
 

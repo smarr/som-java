@@ -26,11 +26,11 @@ package som.primitives;
 
 import som.vm.Universe;
 import som.vmobjects.SArray;
-import som.vmobjects.SFrame;
 import som.vmobjects.SInteger;
 import som.vmobjects.SAbstractObject;
 import som.vmobjects.SPrimitive;
 import som.interpreter.Interpreter;
+import som.interpreter.Frame;
 
 public class ArrayPrimitives extends Primitives {
 
@@ -41,7 +41,7 @@ public class ArrayPrimitives extends Primitives {
   public void installPrimitives() {
     installInstancePrimitive(new SPrimitive("at:", universe) {
 
-      public void invoke(final SFrame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         SInteger index = (SInteger) frame.pop();
         SArray self = (SArray) frame.pop();
         frame.push(self.getIndexableField(index.getEmbeddedInteger() - 1));
@@ -50,7 +50,7 @@ public class ArrayPrimitives extends Primitives {
 
     installInstancePrimitive(new SPrimitive("at:put:", universe) {
 
-      public void invoke(final SFrame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         SAbstractObject value = frame.pop();
         SInteger index = (SInteger) frame.pop();
         SArray self = (SArray) frame.getStackElement(0);
@@ -60,7 +60,7 @@ public class ArrayPrimitives extends Primitives {
 
     installInstancePrimitive(new SPrimitive("length", universe) {
 
-      public void invoke(final SFrame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         SArray self = (SArray) frame.pop();
         frame.push(universe.newInteger(self.getNumberOfIndexableFields()));
       }
@@ -68,7 +68,7 @@ public class ArrayPrimitives extends Primitives {
 
     installClassPrimitive(new SPrimitive("new:", universe) {
 
-      public void invoke(final SFrame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         SInteger length = (SInteger) frame.pop();
         frame.pop(); // not required
         frame.push(universe.newArray(length.getEmbeddedInteger()));

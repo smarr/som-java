@@ -27,7 +27,6 @@ package som.interpreter;
 import som.vm.Universe;
 import som.vmobjects.SBlock;
 import som.vmobjects.SClass;
-import som.vmobjects.SFrame;
 import som.vmobjects.SInvokable;
 import som.vmobjects.SMethod;
 import som.vmobjects.SAbstractObject;
@@ -160,7 +159,7 @@ public class Interpreter {
     SAbstractObject result = getFrame().pop();
 
     // Compute the context for the non-local return
-    SFrame context = getFrame().getOuterContext(universe.nilObject);
+    Frame context = getFrame().getOuterContext(universe.nilObject);
 
     // Make sure the block context is still on the stack
     if (!context.hasPreviousFrame(universe.nilObject)) {
@@ -311,7 +310,7 @@ public class Interpreter {
     }
   }
 
-  public SFrame pushNewFrame(final SMethod method, final SAbstractObject contextFrame) {
+  public Frame pushNewFrame(final SMethod method, final Frame contextFrame) {
     // Allocate a new frame and make it the current one
     frame = universe.newFrame(frame, method, contextFrame);
 
@@ -319,11 +318,11 @@ public class Interpreter {
     return frame;
   }
 
-  public SFrame pushNewFrame(final SMethod method) {
-    return pushNewFrame(method, universe.nilObject);
+  public Frame pushNewFrame(final SMethod method) {
+    return pushNewFrame(method, null);
   }
 
-  public SFrame getFrame() {
+  public Frame getFrame() {
     // Get the frame from the interpreter
     return frame;
   }
@@ -377,15 +376,15 @@ public class Interpreter {
     }
   }
 
-  private SFrame popFrame() {
+  private Frame popFrame() {
     // Save a reference to the top frame
-    SFrame result = frame;
+    Frame result = frame;
 
     // Pop the top frame from the frame stack
     frame = frame.getPreviousFrame();
 
     // Destroy the previous pointer on the old top frame
-    result.clearPreviousFrame(universe.nilObject);
+    result.clearPreviousFrame();
 
     // Return the popped frame
     return result;
@@ -405,5 +404,5 @@ public class Interpreter {
     getFrame().push(result);
   }
 
-  private SFrame frame;
+  private Frame frame;
 }

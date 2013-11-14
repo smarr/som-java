@@ -25,9 +25,9 @@
 package som.primitives;
 
 import som.interpreter.Interpreter;
+import som.interpreter.Frame;
 import som.vm.Universe;
 import som.vmobjects.SClass;
-import som.vmobjects.SFrame;
 import som.vmobjects.SInteger;
 import som.vmobjects.SAbstractObject;
 import som.vmobjects.SPrimitive;
@@ -43,7 +43,7 @@ public class SystemPrimitives extends Primitives {
   public void installPrimitives() {
     installInstancePrimitive(new SPrimitive("load:", universe) {
 
-      public void invoke(final SFrame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         SSymbol argument = (SSymbol) frame.pop();
         frame.pop(); // not required
         SClass result = universe.loadClass(argument);
@@ -53,7 +53,7 @@ public class SystemPrimitives extends Primitives {
 
     installInstancePrimitive(new SPrimitive("exit:", universe) {
 
-      public void invoke(final SFrame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         SInteger error = (SInteger) frame.pop();
         universe.exit(error.getEmbeddedInteger());
       }
@@ -61,7 +61,7 @@ public class SystemPrimitives extends Primitives {
 
     installInstancePrimitive(new SPrimitive("global:", universe) {
 
-      public void invoke(final SFrame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         SSymbol argument = (SSymbol) frame.pop();
         frame.pop(); // not required
         SAbstractObject result = universe.getGlobal(argument);
@@ -71,7 +71,7 @@ public class SystemPrimitives extends Primitives {
 
     installInstancePrimitive(new SPrimitive("global:put:", universe) {
 
-      public void invoke(final SFrame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         SAbstractObject value = frame.pop();
         SSymbol argument = (SSymbol) frame.pop();
         universe.setGlobal(argument, value);
@@ -80,7 +80,7 @@ public class SystemPrimitives extends Primitives {
 
     installInstancePrimitive(new SPrimitive("printString:", universe) {
 
-      public void invoke(final SFrame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         SString argument = (SString) frame.pop();
         Universe.print(argument.getEmbeddedString());
       }
@@ -88,7 +88,7 @@ public class SystemPrimitives extends Primitives {
 
     installInstancePrimitive(new SPrimitive("printNewline", universe) {
 
-      public void invoke(final SFrame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         Universe.println("");
       }
     });
@@ -97,7 +97,7 @@ public class SystemPrimitives extends Primitives {
     startTime = startMicroTime / 1000L;
     installInstancePrimitive(new SPrimitive("time", universe) {
 
-      public void invoke(final SFrame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         frame.pop(); // ignore
         int time = (int) (System.currentTimeMillis() - startTime);
         frame.push(universe.newInteger(time));
@@ -106,7 +106,7 @@ public class SystemPrimitives extends Primitives {
 
     installInstancePrimitive(new SPrimitive("ticks", universe) {
 
-      public void invoke(final SFrame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         frame.pop(); // ignore
         int time = (int) (System.nanoTime() / 1000L - startMicroTime);
         frame.push(universe.newInteger(time));
@@ -115,7 +115,7 @@ public class SystemPrimitives extends Primitives {
 
     installInstancePrimitive(new SPrimitive("fullGC", universe) {
 
-      public void invoke(final SFrame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         frame.pop();
         System.gc();
         frame.push(universe.trueObject);

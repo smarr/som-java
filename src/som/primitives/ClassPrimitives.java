@@ -24,10 +24,10 @@
 
 package som.primitives;
 
-import som.vm.Universe;
+import som.interpreter.Frame;
 import som.interpreter.Interpreter;
+import som.vm.Universe;
 import som.vmobjects.SClass;
-import som.vmobjects.SFrame;
 import som.vmobjects.SPrimitive;
 
 public class ClassPrimitives extends Primitives {
@@ -36,10 +36,12 @@ public class ClassPrimitives extends Primitives {
     super(universe);
   }
 
+  @Override
   public void installPrimitives() {
     installInstancePrimitive(new SPrimitive("new", universe) {
 
-      public void invoke(final SFrame frame, final Interpreter interpreter) {
+      @Override
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         SClass self = (SClass) frame.pop();
         frame.push(universe.newInstance(self));
       }

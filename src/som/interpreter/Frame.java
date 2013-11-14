@@ -22,9 +22,12 @@
  * THE SOFTWARE.
  */
 
-package som.vmobjects;
+package som.interpreter;
 
 import som.vm.Universe;
+import som.vmobjects.SAbstractObject;
+import som.vmobjects.SMethod;
+import som.vmobjects.SObject;
 
 /**
  * Frame layout:
@@ -38,43 +41,47 @@ import som.vm.Universe;
  * | ...             |
  * +-----------------+
  */
-public class SFrame extends SArray {
+public class Frame {
 
-  public SFrame(final SAbstractObject nilObject, final SFrame previousFrame,
-      final SAbstractObject context, final SMethod method) {
-    super(nilObject);
+  public Frame(final SObject nilObject, final Frame previousFrame,
+      final Frame context, final SMethod method, int stackElements) {
     this.previousFrame = previousFrame;
     this.context       = context;
     this.method        = method;
+    this.stack         = new SAbstractObject[stackElements];
+
+    for (int i = 0; i < stackElements; i++) {
+      stack[i] = nilObject;
+    }
   }
 
-  public SFrame getPreviousFrame() {
-    return (SFrame) previousFrame;
+  public Frame getPreviousFrame() {
+    return previousFrame;
   }
 
-  public void clearPreviousFrame(SAbstractObject nilObject) {
-    previousFrame = nilObject;
+  public void clearPreviousFrame() {
+    previousFrame = null;
   }
 
   public boolean hasPreviousFrame(SAbstractObject nilObject) {
-    return previousFrame != nilObject;
+    return previousFrame != null;
   }
 
   public boolean isBootstrapFrame(SAbstractObject nilObject) {
     return !hasPreviousFrame(nilObject);
   }
 
-  public SFrame getContext() {
-    return (SFrame) context;
+  public Frame getContext() {
+    return context;
   }
 
-  public boolean hasContext(SAbstractObject nilObject) {
-    return context != nilObject;
+  public boolean hasContext() {
+    return context != null;
   }
 
-  public SFrame getContext(int level) {
+  public Frame getContext(int level) {
     // Get the context frame at the given level
-    SFrame frame = this;
+    Frame frame = this;
 
     // Iterate through the context chain until the given level is reached
     while (level > 0) {
@@ -89,12 +96,12 @@ public class SFrame extends SArray {
     return frame;
   }
 
-  public SFrame getOuterContext(SAbstractObject nilObject) {
+  public Frame getOuterContext(SAbstractObject nilObject) {
     // Compute the outer context of this frame
-    SFrame frame = this;
+    Frame frame = this;
 
     // Iterate through the context chain until null is reached
-    while (frame.hasContext(nilObject)) {
+    while (frame.hasContext()) {
       frame = frame.getContext();
     }
 
@@ -106,23 +113,17 @@ public class SFrame extends SArray {
     return method;
   }
 
-  @Override
-  public int getDefaultNumberOfFields() {
-    // Return the default number of fields in a frame
-    return numberOfFrameFields;
-  }
-
   public SAbstractObject pop() {
     // Pop an object from the expression stack and return it
     int stackPointer = getStackPointer();
     setStackPointer(stackPointer - 1);
-    return getIndexableField(stackPointer);
+    return stack[stackPointer];
   }
 
   public void push(SAbstractObject value) {
     // Push an object onto the expression stack
     int stackPointer = getStackPointer() + 1;
-    setIndexableField(stackPointer, value);
+    stack[stackPointer] = value;
     setStackPointer(stackPointer);
   }
 
@@ -158,21 +159,21 @@ public class SFrame extends SArray {
   public SAbstractObject getStackElement(int index) {
     // Get the stack element with the given index
     // (an index of zero yields the top element)
-    return getIndexableField(getStackPointer() - index);
+    return stack[getStackPointer() - index];
   }
 
   public void setStackElement(int index, SAbstractObject value) {
     // Set the stack element with the given index to the given value
     // (an index of zero yields the top element)
-    setIndexableField(getStackPointer() - index, value);
+    stack[getStackPointer() - index] = value;
   }
 
   private SAbstractObject getLocal(int index) {
-    return getIndexableField(localOffset + index);
+    return stack[localOffset + index];
   }
 
   private void setLocal(int index, SAbstractObject value) {
-    setIndexableField(localOffset + index, value);
+    stack[localOffset + index] = value;
   }
 
   public SAbstractObject getLocal(int index, int contextLevel) {
@@ -188,35 +189,35 @@ public class SFrame extends SArray {
 
   public SAbstractObject getArgument(int index, int contextLevel) {
     // Get the context
-    SFrame context = getContext(contextLevel);
+    Frame context = getContext(contextLevel);
 
     // Get the argument with the given index
-    return context.getIndexableField(index);
+    return context.stack[index];
   }
 
   public void setArgument(int index, int contextLevel, SAbstractObject value) {
     // Get the context
-    SFrame context = getContext(contextLevel);
+    Frame context = getContext(contextLevel);
 
     // Set the argument with the given index to the given value
-    context.setIndexableField(index, value);
+    context.stack[index] = value;
   }
 
-  public void copyArgumentsFrom(SFrame frame) {
+  public void copyArgumentsFrom(Frame frame) {
     // copy arguments from frame:
     // - arguments are at the top of the stack of frame.
     // - copy them into the argument area of the current frame
     int numArgs = getMethod().getNumberOfArguments();
     for (int i = 0; i < numArgs; ++i) {
-      setIndexableField(i, frame.getStackElement(numArgs - 1 - i));
+      stack[i] = frame.getStackElement(numArgs - 1 - i);
     }
   }
 
   public void printStackTrace(SAbstractObject nilObject) {
     // Print a stack trace starting in this frame
-    Universe.print(getMethod().getHolder().getName().getString());
+    Universe.print(getMethod().getHolder().getName().getEmbeddedString());
     Universe.print(getBytecodeIndex() + "@"
-        + getMethod().getSignature().getString());
+        + getMethod().getSignature().getEmbeddedString());
     if (hasPreviousFrame(nilObject)) {
       getPreviousFrame().printStackTrace(nilObject);
     }
@@ -230,9 +231,7 @@ public class SFrame extends SArray {
   private int      localOffset;
 
   private final SMethod method;
-  private final SAbstractObject context;
-  private       SAbstractObject previousFrame;
-
-  // Static field indices and number of frame fields
-  static final int numberOfFrameFields = numberOfObjectFields;
+  private final Frame   context;
+  private       Frame   previousFrame;
+  private final SAbstractObject[] stack;
 }

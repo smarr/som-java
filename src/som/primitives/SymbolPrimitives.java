@@ -24,9 +24,9 @@
 
 package som.primitives;
 
+import som.interpreter.Frame;
 import som.interpreter.Interpreter;
 import som.vm.Universe;
-import som.vmobjects.SFrame;
 import som.vmobjects.SPrimitive;
 import som.vmobjects.SSymbol;
 
@@ -39,7 +39,8 @@ public class SymbolPrimitives extends Primitives {
   public void installPrimitives() {
     installInstancePrimitive(new SPrimitive("asString", universe) {
 
-      public void invoke(final SFrame frame, final Interpreter interpreter) {
+      @Override
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         SSymbol self = (SSymbol) frame.pop();
         frame.push(universe.newString(self.getString()));
       }

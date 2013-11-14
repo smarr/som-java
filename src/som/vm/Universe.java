@@ -254,7 +254,6 @@ public class Universe {
     methodClass     = newSystemClass();
     integerClass    = newSystemClass();
     bigintegerClass = newSystemClass();
-    frameClass      = newSystemClass();
     primitiveClass  = newSystemClass();
     stringClass     = newSystemClass();
     doubleClass     = newSystemClass();
@@ -272,7 +271,6 @@ public class Universe {
     initializeSystemClass(symbolClass,     objectClass, "Symbol");
     initializeSystemClass(integerClass,    objectClass, "Integer");
     initializeSystemClass(bigintegerClass, objectClass, "BigInteger");
-    initializeSystemClass(frameClass,       arrayClass, "Frame");
     initializeSystemClass(primitiveClass,  objectClass, "Primitive");
     initializeSystemClass(stringClass,     objectClass, "String");
     initializeSystemClass(doubleClass,     objectClass, "Double");
@@ -287,7 +285,6 @@ public class Universe {
     loadSystemClass(symbolClass);
     loadSystemClass(integerClass);
     loadSystemClass(bigintegerClass);
-    loadSystemClass(frameClass);
     loadSystemClass(primitiveClass);
     loadSystemClass(stringClass);
     loadSystemClass(doubleClass);
@@ -400,7 +397,7 @@ public class Universe {
     return result;
   }
 
-  public SBlock newBlock(SMethod method, SFrame context, int arguments) {
+  public SBlock newBlock(SMethod method, Frame context, int arguments) {
     // Allocate a new block and set its class to be the block class
     SBlock result = new SBlock(nilObject, method, context);
     result.setClass(getBlockClass(arguments));
@@ -418,20 +415,17 @@ public class Universe {
     return result;
   }
 
-  public SFrame newFrame(final SFrame previousFrame, final SMethod method,
-      final SAbstractObject context) {
-    // Allocate a new frame and set its class to be the frame class
-    SFrame result = new SFrame(nilObject, previousFrame, context, method);
-    result.setClass(frameClass);
+  public Frame newFrame(final Frame previousFrame, final SMethod method,
+      final Frame context) {
 
     // Compute the maximum number of stack locations (including arguments,
-    // locals and
-    // extra buffer to support doesNotUnderstand) and set the number of
-    // indexable fields accordingly
+    // locals and extra buffer to support doesNotUnderstand) and set the number
+    // of indexable fields accordingly
     int length = method.getNumberOfArguments()
         + method.getNumberOfLocals().getEmbeddedInteger()
         + method.getMaximumNumberOfStackElements().getEmbeddedInteger() + 2;
-    result.setNumberOfIndexableFieldsAndClear(length, nilObject);
+
+    Frame result = new Frame(nilObject, previousFrame, context, method, length);
 
     // Reset the stack pointer and the bytecode index
     result.resetStackPointer();

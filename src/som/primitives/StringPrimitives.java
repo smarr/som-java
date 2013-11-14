@@ -25,9 +25,9 @@
 
 package som.primitives;
 
+import som.interpreter.Frame;
 import som.interpreter.Interpreter;
 import som.vm.Universe;
-import som.vmobjects.SFrame;
 import som.vmobjects.SInteger;
 import som.vmobjects.SAbstractObject;
 import som.vmobjects.SPrimitive;
@@ -39,10 +39,12 @@ public class StringPrimitives extends Primitives {
     super(universe);
   }
 
+  @Override
   public void installPrimitives() {
     installInstancePrimitive(new SPrimitive("concatenate:", universe) {
 
-      public void invoke(final SFrame frame, final Interpreter interpreter) {
+      @Override
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         SString argument = (SString) frame.pop();
         SString self = (SString) frame.pop();
         frame.push(universe.newString(self.getEmbeddedString()
@@ -52,7 +54,8 @@ public class StringPrimitives extends Primitives {
 
     installInstancePrimitive(new SPrimitive("asSymbol", universe) {
 
-      public void invoke(final SFrame frame, final Interpreter interpreter) {
+      @Override
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         SString self = (SString) frame.pop();
         frame.push(universe.symbolFor(self.getEmbeddedString()));
       }
@@ -60,7 +63,8 @@ public class StringPrimitives extends Primitives {
 
     installInstancePrimitive(new SPrimitive("length", universe) {
 
-      public void invoke(final SFrame frame, final Interpreter interpreter) {
+      @Override
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         SString self = (SString) frame.pop();
         frame.push(universe.newInteger(self.getEmbeddedString().length()));
       }
@@ -68,7 +72,8 @@ public class StringPrimitives extends Primitives {
 
     installInstancePrimitive(new SPrimitive("=", universe) {
 
-      public void invoke(final SFrame frame, final Interpreter interpreter) {
+      @Override
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         SAbstractObject op1 = frame.pop();
         SString op2 = (SString) frame.pop(); // self
         if (op1.getSOMClass() == universe.stringClass) {
@@ -85,7 +90,8 @@ public class StringPrimitives extends Primitives {
 
     installInstancePrimitive(new SPrimitive("primSubstringFrom:to:", universe) {
 
-      public void invoke(final SFrame frame, final Interpreter interpreter) {
+      @Override
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         SInteger end   = (SInteger) frame.pop();
         SInteger start = (SInteger) frame.pop();
 
@@ -103,7 +109,8 @@ public class StringPrimitives extends Primitives {
 
     installInstancePrimitive(new SPrimitive("hashcode", universe) {
 
-      public void invoke(final SFrame frame, final Interpreter interpreter) {
+      @Override
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         SString self = (SString) frame.pop();
         frame.push(universe.newInteger(self.getEmbeddedString().hashCode()));
       }

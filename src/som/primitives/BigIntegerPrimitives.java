@@ -26,11 +26,11 @@ package som.primitives;
 
 import som.vm.Universe;
 import som.vmobjects.SBigInteger;
-import som.vmobjects.SFrame;
 import som.vmobjects.SInteger;
 import som.vmobjects.SAbstractObject;
 import som.vmobjects.SPrimitive;
 import som.interpreter.Interpreter;
+import som.interpreter.Frame;
 
 public class BigIntegerPrimitives extends Primitives {
 
@@ -41,7 +41,7 @@ public class BigIntegerPrimitives extends Primitives {
   public void installPrimitives() {
     installInstancePrimitive(new SPrimitive("asString", universe) {
 
-      public void invoke(final SFrame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         SBigInteger self = (SBigInteger) frame.pop();
         frame.push(universe.newString(self.getEmbeddedBiginteger().toString()));
       }
@@ -49,7 +49,7 @@ public class BigIntegerPrimitives extends Primitives {
 
     installInstancePrimitive(new SPrimitive("sqrt", universe) {
 
-      public void invoke(final SFrame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         SBigInteger self = (SBigInteger) frame.pop();
         frame.push(universe.newDouble(
             Math.sqrt(self.getEmbeddedBiginteger().doubleValue())));
@@ -58,7 +58,7 @@ public class BigIntegerPrimitives extends Primitives {
 
     installInstancePrimitive(new SPrimitive("+", universe) {
 
-      public void invoke(final SFrame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         SAbstractObject rightObj = frame.pop();
         SBigInteger right = null;
         SBigInteger left = (SBigInteger) frame.pop();
@@ -85,7 +85,7 @@ public class BigIntegerPrimitives extends Primitives {
 
     installInstancePrimitive(new SPrimitive("-", universe) {
 
-      public void invoke(final SFrame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         SAbstractObject rightObj = frame.pop();
         SBigInteger right = null;
         SBigInteger left = (SBigInteger) frame.pop();
@@ -112,7 +112,7 @@ public class BigIntegerPrimitives extends Primitives {
 
     installInstancePrimitive(new SPrimitive("*", universe) {
 
-      public void invoke(final SFrame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         SAbstractObject rightObj = frame.pop();
         SBigInteger right = null;
         SBigInteger left = (SBigInteger) frame.pop();
@@ -139,7 +139,7 @@ public class BigIntegerPrimitives extends Primitives {
 
     installInstancePrimitive(new SPrimitive("/", universe) {
 
-      public void invoke(final SFrame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         SAbstractObject rightObj = frame.pop();
         SBigInteger right = null;
         SBigInteger left = (SBigInteger) frame.pop();
@@ -166,7 +166,7 @@ public class BigIntegerPrimitives extends Primitives {
 
     installInstancePrimitive(new SPrimitive("%", universe) {
 
-      public void invoke(final SFrame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         SAbstractObject rightObj = frame.pop();
         SBigInteger right = null;
         SBigInteger left = (SBigInteger) frame.pop();
@@ -188,7 +188,7 @@ public class BigIntegerPrimitives extends Primitives {
 
     installInstancePrimitive(new SPrimitive("&", universe) {
 
-      public void invoke(final SFrame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         SAbstractObject rightObj = frame.pop();
         SBigInteger right = null;
         SBigInteger left = (SBigInteger) frame.pop();
@@ -210,7 +210,7 @@ public class BigIntegerPrimitives extends Primitives {
 
     installInstancePrimitive(new SPrimitive("=", universe) {
 
-      public void invoke(final SFrame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         SAbstractObject rightObj = frame.pop();
         SBigInteger right = null;
         SBigInteger left = (SBigInteger) frame.pop();
@@ -236,7 +236,7 @@ public class BigIntegerPrimitives extends Primitives {
 
     installInstancePrimitive(new SPrimitive("<", universe) {
 
-      public void invoke(final SFrame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         SAbstractObject rightObj = frame.pop();
         SBigInteger right = null;
         SBigInteger left = (SBigInteger) frame.pop();

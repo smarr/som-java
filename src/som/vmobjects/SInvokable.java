@@ -25,6 +25,7 @@
 package som.vmobjects;
 
 import som.interpreter.Interpreter;
+import som.interpreter.Frame;
 
 public interface SInvokable {
 
@@ -32,7 +33,7 @@ public interface SInvokable {
   boolean isPrimitive();
 
   // Invoke this invokable object in a given frame
-  void invoke(final SFrame frame, final Interpreter interpreter);
+  void invoke(final Frame frame, final Interpreter interpreter);
 
   // Get the signature for this invokable object
   SSymbol getSignature();

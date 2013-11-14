@@ -26,8 +26,8 @@ package som.primitives;
 
 import som.vm.Universe;
 import som.interpreter.Interpreter;
+import som.interpreter.Frame;
 import som.vmobjects.SDouble;
-import som.vmobjects.SFrame;
 import som.vmobjects.SInteger;
 import som.vmobjects.SAbstractObject;
 import som.vmobjects.SPrimitive;
@@ -49,7 +49,7 @@ public class DoublePrimitives extends Primitives {
   public void installPrimitives() {
     installInstancePrimitive(new SPrimitive("asString", universe) {
 
-      public void invoke(final SFrame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         SDouble self = (SDouble) frame.pop();
         frame.push(universe.newString(
             java.lang.Double.toString(self.getEmbeddedDouble())));
@@ -58,7 +58,7 @@ public class DoublePrimitives extends Primitives {
 
     installInstancePrimitive(new SPrimitive("sqrt", universe) {
 
-      public void invoke(final SFrame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         SDouble self = (SDouble) frame.pop();
         frame.push(universe.newDouble(Math.sqrt(self.getEmbeddedDouble())));
       }
@@ -66,7 +66,7 @@ public class DoublePrimitives extends Primitives {
 
     installInstancePrimitive(new SPrimitive("+", universe) {
 
-      public void invoke(final SFrame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         SDouble op1 = coerceToDouble(frame.pop());
         SDouble op2 = (SDouble) frame.pop();
         frame.push(universe.newDouble(op1.getEmbeddedDouble()
@@ -76,7 +76,7 @@ public class DoublePrimitives extends Primitives {
 
     installInstancePrimitive(new SPrimitive("-", universe) {
 
-      public void invoke(final SFrame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         SDouble op1 = coerceToDouble(frame.pop());
         SDouble op2 = (SDouble) frame.pop();
         frame.push(universe.newDouble(op2.getEmbeddedDouble()
@@ -86,7 +86,7 @@ public class DoublePrimitives extends Primitives {
 
     installInstancePrimitive(new SPrimitive("*", universe) {
 
-      public void invoke(final SFrame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         SDouble op1 = coerceToDouble(frame.pop());
         SDouble op2 = (SDouble) frame.pop();
         frame.push(universe.newDouble(op2.getEmbeddedDouble()
@@ -96,7 +96,7 @@ public class DoublePrimitives extends Primitives {
 
     installInstancePrimitive(new SPrimitive("//", universe) {
 
-      public void invoke(final SFrame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         SDouble op1 = coerceToDouble(frame.pop());
         SDouble op2 = (SDouble) frame.pop();
         frame.push(universe.newDouble(op2.getEmbeddedDouble()
@@ -106,7 +106,7 @@ public class DoublePrimitives extends Primitives {
 
     installInstancePrimitive(new SPrimitive("%", universe) {
 
-      public void invoke(final SFrame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         SDouble op1 = coerceToDouble(frame.pop());
         SDouble op2 = (SDouble) frame.pop();
         frame.push(universe.newDouble(op2.getEmbeddedDouble()
@@ -116,7 +116,7 @@ public class DoublePrimitives extends Primitives {
 
     installInstancePrimitive(new SPrimitive("=", universe) {
 
-      public void invoke(final SFrame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         SDouble op1 = coerceToDouble(frame.pop());
         SDouble op2 = (SDouble) frame.pop();
         if (op1.getEmbeddedDouble() == op2.getEmbeddedDouble()) {
@@ -129,7 +129,7 @@ public class DoublePrimitives extends Primitives {
 
     installInstancePrimitive(new SPrimitive("<", universe) {
 
-      public void invoke(SFrame frame, final Interpreter interpreter) {
+      public void invoke(Frame frame, final Interpreter interpreter) {
         SDouble op1 = coerceToDouble(frame.pop());
         SDouble op2 = (SDouble) frame.pop();
         if (op2.getEmbeddedDouble() < op1.getEmbeddedDouble()) {
@@ -142,7 +142,7 @@ public class DoublePrimitives extends Primitives {
 
     installInstancePrimitive(new SPrimitive("round", universe) {
 
-      public void invoke(SFrame frame, Interpreter interpreter) {
+      public void invoke(Frame frame, Interpreter interpreter) {
         SDouble rcvr = (SDouble) frame.pop();
         long result = Math.round(rcvr.getEmbeddedDouble());
         if (result > java.lang.Integer.MAX_VALUE
