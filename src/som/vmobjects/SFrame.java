@@ -38,43 +38,43 @@ import som.vm.Universe;
  * | ...             |
  * +-----------------+
  */
-public class Frame extends Array {
+public class SFrame extends SArray {
 
-  public Frame(final Object nilObject, final Frame previousFrame,
-      final Object context, final Method method) {
+  public SFrame(final SAbstractObject nilObject, final SFrame previousFrame,
+      final SAbstractObject context, final SMethod method) {
     super(nilObject);
     this.previousFrame = previousFrame;
     this.context       = context;
     this.method        = method;
   }
 
-  public Frame getPreviousFrame() {
-    return (Frame) previousFrame;
+  public SFrame getPreviousFrame() {
+    return (SFrame) previousFrame;
   }
 
-  public void clearPreviousFrame(Object nilObject) {
+  public void clearPreviousFrame(SAbstractObject nilObject) {
     previousFrame = nilObject;
   }
 
-  public boolean hasPreviousFrame(Object nilObject) {
+  public boolean hasPreviousFrame(SAbstractObject nilObject) {
     return previousFrame != nilObject;
   }
 
-  public boolean isBootstrapFrame(Object nilObject) {
+  public boolean isBootstrapFrame(SAbstractObject nilObject) {
     return !hasPreviousFrame(nilObject);
   }
 
-  public Frame getContext() {
-    return (Frame) context;
+  public SFrame getContext() {
+    return (SFrame) context;
   }
 
-  public boolean hasContext(Object nilObject) {
+  public boolean hasContext(SAbstractObject nilObject) {
     return context != nilObject;
   }
 
-  public Frame getContext(int level) {
+  public SFrame getContext(int level) {
     // Get the context frame at the given level
-    Frame frame = this;
+    SFrame frame = this;
 
     // Iterate through the context chain until the given level is reached
     while (level > 0) {
@@ -89,9 +89,9 @@ public class Frame extends Array {
     return frame;
   }
 
-  public Frame getOuterContext(Object nilObject) {
+  public SFrame getOuterContext(SAbstractObject nilObject) {
     // Compute the outer context of this frame
-    Frame frame = this;
+    SFrame frame = this;
 
     // Iterate through the context chain until null is reached
     while (frame.hasContext(nilObject)) {
@@ -102,7 +102,7 @@ public class Frame extends Array {
     return frame;
   }
 
-  public Method getMethod() {
+  public SMethod getMethod() {
     return method;
   }
 
@@ -112,14 +112,14 @@ public class Frame extends Array {
     return numberOfFrameFields;
   }
 
-  public Object pop() {
+  public SAbstractObject pop() {
     // Pop an object from the expression stack and return it
     int stackPointer = getStackPointer();
     setStackPointer(stackPointer - 1);
     return getIndexableField(stackPointer);
   }
 
-  public void push(Object value) {
+  public void push(SAbstractObject value) {
     // Push an object onto the expression stack
     int stackPointer = getStackPointer() + 1;
     setIndexableField(stackPointer, value);
@@ -155,54 +155,54 @@ public class Frame extends Array {
     bytecodeIndex = value;
   }
 
-  public Object getStackElement(int index) {
+  public SAbstractObject getStackElement(int index) {
     // Get the stack element with the given index
     // (an index of zero yields the top element)
     return getIndexableField(getStackPointer() - index);
   }
 
-  public void setStackElement(int index, Object value) {
+  public void setStackElement(int index, SAbstractObject value) {
     // Set the stack element with the given index to the given value
     // (an index of zero yields the top element)
     setIndexableField(getStackPointer() - index, value);
   }
 
-  private Object getLocal(int index) {
+  private SAbstractObject getLocal(int index) {
     return getIndexableField(localOffset + index);
   }
 
-  private void setLocal(int index, Object value) {
+  private void setLocal(int index, SAbstractObject value) {
     setIndexableField(localOffset + index, value);
   }
 
-  public Object getLocal(int index, int contextLevel) {
+  public SAbstractObject getLocal(int index, int contextLevel) {
     // Get the local with the given index in the given context
     return getContext(contextLevel).getLocal(index);
   }
 
-  public void setLocal(int index, int contextLevel, Object value) {
+  public void setLocal(int index, int contextLevel, SAbstractObject value) {
     // Set the local with the given index in the given context to the given
     // value
     getContext(contextLevel).setLocal(index, value);
   }
 
-  public Object getArgument(int index, int contextLevel) {
+  public SAbstractObject getArgument(int index, int contextLevel) {
     // Get the context
-    Frame context = getContext(contextLevel);
+    SFrame context = getContext(contextLevel);
 
     // Get the argument with the given index
     return context.getIndexableField(index);
   }
 
-  public void setArgument(int index, int contextLevel, Object value) {
+  public void setArgument(int index, int contextLevel, SAbstractObject value) {
     // Get the context
-    Frame context = getContext(contextLevel);
+    SFrame context = getContext(contextLevel);
 
     // Set the argument with the given index to the given value
     context.setIndexableField(index, value);
   }
 
-  public void copyArgumentsFrom(Frame frame) {
+  public void copyArgumentsFrom(SFrame frame) {
     // copy arguments from frame:
     // - arguments are at the top of the stack of frame.
     // - copy them into the argument area of the current frame
@@ -212,7 +212,7 @@ public class Frame extends Array {
     }
   }
 
-  public void printStackTrace(Object nilObject) {
+  public void printStackTrace(SAbstractObject nilObject) {
     // Print a stack trace starting in this frame
     Universe.print(getMethod().getHolder().getName().getString());
     Universe.print(getBytecodeIndex() + "@"
@@ -229,9 +229,9 @@ public class Frame extends Array {
   // the offset at which local variables start
   private int      localOffset;
 
-  private final Method method;
-  private final Object context;
-  private       Object previousFrame;
+  private final SMethod method;
+  private final SAbstractObject context;
+  private       SAbstractObject previousFrame;
 
   // Static field indices and number of frame fields
   static final int numberOfFrameFields = numberOfObjectFields;

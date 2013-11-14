@@ -24,9 +24,9 @@
 
 package som.vmobjects;
 
-public class BigInteger extends Object {
+public class SBigInteger extends SAbstractObject {
 
-  public BigInteger(final Object nilObject) {
+  public SBigInteger(final SAbstractObject nilObject) {
     super(nilObject);
   }
 

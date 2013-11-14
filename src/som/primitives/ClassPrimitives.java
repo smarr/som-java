@@ -26,9 +26,9 @@ package som.primitives;
 
 import som.vm.Universe;
 import som.interpreter.Interpreter;
-import som.vmobjects.Class;
-import som.vmobjects.Frame;
-import som.vmobjects.Primitive;
+import som.vmobjects.SClass;
+import som.vmobjects.SFrame;
+import som.vmobjects.SPrimitive;
 
 public class ClassPrimitives extends Primitives {
 
@@ -37,10 +37,10 @@ public class ClassPrimitives extends Primitives {
   }
 
   public void installPrimitives() {
-    installInstancePrimitive(new Primitive("new", universe) {
+    installInstancePrimitive(new SPrimitive("new", universe) {
 
-      public void invoke(final Frame frame, final Interpreter interpreter) {
-        Class self = (Class) frame.pop();
+      public void invoke(final SFrame frame, final Interpreter interpreter) {
+        SClass self = (SClass) frame.pop();
         frame.push(universe.newInstance(self));
       }
     });

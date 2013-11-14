@@ -28,14 +28,14 @@ package som.vmobjects;
 import som.interpreter.Interpreter;
 import som.vm.Universe;
 
-public abstract class Primitive extends Object implements Invokable {
+public abstract class SPrimitive extends SAbstractObject implements SInvokable {
 
   @Override
   public boolean isPrimitive() {
     return true;
   }
 
-  public Primitive(java.lang.String signatureString, final Universe universe) {
+  public SPrimitive(java.lang.String signatureString, final Universe universe) {
     super(universe.nilObject);
 
     // Set the class of this primitive to be the universal primitive class
@@ -46,24 +46,24 @@ public abstract class Primitive extends Object implements Invokable {
   }
 
   @Override
-  public Symbol getSignature() {
+  public SSymbol getSignature() {
     // Get the signature by reading the field with signature index
-    return (Symbol) getField(signatureIndex);
+    return (SSymbol) getField(signatureIndex);
   }
 
-  public void setSignature(Symbol value) {
+  public void setSignature(SSymbol value) {
     // Set the signature by writing to the field with signature index
     setField(signatureIndex, value);
   }
 
   @Override
-  public Class getHolder() {
+  public SClass getHolder() {
     // Get the holder of this method by reading the field with holder index
-    return (Class) getField(holderIndex);
+    return (SClass) getField(holderIndex);
   }
 
   @Override
-  public void setHolder(Class value) {
+  public void setHolder(SClass value) {
     // Set the holder of this method by writing to the field with holder
     // index
     setField(holderIndex, value);
@@ -80,13 +80,13 @@ public abstract class Primitive extends Object implements Invokable {
     return false;
   }
 
-  public static Primitive getEmptyPrimitive(java.lang.String signatureString,
+  public static SPrimitive getEmptyPrimitive(java.lang.String signatureString,
       final Universe universe) {
     // Return an empty primitive with the given signature
-    return (new Primitive(signatureString, universe) {
+    return (new SPrimitive(signatureString, universe) {
 
       @Override
-      public void invoke(final Frame frame, final Interpreter interpreter) {
+      public void invoke(final SFrame frame, final Interpreter interpreter) {
         // Write a warning to the screen
         Universe.println("Warning: undefined primitive "
             + this.getSignature().getString() + " called");

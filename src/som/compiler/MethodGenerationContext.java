@@ -29,10 +29,10 @@ import java.util.List;
 import java.util.Vector;
 
 import som.vm.Universe;
-import som.vmobjects.Invokable;
-import som.vmobjects.Method;
-import som.vmobjects.Primitive;
-import som.vmobjects.Symbol;
+import som.vmobjects.SInvokable;
+import som.vmobjects.SMethod;
+import som.vmobjects.SPrimitive;
+import som.vmobjects.SSymbol;
 
 import static som.interpreter.Bytecodes.*;
 
@@ -41,11 +41,11 @@ public class MethodGenerationContext {
   private ClassGenerationContext     holderGenc;
   private MethodGenerationContext    outerGenc;
   private boolean                    blockMethod;
-  private som.vmobjects.Symbol       signature;
+  private som.vmobjects.SSymbol       signature;
   private List<String>               arguments = new ArrayList<String>();
   private boolean                    primitive;
   private List<String>               locals    = new ArrayList<String>();
-  private List<som.vmobjects.Object> literals  = new ArrayList<som.vmobjects.Object>();
+  private List<som.vmobjects.SAbstractObject> literals  = new ArrayList<som.vmobjects.SAbstractObject>();
   private boolean                    finished;
   private Vector<Byte>               bytecode  = new Vector<Byte>();
 
@@ -61,16 +61,16 @@ public class MethodGenerationContext {
     return primitive;
   }
 
-  public Invokable assemblePrimitive(final Universe universe) {
-    return Primitive.getEmptyPrimitive(signature.getString(), universe);
+  public SInvokable assemblePrimitive(final Universe universe) {
+    return SPrimitive.getEmptyPrimitive(signature.getString(), universe);
   }
 
-  public Method assemble(final Universe universe) {
+  public SMethod assemble(final Universe universe) {
     // create a method instance with the given number of bytecodes and
     // literals
     int numLiterals = literals.size();
 
-    Method meth = universe.newMethod(signature, bytecode.size(), numLiterals);
+    SMethod meth = universe.newMethod(signature, bytecode.size(), numLiterals);
 
     // populate the fields that are immediately available
     int numLocals = locals.size();
@@ -80,7 +80,7 @@ public class MethodGenerationContext {
 
     // copy literals into the method
     int i = 0;
-    for (som.vmobjects.Object l : literals) {
+    for (som.vmobjects.SAbstractObject l : literals) {
       meth.setIndexableField(i++, l);
     }
 
@@ -137,7 +137,7 @@ public class MethodGenerationContext {
         case super_send: {
           // these are special: they need to look at the number of
           // arguments (extractable from the signature)
-          som.vmobjects.Symbol sig = (som.vmobjects.Symbol) literals.
+          som.vmobjects.SSymbol sig = (som.vmobjects.SSymbol) literals.
                get(bytecode.elementAt(i + 1));
 
           depth -= sig.getNumberOfSignatureArguments();
@@ -167,7 +167,7 @@ public class MethodGenerationContext {
     primitive = prim;
   }
 
-  public void setSignature(Symbol sig) {
+  public void setSignature(SSymbol sig) {
     signature = sig;
   }
 
@@ -213,7 +213,7 @@ public class MethodGenerationContext {
     finished = true;
   }
 
-  public boolean addLiteralIfAbsent(som.vmobjects.Object lit) {
+  public boolean addLiteralIfAbsent(som.vmobjects.SAbstractObject lit) {
     if (literals.contains(lit)) {
       return false;
     }
@@ -234,7 +234,7 @@ public class MethodGenerationContext {
     outerGenc = mgenc;
   }
 
-  public void addLiteral(som.vmobjects.Object lit) {
+  public void addLiteral(som.vmobjects.SAbstractObject lit) {
     literals.add(lit);
   }
 
@@ -258,11 +258,11 @@ public class MethodGenerationContext {
     return true;
   }
 
-  public boolean hasField(final Symbol field) {
+  public boolean hasField(final SSymbol field) {
     return holderGenc.hasField(field);
   }
 
-  public byte getFieldIndex(final Symbol field) {
+  public byte getFieldIndex(final SSymbol field) {
     return holderGenc.getFieldIndex(field);
   }
 
@@ -274,7 +274,7 @@ public class MethodGenerationContext {
     bytecode.add(code);
   }
 
-  public byte findLiteralIndex(som.vmobjects.Object lit) {
+  public byte findLiteralIndex(som.vmobjects.SAbstractObject lit) {
     return (byte) literals.indexOf(lit);
   }
 
@@ -282,7 +282,7 @@ public class MethodGenerationContext {
     return outerGenc;
   }
 
-  public som.vmobjects.Symbol getSignature() {
+  public som.vmobjects.SSymbol getSignature() {
     return signature;
   }
 

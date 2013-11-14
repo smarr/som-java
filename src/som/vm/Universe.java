@@ -30,18 +30,18 @@ import java.util.HashMap;
 import som.compiler.Disassembler;
 import som.interpreter.Bytecodes;
 import som.interpreter.Interpreter;
-import som.vmobjects.Array;
-import som.vmobjects.BigInteger;
-import som.vmobjects.Block;
-import som.vmobjects.Class;
-import som.vmobjects.Double;
-import som.vmobjects.Frame;
-import som.vmobjects.Integer;
-import som.vmobjects.Invokable;
-import som.vmobjects.Method;
-import som.vmobjects.Object;
-import som.vmobjects.String;
-import som.vmobjects.Symbol;
+import som.vmobjects.SArray;
+import som.vmobjects.SBigInteger;
+import som.vmobjects.SBlock;
+import som.vmobjects.SClass;
+import som.vmobjects.SDouble;
+import som.vmobjects.SFrame;
+import som.vmobjects.SInteger;
+import som.vmobjects.SInvokable;
+import som.vmobjects.SMethod;
+import som.vmobjects.SAbstractObject;
+import som.vmobjects.SString;
+import som.vmobjects.SSymbol;
 
 public class Universe {
 
@@ -237,7 +237,7 @@ public class Universe {
 
   private void initialize(java.lang.String[] arguments) {
     // Allocate the nil object
-    nilObject = new Object(null);
+    nilObject = new SAbstractObject(null);
 
     // Allocate the Metaclass classes
     metaclassClass = newMetaclassClass();
@@ -293,17 +293,17 @@ public class Universe {
     blockClass = loadClass(symbolFor("Block"));
 
     // Setup the true and false objects
-    Symbol trueSymbol = symbolFor("True");
+    SSymbol trueSymbol = symbolFor("True");
     trueClass   = loadClass(trueSymbol);
     trueObject  = newInstance(trueClass);
 
-    Symbol falseSymbol = symbolFor("False");
+    SSymbol falseSymbol = symbolFor("False");
     falseClass  = loadClass(falseSymbol);
     falseObject = newInstance(falseClass);
 
     // Load the system class and create an instance of it
     systemClass = loadClass(symbolFor("System"));
-    Object systemObject = newInstance(systemClass);
+    SAbstractObject systemObject = newInstance(systemClass);
 
     // Put special objects and classes into the dictionary of globals
     setGlobal(symbolFor("nil"),    nilObject);
@@ -317,7 +317,7 @@ public class Universe {
     setGlobal(falseSymbol, falseClass);
 
     // Create a fake bootstrap method to simplify later frame traversal
-    Method bootstrapMethod = newMethod(symbolFor("bootstrap"), 1, 0);
+    SMethod bootstrapMethod = newMethod(symbolFor("bootstrap"), 1, 0);
     bootstrapMethod.setBytecode(0, Bytecodes.halt);
     bootstrapMethod.setNumberOfLocals(newInteger(0));
     bootstrapMethod.setMaximumNumberOfStackElements(newInteger(2));
@@ -332,15 +332,15 @@ public class Universe {
     }
 
     // Convert the arguments into an array
-    Array argumentsArray = newArray(arguments);
+    SArray argumentsArray = newArray(arguments);
 
     // Create a fake bootstrap frame with the system object on the stack
-    Frame bootstrapFrame = interpreter.pushNewFrame(bootstrapMethod);
+    SFrame bootstrapFrame = interpreter.pushNewFrame(bootstrapMethod);
     bootstrapFrame.push(systemObject);
     bootstrapFrame.push(argumentsArray);
 
     // Lookup the initialize invokable on the system class
-    Invokable initialize = systemClass.lookupInvokable(symbolFor("initialize:"));
+    SInvokable initialize = systemClass.lookupInvokable(symbolFor("initialize:"));
 
     // Invoke the initialize invokable
     initialize.invoke(bootstrapFrame, interpreter);
@@ -349,9 +349,9 @@ public class Universe {
     interpreter.start();
   }
 
-  public Symbol symbolFor(java.lang.String string) {
+  public SSymbol symbolFor(java.lang.String string) {
     // Lookup the symbol in the symbol table
-    Symbol result = symbolTable.lookup(string);
+    SSymbol result = symbolTable.lookup(string);
     if (result != null) { return result; }
 
     // Create a new symbol and return it
@@ -359,9 +359,9 @@ public class Universe {
     return result;
   }
 
-  public Array newArray(int length) {
+  public SArray newArray(int length) {
     // Allocate a new array and set its class to be the array class
-    Array result = new Array(nilObject);
+    SArray result = new SArray(nilObject);
     result.setClass(arrayClass);
 
     // Set the number of indexable fields to the given value (length)
@@ -371,22 +371,22 @@ public class Universe {
     return result;
   }
 
-  public Array newArray(java.util.List<?> list) {
+  public SArray newArray(java.util.List<?> list) {
     // Allocate a new array with the same length as the list
-    Array result = newArray(list.size());
+    SArray result = newArray(list.size());
 
     // Copy all elements from the list into the array
     for (int i = 0; i < list.size(); i++) {
-      result.setIndexableField(i, (Object) list.get(i));
+      result.setIndexableField(i, (SAbstractObject) list.get(i));
     }
 
     // Return the allocated and initialized array
     return result;
   }
 
-  public Array newArray(java.lang.String[] stringArray) {
+  public SArray newArray(java.lang.String[] stringArray) {
     // Allocate a new array with the same length as the string array
-    Array result = newArray(stringArray.length);
+    SArray result = newArray(stringArray.length);
 
     // Copy all elements from the string array into the array
     for (int i = 0; i < stringArray.length; i++) {
@@ -397,28 +397,28 @@ public class Universe {
     return result;
   }
 
-  public Block newBlock(Method method, Frame context, int arguments) {
+  public SBlock newBlock(SMethod method, SFrame context, int arguments) {
     // Allocate a new block and set its class to be the block class
-    Block result = new Block(nilObject, method, context);
+    SBlock result = new SBlock(nilObject, method, context);
     result.setClass(getBlockClass(arguments));
 
     // Return the freshly allocated block
     return result;
   }
 
-  public Class newClass(Class classClass) {
+  public SClass newClass(SClass classClass) {
     // Allocate a new class and set its class to be the given class class
-    Class result = new Class(classClass.getNumberOfInstanceFields(), this);
+    SClass result = new SClass(classClass.getNumberOfInstanceFields(), this);
     result.setClass(classClass);
 
     // Return the freshly allocated class
     return result;
   }
 
-  public Frame newFrame(final Frame previousFrame, final Method method,
-      final Object context) {
+  public SFrame newFrame(final SFrame previousFrame, final SMethod method,
+      final SAbstractObject context) {
     // Allocate a new frame and set its class to be the frame class
-    Frame result = new Frame(nilObject, previousFrame, context, method);
+    SFrame result = new SFrame(nilObject, previousFrame, context, method);
     result.setClass(frameClass);
 
     // Compute the maximum number of stack locations (including arguments,
@@ -438,10 +438,10 @@ public class Universe {
     return result;
   }
 
-  public Method newMethod(Symbol signature, int numberOfBytecodes,
+  public SMethod newMethod(SSymbol signature, int numberOfBytecodes,
       int numberOfLiterals) {
     // Allocate a new method and set its class to be the method class
-    Method result = new Method(nilObject);
+    SMethod result = new SMethod(nilObject);
     result.setClass(methodClass);
 
     // Set the signature and the number of bytecodes
@@ -453,9 +453,9 @@ public class Universe {
     return result;
   }
 
-  public Object newInstance(Class instanceClass) {
+  public SAbstractObject newInstance(SClass instanceClass) {
     // Allocate a new instance and set its class to be the given class
-    Object result = new Object(instanceClass.getNumberOfInstanceFields(),
+    SAbstractObject result = new SAbstractObject(instanceClass.getNumberOfInstanceFields(),
         nilObject);
     result.setClass(instanceClass);
 
@@ -463,9 +463,9 @@ public class Universe {
     return result;
   }
 
-  public Integer newInteger(int value) {
+  public SInteger newInteger(int value) {
     // Allocate a new integer and set its class to be the integer class
-    Integer result = new Integer(nilObject);
+    SInteger result = new SInteger(nilObject);
     result.setClass(integerClass);
 
     // Set the embedded integer of the newly allocated integer
@@ -475,9 +475,9 @@ public class Universe {
     return result;
   }
 
-  public BigInteger newBigInteger(java.math.BigInteger value) {
+  public SBigInteger newBigInteger(java.math.BigInteger value) {
     // Allocate a new integer and set its class to be the integer class
-    BigInteger result = new BigInteger(nilObject);
+    SBigInteger result = new SBigInteger(nilObject);
     result.setClass(bigintegerClass);
 
     // Set the embedded integer of the newly allocated integer
@@ -487,9 +487,9 @@ public class Universe {
     return result;
   }
 
-  public BigInteger newBigInteger(long value) {
+  public SBigInteger newBigInteger(long value) {
     // Allocate a new integer and set its class to be the integer class
-    BigInteger result = new BigInteger(nilObject);
+    SBigInteger result = new SBigInteger(nilObject);
     result.setClass(bigintegerClass);
 
     // Set the embedded integer of the newly allocated integer
@@ -500,9 +500,9 @@ public class Universe {
     return result;
   }
 
-  public Double newDouble(double value) {
+  public SDouble newDouble(double value) {
     // Allocate a new integer and set its class to be the double class
-    Double result = new Double(nilObject);
+    SDouble result = new SDouble(nilObject);
     result.setClass(doubleClass);
 
     // Set the embedded double of the newly allocated double
@@ -512,10 +512,10 @@ public class Universe {
     return result;
   }
 
-  public Class newMetaclassClass() {
+  public SClass newMetaclassClass() {
     // Allocate the metaclass classes
-    Class result = new Class(this);
-    result.setClass(new Class(this));
+    SClass result = new SClass(this);
+    result.setClass(new SClass(this));
 
     // Setup the metaclass hierarchy
     result.getSOMClass().setClass(result);
@@ -524,9 +524,9 @@ public class Universe {
     return result;
   }
 
-  public String newString(java.lang.String embeddedString) {
+  public SString newString(java.lang.String embeddedString) {
     // Allocate a new string and set its class to be the string class
-    String result = new String(nilObject);
+    SString result = new SString(nilObject);
     result.setClass(stringClass);
 
     // Put the embedded string into the new string
@@ -536,9 +536,9 @@ public class Universe {
     return result;
   }
 
-  public Symbol newSymbol(java.lang.String string) {
+  public SSymbol newSymbol(java.lang.String string) {
     // Allocate a new symbol and set its class to be the symbol class
-    Symbol result = new Symbol(nilObject);
+    SSymbol result = new SSymbol(nilObject);
     result.setClass(symbolClass);
 
     // Put the string into the symbol
@@ -551,19 +551,19 @@ public class Universe {
     return result;
   }
 
-  public Class newSystemClass() {
+  public SClass newSystemClass() {
     // Allocate the new system class
-    Class systemClass = new Class(this);
+    SClass systemClass = new SClass(this);
 
     // Setup the metaclass hierarchy
-    systemClass.setClass(new Class(this));
+    systemClass.setClass(new SClass(this));
     systemClass.getSOMClass().setClass(metaclassClass);
 
     // Return the freshly allocated system class
     return systemClass;
   }
 
-  public void initializeSystemClass(Class systemClass, Class superClass,
+  public void initializeSystemClass(SClass systemClass, SClass superClass,
       java.lang.String name) {
     // Initialize the superclass hierarchy
     if (superClass != null) {
@@ -589,7 +589,7 @@ public class Universe {
     setGlobal(systemClass.getName(), systemClass);
   }
 
-  public Object getGlobal(Symbol name) {
+  public SAbstractObject getGlobal(SSymbol name) {
     // Return the global with the given name if it's in the dictionary of
     // globals
     if (hasGlobal(name)) { return globals.get(name); }
@@ -598,36 +598,36 @@ public class Universe {
     return null;
   }
 
-  public void setGlobal(Symbol name, Object value) {
+  public void setGlobal(SSymbol name, SAbstractObject value) {
     // Insert the given value into the dictionary of globals
     globals.put(name, value);
   }
 
-  public boolean hasGlobal(Symbol name) {
+  public boolean hasGlobal(SSymbol name) {
     // Returns if the universe has a value for the global of the given name
     return globals.containsKey(name);
   }
 
-  public Class getBlockClass() {
+  public SClass getBlockClass() {
     // Get the generic block class
     return blockClass;
   }
 
-  public Class getBlockClass(int numberOfArguments) {
+  public SClass getBlockClass(int numberOfArguments) {
     // Compute the name of the block class with the given number of
     // arguments
-    Symbol name = symbolFor("Block"
+    SSymbol name = symbolFor("Block"
         + java.lang.Integer.toString(numberOfArguments));
 
     // Lookup the specific block class in the dictionary of globals and
     // return it
-    if (hasGlobal(name)) { return (Class) getGlobal(name); }
+    if (hasGlobal(name)) { return (SClass) getGlobal(name); }
 
     // Get the block class for blocks with the given number of arguments
-    Class result = loadClass(name, null);
+    SClass result = loadClass(name, null);
 
     // Add the appropriate value primitive to the block class
-    result.addInstancePrimitive(Block.getEvaluationPrimitive(numberOfArguments,
+    result.addInstancePrimitive(SBlock.getEvaluationPrimitive(numberOfArguments,
         this));
 
     // Insert the block class into the dictionary of globals
@@ -637,33 +637,33 @@ public class Universe {
     return result;
   }
 
-  public Class loadClass(Symbol name) {
+  public SClass loadClass(SSymbol name) {
     // Check if the requested class is already in the dictionary of globals
-    if (hasGlobal(name)) { return (Class) getGlobal(name); }
+    if (hasGlobal(name)) { return (SClass) getGlobal(name); }
 
     // Load the class
-    Class result = loadClass(name, null);
+    SClass result = loadClass(name, null);
 
     // Load primitives (if necessary) and return the resulting class
     if (result != null && result.hasPrimitives()) { result.loadPrimitives(); }
     return result;
   }
 
-  public void loadSystemClass(Class systemClass) {
+  public void loadSystemClass(SClass systemClass) {
     // Load the system class
-    Class result = loadClass(systemClass.getName(), systemClass);
+    SClass result = loadClass(systemClass.getName(), systemClass);
 
     // Load primitives if necessary
     if (result.hasPrimitives()) { result.loadPrimitives(); }
   }
 
-  private Class loadClass(Symbol name, Class systemClass) {
+  private SClass loadClass(SSymbol name, SClass systemClass) {
     // Try loading the class from all different paths
     for (java.lang.String cpEntry : classPath) {
       try {
         // Load the class from a file and return the loaded class
-        Class result = som.compiler.SourcecodeCompiler.compileClass(cpEntry
-            + fileSeparator, name.getString(), systemClass, this);
+        SClass result = som.compiler.SourcecodeCompiler.compileClass(cpEntry,
+            name.getString(), systemClass, this);
         if (dumpBytecodes) {
           Disassembler.dump(result.getSOMClass());
           Disassembler.dump(result);
@@ -679,12 +679,12 @@ public class Universe {
     return null;
   }
 
-  public Class loadShellClass(java.lang.String stmt) throws IOException {
+  public SClass loadShellClass(java.lang.String stmt) throws IOException {
     // java.io.ByteArrayInputStream in = new
     // java.io.ByteArrayInputStream(stmt.getBytes());
 
     // Load the class from a stream and return the loaded class
-    Class result = som.compiler.SourcecodeCompiler.compileClass(stmt, null,
+    SClass result = som.compiler.SourcecodeCompiler.compileClass(stmt, null,
         this);
     if (dumpBytecodes) { Disassembler.dump(result); }
     return result;
@@ -726,31 +726,30 @@ public class Universe {
     // Checkstyle: resume
   }
 
-  public Object                                 nilObject;
-  public Object                                 trueObject;
-  public Object                                 falseObject;
+  public SAbstractObject                                 nilObject;
+  public SAbstractObject                                 trueObject;
+  public SAbstractObject                                 falseObject;
 
-  public Class                                  objectClass;
-  public Class                                  classClass;
-  public Class                                  metaclassClass;
+  public SClass                                  objectClass;
+  public SClass                                  classClass;
+  public SClass                                  metaclassClass;
 
-  public Class                                  nilClass;
-  public Class                                  integerClass;
-  public Class                                  bigintegerClass;
-  public Class                                  arrayClass;
-  public Class                                  methodClass;
-  public Class                                  symbolClass;
-  public Class                                  frameClass;
-  public Class                                  primitiveClass;
-  public Class                                  stringClass;
-  public Class                                  systemClass;
-  public Class                                  blockClass;
-  public Class                                  doubleClass;
+  public SClass                                  nilClass;
+  public SClass                                  integerClass;
+  public SClass                                  bigintegerClass;
+  public SClass                                  arrayClass;
+  public SClass                                  methodClass;
+  public SClass                                  symbolClass;
+  public SClass                                  primitiveClass;
+  public SClass                                  stringClass;
+  public SClass                                  systemClass;
+  public SClass                                  blockClass;
+  public SClass                                  doubleClass;
 
-  public Class                                  trueClass;
-  public Class                                  falseClass;
+  public SClass                                  trueClass;
+  public SClass                                  falseClass;
 
-  private final HashMap<Symbol, som.vmobjects.Object> globals = new HashMap<Symbol, som.vmobjects.Object>();
+  private final HashMap<SSymbol, som.vmobjects.SAbstractObject> globals = new HashMap<SSymbol, som.vmobjects.SAbstractObject>();
   private java.lang.String[]                    classPath;
   private boolean                               dumpBytecodes;
 

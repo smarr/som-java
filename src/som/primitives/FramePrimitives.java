@@ -2,8 +2,8 @@ package som.primitives;
 
 import som.interpreter.Interpreter;
 import som.vm.Universe;
-import som.vmobjects.Frame;
-import som.vmobjects.Primitive;
+import som.vmobjects.SFrame;
+import som.vmobjects.SPrimitive;
 
 public class FramePrimitives extends Primitives {
 
@@ -12,20 +12,20 @@ public class FramePrimitives extends Primitives {
   }
 
   public void installPrimitives() {
-    installInstancePrimitive(new Primitive("method", universe) {
+    installInstancePrimitive(new SPrimitive("method", universe) {
 
       @Override
-      public void invoke(Frame frame, Interpreter interpreter) {
-        Frame self = (Frame) frame.pop();
+      public void invoke(SFrame frame, Interpreter interpreter) {
+        SFrame self = (SFrame) frame.pop();
         frame.push(self.getMethod());
       }
     });
 
-    installInstancePrimitive(new Primitive("previousFrame", universe) {
+    installInstancePrimitive(new SPrimitive("previousFrame", universe) {
 
       @Override
-      public void invoke(Frame frame, Interpreter interpreter) {
-        Frame self = (Frame) frame.pop();
+      public void invoke(SFrame frame, Interpreter interpreter) {
+        SFrame self = (SFrame) frame.pop();
         frame.push(self.getPreviousFrame());
       }
     });

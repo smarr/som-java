@@ -25,11 +25,11 @@
 package som.vm;
 
 import som.interpreter.Interpreter;
-import som.vmobjects.Class;
-import som.vmobjects.Frame;
-import som.vmobjects.Invokable;
-import som.vmobjects.Method;
-import som.vmobjects.Object;
+import som.vmobjects.SClass;
+import som.vmobjects.SFrame;
+import som.vmobjects.SInvokable;
+import som.vmobjects.SMethod;
+import som.vmobjects.SAbstractObject;
 
 public class Shell {
 
@@ -41,9 +41,9 @@ public class Shell {
     this.interpreter = interpreter;
   }
 
-  private Method bootstrapMethod;
+  private SMethod bootstrapMethod;
 
-  public void setBootstrapMethod(Method method) {
+  public void setBootstrapMethod(SMethod method) {
     bootstrapMethod = method;
   }
 
@@ -53,10 +53,10 @@ public class Shell {
     java.lang.String stmt;
     int counter;
     int bytecodeIndex;
-    Class myClass;
-    Object myObject;
-    Object it;
-    Frame currentFrame;
+    SClass myClass;
+    SAbstractObject myObject;
+    SAbstractObject it;
+    SFrame currentFrame;
 
     counter = 0;
     in = new java.io.BufferedReader(new java.io.InputStreamReader(
@@ -104,7 +104,7 @@ public class Shell {
           currentFrame.push(it);
 
           // Lookup the run: method
-          Invokable initialize = myClass.lookupInvokable(
+          SInvokable initialize = myClass.lookupInvokable(
               universe.symbolFor("run:"));
 
           // Invoke the run method

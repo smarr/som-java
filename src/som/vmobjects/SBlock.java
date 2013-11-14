@@ -27,20 +27,20 @@ package som.vmobjects;
 import som.interpreter.Interpreter;
 import som.vm.Universe;
 
-public class Block extends Object {
+public class SBlock extends SAbstractObject {
 
-  public Block(final Object nilObject, final Method method,
-      final Frame context) {
+  public SBlock(final SAbstractObject nilObject, final SMethod method,
+      final SFrame context) {
     super(nilObject);
     this.method  = method;
     this.context = context;
   }
 
-  public Method getMethod() {
+  public SMethod getMethod() {
     return method;
   }
 
-  public Frame getContext() {
+  public SFrame getContext() {
     return context;
   }
 
@@ -50,12 +50,12 @@ public class Block extends Object {
     return numberOfBlockFields;
   }
 
-  public static Primitive getEvaluationPrimitive(int numberOfArguments,
+  public static SPrimitive getEvaluationPrimitive(int numberOfArguments,
       final Universe universe) {
     return new Evaluation(numberOfArguments, universe);
   }
 
-  public static class Evaluation extends Primitive {
+  public static class Evaluation extends SPrimitive {
 
     public Evaluation(int numberOfArguments, final Universe universe) {
       super(computeSignatureString(numberOfArguments), universe);
@@ -63,16 +63,16 @@ public class Block extends Object {
     }
 
     @Override
-    public void invoke(final Frame frame, final Interpreter interpreter) {
+    public void invoke(final SFrame frame, final Interpreter interpreter) {
       // Get the block (the receiver) from the stack
-      Block self = (Block) frame.getStackElement(numberOfArguments - 1);
+      SBlock self = (SBlock) frame.getStackElement(numberOfArguments - 1);
 
       // Get the context of the block...
-      Frame context = self.getContext();
+      SFrame context = self.getContext();
 
       // Push a new frame and set its context to be the one specified in
       // the block
-      Frame newFrame = interpreter.pushNewFrame(self.getMethod(), context);
+      SFrame newFrame = interpreter.pushNewFrame(self.getMethod(), context);
       newFrame.copyArgumentsFrom(frame);
     }
 
@@ -93,8 +93,8 @@ public class Block extends Object {
     private final int numberOfArguments;
   }
 
-  private final Method method;
-  private final Frame  context;
+  private final SMethod method;
+  private final SFrame  context;
 
   // Static field indices and number of block fields
   static final int numberOfBlockFields = numberOfObjectFields;

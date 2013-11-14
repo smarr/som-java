@@ -24,9 +24,9 @@
 
 package som.vmobjects;
 
-public class Integer extends Object {
+public class SInteger extends SAbstractObject {
 
-  public Integer(final Object nilObject) {
+  public SInteger(final SAbstractObject nilObject) {
     super(nilObject);
   }
 

@@ -39,8 +39,8 @@ import static som.interpreter.Bytecodes.return_local;
 import static som.interpreter.Bytecodes.return_non_local;
 import static som.interpreter.Bytecodes.send;
 import static som.interpreter.Bytecodes.super_send;
-import som.vmobjects.Method;
-import som.vmobjects.Symbol;
+import som.vmobjects.SMethod;
+import som.vmobjects.SSymbol;
 
 public class BytecodeGenerator {
 
@@ -64,7 +64,7 @@ public class BytecodeGenerator {
     emit1(mgenc, dup);
   }
 
-  public void emitPUSHBLOCK(MethodGenerationContext mgenc, Method blockMethod) {
+  public void emitPUSHBLOCK(MethodGenerationContext mgenc, SMethod blockMethod) {
     emit2(mgenc, push_block, mgenc.findLiteralIndex(blockMethod));
   }
 
@@ -72,11 +72,11 @@ public class BytecodeGenerator {
     emit3(mgenc, push_local, idx, ctx);
   }
 
-  public void emitPUSHFIELD(MethodGenerationContext mgenc, Symbol fieldName) {
+  public void emitPUSHFIELD(MethodGenerationContext mgenc, SSymbol fieldName) {
     emit2(mgenc, push_field, mgenc.getFieldIndex(fieldName));
   }
 
-  public void emitPUSHGLOBAL(MethodGenerationContext mgenc, Symbol global) {
+  public void emitPUSHGLOBAL(MethodGenerationContext mgenc, SSymbol global) {
     emit2(mgenc, push_global, mgenc.findLiteralIndex(global));
   }
 
@@ -88,20 +88,20 @@ public class BytecodeGenerator {
     emit3(mgenc, pop_local, idx, ctx);
   }
 
-  public void emitPOPFIELD(MethodGenerationContext mgenc, Symbol fieldName) {
+  public void emitPOPFIELD(MethodGenerationContext mgenc, SSymbol fieldName) {
     emit2(mgenc, pop_field, mgenc.getFieldIndex(fieldName));
   }
 
-  public void emitSUPERSEND(MethodGenerationContext mgenc, Symbol msg) {
+  public void emitSUPERSEND(MethodGenerationContext mgenc, SSymbol msg) {
     emit2(mgenc, super_send, mgenc.findLiteralIndex(msg));
   }
 
-  public void emitSEND(MethodGenerationContext mgenc, Symbol msg) {
+  public void emitSEND(MethodGenerationContext mgenc, SSymbol msg) {
     emit2(mgenc, send, mgenc.findLiteralIndex(msg));
   }
 
   public void emitPUSHCONSTANT(MethodGenerationContext mgenc,
-      som.vmobjects.Object lit) {
+      som.vmobjects.SAbstractObject lit) {
     emit2(mgenc, push_constant, mgenc.findLiteralIndex(lit));
   }
 

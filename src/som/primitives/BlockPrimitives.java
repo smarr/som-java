@@ -26,8 +26,8 @@ package som.primitives;
 
 import som.vm.Universe;
 import som.interpreter.Interpreter;
-import som.vmobjects.Frame;
-import som.vmobjects.Primitive;
+import som.vmobjects.SFrame;
+import som.vmobjects.SPrimitive;
 
 public class BlockPrimitives extends Primitives {
 
@@ -36,9 +36,9 @@ public class BlockPrimitives extends Primitives {
   }
 
   public void installPrimitives() {
-    installInstancePrimitive(new Primitive("restart", universe) {
+    installInstancePrimitive(new SPrimitive("restart", universe) {
 
-      public void invoke(final Frame frame, final Interpreter interpreter) {
+      public void invoke(final SFrame frame, final Interpreter interpreter) {
         frame.setBytecodeIndex(0);
         frame.resetStackPointer();
       }

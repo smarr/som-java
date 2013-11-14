@@ -27,17 +27,17 @@ package som.compiler;
 
 import som.interpreter.Bytecodes;
 import som.vm.Universe;
-import som.vmobjects.Class;
-import som.vmobjects.Invokable;
-import som.vmobjects.Method;
-import som.vmobjects.Object;
-import som.vmobjects.Symbol;
+import som.vmobjects.SClass;
+import som.vmobjects.SInvokable;
+import som.vmobjects.SMethod;
+import som.vmobjects.SAbstractObject;
+import som.vmobjects.SSymbol;
 
 public class Disassembler {
 
-  public static void dump(Class cl) {
+  public static void dump(SClass cl) {
     for (int i = 0; i < cl.getNumberOfInstanceInvokables(); i++) {
-      Invokable inv = cl.getInstanceInvokable(i);
+      SInvokable inv = cl.getInstanceInvokable(i);
 
       // output header and skip if the Invokable is a Primitive
       Universe.errorPrint(cl.getName().toString() + ">>"
@@ -48,11 +48,11 @@ public class Disassembler {
         continue;
       }
       // output actual method
-      dumpMethod((Method) inv, "\t");
+      dumpMethod((SMethod) inv, "\t");
     }
   }
 
-  public static void dumpMethod(Method m, java.lang.String indent) {
+  public static void dumpMethod(SMethod m, java.lang.String indent) {
     Universe.errorPrintln("(");
 
     // output stack information
@@ -92,21 +92,21 @@ public class Disassembler {
           break;
         case Bytecodes.push_field:
           Universe.errorPrintln("(index: " + m.getBytecode(b + 1) + ") field: "
-              + ((Symbol) m.getConstant(b)).toString());
+              + ((SSymbol) m.getConstant(b)).toString());
           break;
         case Bytecodes.push_block:
           Universe.errorPrint("block: (index: " + m.getBytecode(b + 1) + ") ");
-          dumpMethod((Method) m.getConstant(b), indent + "\t");
+          dumpMethod((SMethod) m.getConstant(b), indent + "\t");
           break;
         case Bytecodes.push_constant:
-          Object constant = m.getConstant(b);
+          SAbstractObject constant = m.getConstant(b);
           Universe.errorPrintln("(index: " + m.getBytecode(b + 1) + ") value: "
               + "(" + constant.getSOMClass().getName().toString() + ") "
               + constant.toString());
           break;
         case Bytecodes.push_global:
           Universe.errorPrintln("(index: " + m.getBytecode(b + 1) + ") value: "
-              + ((Symbol) m.getConstant(b)).toString());
+              + ((SSymbol) m.getConstant(b)).toString());
           break;
         case Bytecodes.pop_local:
           Universe.errorPrintln("local: " + m.getBytecode(b + 1) + ", context: "
@@ -118,15 +118,15 @@ public class Disassembler {
           break;
         case Bytecodes.pop_field:
           Universe.errorPrintln("(index: " + m.getBytecode(b + 1) + ") field: "
-              + ((Symbol) m.getConstant(b)).toString());
+              + ((SSymbol) m.getConstant(b)).toString());
           break;
         case Bytecodes.send:
           Universe.errorPrintln("(index: " + m.getBytecode(b + 1)
-              + ") signature: " + ((Symbol) m.getConstant(b)).toString());
+              + ") signature: " + ((SSymbol) m.getConstant(b)).toString());
           break;
         case Bytecodes.super_send:
           Universe.errorPrintln("(index: " + m.getBytecode(b + 1)
-              + ") signature: " + ((Symbol) m.getConstant(b)).toString());
+              + ") signature: " + ((SSymbol) m.getConstant(b)).toString());
           break;
         default:
           Universe.errorPrintln("<incorrect bytecode>");

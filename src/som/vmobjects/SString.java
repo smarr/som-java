@@ -24,22 +24,26 @@
 
 package som.vmobjects;
 
-public class Double extends Object {
+public class SString extends SAbstractObject {
 
-  public Double(final Object nilObject) {
+  public SString(final SAbstractObject nilObject) {
     super(nilObject);
   }
 
-  public double getEmbeddedDouble() {
-    // Get the embedded double
-    return embeddedDouble;
+  public java.lang.String getEmbeddedString() {
+    // Get the string associated to this symbol
+    return string;
   }
 
-  public void setEmbeddedDouble(double value) {
-    // Set the embedded double to the given value
-    embeddedDouble = value;
+  public void setEmbeddedString(java.lang.String value) {
+    // Set the string associated to this symbol
+    string = value;
   }
 
-  // Private variable holding the embedded double
-  private double embeddedDouble;
+  public java.lang.String toString() {
+    return "\"" + string + "\"";
+  }
+
+  // Private variable holding the string associated to this symbol
+  private java.lang.String string;
 }

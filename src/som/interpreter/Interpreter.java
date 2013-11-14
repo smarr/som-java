@@ -25,13 +25,13 @@
 package som.interpreter;
 
 import som.vm.Universe;
-import som.vmobjects.Block;
-import som.vmobjects.Class;
-import som.vmobjects.Frame;
-import som.vmobjects.Invokable;
-import som.vmobjects.Method;
-import som.vmobjects.Object;
-import som.vmobjects.Symbol;
+import som.vmobjects.SBlock;
+import som.vmobjects.SClass;
+import som.vmobjects.SFrame;
+import som.vmobjects.SInvokable;
+import som.vmobjects.SMethod;
+import som.vmobjects.SAbstractObject;
+import som.vmobjects.SSymbol;
 
 public class Interpreter {
 
@@ -70,7 +70,7 @@ public class Interpreter {
 
   private void doPushBlock(int bytecodeIndex) {
     // Handle the push block bytecode
-    Method blockMethod = (Method) getMethod().getConstant(bytecodeIndex);
+    SMethod blockMethod = (SMethod) getMethod().getConstant(bytecodeIndex);
 
     // Push a new block with the current getFrame() as context onto the
     // stack
@@ -86,10 +86,10 @@ public class Interpreter {
 
   private void doPushGlobal(int bytecodeIndex) {
     // Handle the push global bytecode
-    Symbol globalName = (Symbol) getMethod().getConstant(bytecodeIndex);
+    SSymbol globalName = (SSymbol) getMethod().getConstant(bytecodeIndex);
 
     // Get the global from the universe
-    Object global = universe.getGlobal(globalName);
+    SAbstractObject global = universe.getGlobal(globalName);
 
     if (global != null) {
       // Push the global onto the stack
@@ -127,11 +127,11 @@ public class Interpreter {
 
   private void doSuperSend(int bytecodeIndex) {
     // Handle the super send bytecode
-    Symbol signature = (Symbol) getMethod().getConstant(bytecodeIndex);
+    SSymbol signature = (SSymbol) getMethod().getConstant(bytecodeIndex);
 
     // Send the message
     // Lookup the invokable with the given signature
-    Invokable invokable = getMethod().getHolder().getSuperClass().lookupInvokable(signature);
+    SInvokable invokable = getMethod().getHolder().getSuperClass().lookupInvokable(signature);
 
     if (invokable != null) {
       // Invoke the invokable in the current frame
@@ -141,7 +141,7 @@ public class Interpreter {
       int numberOfArguments = signature.getNumberOfSignatureArguments();
 
       // Compute the receiver
-      Object receiver = getFrame().getStackElement(numberOfArguments - 1);
+      SAbstractObject receiver = getFrame().getStackElement(numberOfArguments - 1);
 
       receiver.sendDoesNotUnderstand(signature, universe, this);
     }
@@ -149,7 +149,7 @@ public class Interpreter {
 
   private void doReturnLocal() {
     // Handle the return local bytecode
-    Object result = getFrame().pop();
+    SAbstractObject result = getFrame().pop();
 
     // Pop the top frame and push the result
     popFrameAndPushResult(result);
@@ -157,10 +157,10 @@ public class Interpreter {
 
   private void doReturnNonLocal() {
     // Handle the return non local bytecode
-    Object result = getFrame().pop();
+    SAbstractObject result = getFrame().pop();
 
     // Compute the context for the non-local return
-    Frame context = getFrame().getOuterContext(universe.nilObject);
+    SFrame context = getFrame().getOuterContext(universe.nilObject);
 
     // Make sure the block context is still on the stack
     if (!context.hasPreviousFrame(universe.nilObject)) {
@@ -168,8 +168,8 @@ public class Interpreter {
       // this can get a bit nasty when using nested blocks. In this case
       // the "sender" will be the surrounding block and not the object
       // that actually sent the 'value' message.
-      Block block = (Block) getFrame().getArgument(0, 0);
-      Object sender = getFrame().getPreviousFrame().getOuterContext(universe.nilObject).getArgument(0, 0);
+      SBlock block = (SBlock) getFrame().getArgument(0, 0);
+      SAbstractObject sender = getFrame().getPreviousFrame().getOuterContext(universe.nilObject).getArgument(0, 0);
 
       // pop the frame of the currently executing block...
       popFrame();
@@ -190,13 +190,13 @@ public class Interpreter {
 
   private void doSend(int bytecodeIndex) {
     // Handle the send bytecode
-    Symbol signature = (Symbol) getMethod().getConstant(bytecodeIndex);
+    SSymbol signature = (SSymbol) getMethod().getConstant(bytecodeIndex);
 
     // Get the number of arguments from the signature
     int numberOfArguments = signature.getNumberOfSignatureArguments();
 
     // Get the receiver from the stack
-    Object receiver = getFrame().getStackElement(numberOfArguments - 1);
+    SAbstractObject receiver = getFrame().getStackElement(numberOfArguments - 1);
 
     // Send the message
     send(signature, receiver.getSOMClass(), bytecodeIndex);
@@ -311,7 +311,7 @@ public class Interpreter {
     }
   }
 
-  public Frame pushNewFrame(final Method method, final Object contextFrame) {
+  public SFrame pushNewFrame(final SMethod method, final SAbstractObject contextFrame) {
     // Allocate a new frame and make it the current one
     frame = universe.newFrame(frame, method, contextFrame);
 
@@ -319,31 +319,31 @@ public class Interpreter {
     return frame;
   }
 
-  public Frame pushNewFrame(final Method method) {
+  public SFrame pushNewFrame(final SMethod method) {
     return pushNewFrame(method, universe.nilObject);
   }
 
-  public Frame getFrame() {
+  public SFrame getFrame() {
     // Get the frame from the interpreter
     return frame;
   }
 
-  public Method getMethod() {
+  public SMethod getMethod() {
     // Get the method from the interpreter
     return getFrame().getMethod();
   }
 
-  public Object getSelf() {
+  public SAbstractObject getSelf() {
     // Get the self object from the interpreter
     return getFrame().getOuterContext(universe.nilObject).getArgument(0, 0);
   }
 
-  private void send(Symbol selector, Class receiverClass, int bytecodeIndex) {
+  private void send(SSymbol selector, SClass receiverClass, int bytecodeIndex) {
     // First try the inline cache
-    Invokable invokable;
+    SInvokable invokable;
 
-    Method m = getMethod();
-    Class cachedClass = m.getInlineCacheClass(bytecodeIndex);
+    SMethod m = getMethod();
+    SClass cachedClass = m.getInlineCacheClass(bytecodeIndex);
     if (cachedClass == receiverClass) {
       invokable = m.getInlineCacheInvokable(bytecodeIndex);
     } else {
@@ -371,15 +371,15 @@ public class Interpreter {
       int numberOfArguments = selector.getNumberOfSignatureArguments();
 
       // Compute the receiver
-      Object receiver = frame.getStackElement(numberOfArguments - 1);
+      SAbstractObject receiver = frame.getStackElement(numberOfArguments - 1);
 
       receiver.sendDoesNotUnderstand(selector, universe, this);
     }
   }
 
-  private Frame popFrame() {
+  private SFrame popFrame() {
     // Save a reference to the top frame
-    Frame result = frame;
+    SFrame result = frame;
 
     // Pop the top frame from the frame stack
     frame = frame.getPreviousFrame();
@@ -391,7 +391,7 @@ public class Interpreter {
     return result;
   }
 
-  private void popFrameAndPushResult(Object result) {
+  private void popFrameAndPushResult(SAbstractObject result) {
     // Pop the top frame from the interpreter frame stack and compute the
     // number of arguments
     int numberOfArguments = popFrame().getMethod().getNumberOfArguments();
@@ -405,5 +405,5 @@ public class Interpreter {
     getFrame().push(result);
   }
 
-  private Frame frame;
+  private SFrame frame;
 }

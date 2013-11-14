@@ -24,9 +24,9 @@
 
 package som.vmobjects;
 
-public class Symbol extends Object {
+public class SSymbol extends SAbstractObject {
 
-  public Symbol(final Object nilObject) {
+  public SSymbol(final SAbstractObject nilObject) {
     super(nilObject);
   }
 

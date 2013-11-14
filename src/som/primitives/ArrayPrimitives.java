@@ -25,11 +25,11 @@
 package som.primitives;
 
 import som.vm.Universe;
-import som.vmobjects.Array;
-import som.vmobjects.Frame;
-import som.vmobjects.Integer;
-import som.vmobjects.Object;
-import som.vmobjects.Primitive;
+import som.vmobjects.SArray;
+import som.vmobjects.SFrame;
+import som.vmobjects.SInteger;
+import som.vmobjects.SAbstractObject;
+import som.vmobjects.SPrimitive;
 import som.interpreter.Interpreter;
 
 public class ArrayPrimitives extends Primitives {
@@ -39,37 +39,37 @@ public class ArrayPrimitives extends Primitives {
   }
 
   public void installPrimitives() {
-    installInstancePrimitive(new Primitive("at:", universe) {
+    installInstancePrimitive(new SPrimitive("at:", universe) {
 
-      public void invoke(final Frame frame, final Interpreter interpreter) {
-        Integer index = (Integer) frame.pop();
-        Array self = (Array) frame.pop();
+      public void invoke(final SFrame frame, final Interpreter interpreter) {
+        SInteger index = (SInteger) frame.pop();
+        SArray self = (SArray) frame.pop();
         frame.push(self.getIndexableField(index.getEmbeddedInteger() - 1));
       }
     });
 
-    installInstancePrimitive(new Primitive("at:put:", universe) {
+    installInstancePrimitive(new SPrimitive("at:put:", universe) {
 
-      public void invoke(final Frame frame, final Interpreter interpreter) {
-        Object value = frame.pop();
-        Integer index = (Integer) frame.pop();
-        Array self = (Array) frame.getStackElement(0);
+      public void invoke(final SFrame frame, final Interpreter interpreter) {
+        SAbstractObject value = frame.pop();
+        SInteger index = (SInteger) frame.pop();
+        SArray self = (SArray) frame.getStackElement(0);
         self.setIndexableField(index.getEmbeddedInteger() - 1, value);
       }
     });
 
-    installInstancePrimitive(new Primitive("length", universe) {
+    installInstancePrimitive(new SPrimitive("length", universe) {
 
-      public void invoke(final Frame frame, final Interpreter interpreter) {
-        Array self = (Array) frame.pop();
+      public void invoke(final SFrame frame, final Interpreter interpreter) {
+        SArray self = (SArray) frame.pop();
         frame.push(universe.newInteger(self.getNumberOfIndexableFields()));
       }
     });
 
-    installClassPrimitive(new Primitive("new:", universe) {
+    installClassPrimitive(new SPrimitive("new:", universe) {
 
-      public void invoke(final Frame frame, final Interpreter interpreter) {
-        Integer length = (Integer) frame.pop();
+      public void invoke(final SFrame frame, final Interpreter interpreter) {
+        SInteger length = (SInteger) frame.pop();
         frame.pop(); // not required
         frame.push(universe.newArray(length.getEmbeddedInteger()));
       }

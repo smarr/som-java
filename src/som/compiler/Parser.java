@@ -67,6 +67,7 @@ import som.vm.Universe;
 public class Parser {
 
   private final Universe            universe;
+  private final String              filename;
 
   private final Lexer               lexer;
   private final BytecodeGenerator   bcGen;
@@ -93,8 +94,9 @@ public class Parser {
     }
   }
 
-  public Parser(Reader reader, final Universe universe) {
+  public Parser(Reader reader, final Universe universe, final String filename) {
     this.universe = universe;
+    this.filename = filename;
 
     sym = NONE;
     lexer = new Lexer(reader);
@@ -108,7 +110,7 @@ public class Parser {
     expect(Identifier);
     expect(Equal);
 
-    som.vmobjects.Symbol superName;
+    som.vmobjects.SSymbol superName;
     if (sym == Identifier) {
       superName = universe.symbolFor(text);
       accept(Identifier);
@@ -122,7 +124,7 @@ public class Parser {
       cgenc.setNumberOfInstanceFieldsOfSuper(0);  // Object's super class is nil, has no fields
       cgenc.setNumberOfClassFieldsOfSuper(4);     // Object's class has the fields of Class
     } else {
-      som.vmobjects.Class superClass = universe.loadClass(superName);
+      som.vmobjects.SClass superClass = universe.loadClass(superName);
       cgenc.setNumberOfInstanceFieldsOfSuper(superClass.getNumberOfInstanceFields());
       cgenc.setNumberOfClassFieldsOfSuper(superClass.getSOMClass().getNumberOfInstanceFields());
     }
@@ -188,9 +190,10 @@ public class Parser {
 
   private boolean expect(Symbol s) {
     if (accept(s)) { return true; }
-    StringBuffer err = new StringBuffer("Error: unexpected symbol in line "
-        + lexer.getCurrentLineNumber() + ". Expected " + s.toString()
-        + ", but found " + sym.toString());
+    StringBuffer err = new StringBuffer("Error: " + filename + ":" +
+        lexer.getCurrentLineNumber() +
+        ": unexpected symbol, expected: " + s.toString()
+        + ", but found: " + sym.toString());
     if (printableSymbol()) { err.append(" (" + text + ")"); }
     err.append(": " + lexer.getRawBuffer());
     throw new IllegalStateException(err.toString());
@@ -198,12 +201,12 @@ public class Parser {
 
   private boolean expectOneOf(List<Symbol> ss) {
     if (acceptOneOf(ss)) { return true; }
-    StringBuffer err = new StringBuffer("Error: unexpected symbol in line "
-        + lexer.getCurrentLineNumber() + ". Expected one of ");
+    StringBuffer err = new StringBuffer("Error: " + filename + ":" +
+    lexer.getCurrentLineNumber() + ": unexpected symbol, expected one of: ");
     for (Symbol s : ss) {
       err.append(s.toString() + ", ");
     }
-    err.append("but found " + sym.toString());
+    err.append("but found: " + sym.toString());
     if (printableSymbol()) { err.append(" (" + text + ")"); }
     err.append(": " + lexer.getRawBuffer());
     throw new IllegalStateException(err.toString());
@@ -295,11 +298,11 @@ public class Parser {
     expect(EndTerm);
   }
 
-  private som.vmobjects.Symbol unarySelector() {
+  private som.vmobjects.SSymbol unarySelector() {
     return universe.symbolFor(identifier());
   }
 
-  private som.vmobjects.Symbol binarySelector() {
+  private som.vmobjects.SSymbol binarySelector() {
     String s = new String(text);
 
     // Checkstyle: stop
@@ -426,7 +429,7 @@ public class Parser {
 
   private String assignment(final MethodGenerationContext mgenc) {
     String v = variable();
-    som.vmobjects.Symbol var = universe.symbolFor(v);
+    som.vmobjects.SSymbol var = universe.symbolFor(v);
     mgenc.addLiteralIfAbsent(var);
 
     expect(Assign);
@@ -470,7 +473,7 @@ public class Parser {
 
         nestedBlock(bgenc);
 
-        som.vmobjects.Method blockMethod = bgenc.assemble(universe);
+        som.vmobjects.SMethod blockMethod = bgenc.assemble(universe);
         mgenc.addLiteral(blockMethod);
         bcGen.emitPUSHBLOCK(mgenc, blockMethod);
         break;
@@ -519,7 +522,7 @@ public class Parser {
 
   private void unaryMessage(final MethodGenerationContext mgenc,
       Single<Boolean> superSend) {
-    som.vmobjects.Symbol msg = unarySelector();
+    som.vmobjects.SSymbol msg = unarySelector();
     mgenc.addLiteralIfAbsent(msg);
 
     if (superSend.get()) {
@@ -531,7 +534,7 @@ public class Parser {
 
   private void binaryMessage(final MethodGenerationContext mgenc,
       Single<Boolean> superSend) {
-    som.vmobjects.Symbol msg = binarySelector();
+    som.vmobjects.SSymbol msg = binarySelector();
     mgenc.addLiteralIfAbsent(msg);
 
     binaryOperand(mgenc, new Single<Boolean>(false));
@@ -561,7 +564,7 @@ public class Parser {
     }
     while (sym == Keyword);
 
-    som.vmobjects.Symbol msg = universe.symbolFor(kw.toString());
+    som.vmobjects.SSymbol msg = universe.symbolFor(kw.toString());
 
     mgenc.addLiteralIfAbsent(msg);
 
@@ -616,7 +619,7 @@ public class Parser {
       val = literalDecimal();
     }
 
-    som.vmobjects.Object lit;
+    som.vmobjects.SAbstractObject lit;
     if (val < java.lang.Integer.MIN_VALUE || val > java.lang.Integer.MAX_VALUE) {
       lit = universe.newBigInteger(val);
     } else {
@@ -636,13 +639,21 @@ public class Parser {
   }
 
   private long literalInteger() {
-    long i = java.lang.Long.parseLong(text);
-    expect(Integer);
-    return i;
+    try {
+      long i = java.lang.Long.parseLong(text);
+      expect(Integer);
+      return i;
+    } catch (NumberFormatException e) {
+      StringBuffer err = new StringBuffer("Error: " + filename + ":" +
+          lexer.getCurrentLineNumber() +
+          ": parsing number literal failed: '" + text.toString()
+          + "'");
+      throw new IllegalStateException(err.toString());
+    }
   }
 
   private void literalSymbol(final MethodGenerationContext mgenc) {
-    som.vmobjects.Symbol symb;
+    som.vmobjects.SSymbol symb;
     expect(Pound);
     if (sym == STString) {
       String s = string();
@@ -658,13 +669,13 @@ public class Parser {
   private void literalString(final MethodGenerationContext mgenc) {
     String s = string();
 
-    som.vmobjects.String str = universe.newString(s);
+    som.vmobjects.SString str = universe.newString(s);
     mgenc.addLiteralIfAbsent(str);
 
     bcGen.emitPUSHCONSTANT(mgenc, str);
   }
 
-  private som.vmobjects.Symbol selector() {
+  private som.vmobjects.SSymbol selector() {
     if (sym == OperatorSequence || symIn(singleOpSyms)) {
       return binarySelector();
     } else if (sym == Keyword || sym == KeywordSequence) {
@@ -674,10 +685,10 @@ public class Parser {
     }
   }
 
-  private som.vmobjects.Symbol keywordSelector() {
+  private som.vmobjects.SSymbol keywordSelector() {
     String s = new String(text);
     expectOneOf(keywordSelectorSyms);
-    som.vmobjects.Symbol symb = universe.symbolFor(s);
+    som.vmobjects.SSymbol symb = universe.symbolFor(s);
     return symb;
   }
 
@@ -746,13 +757,13 @@ public class Parser {
         bcGen.emitPUSHLOCAL(mgenc, tri.getX(), tri.getY());
       }
     } else {
-      som.vmobjects.Symbol identifier = universe.symbolFor(var);
+      som.vmobjects.SSymbol identifier = universe.symbolFor(var);
       if (mgenc.hasField(identifier)) {
-        som.vmobjects.Symbol fieldName = identifier;
+        som.vmobjects.SSymbol fieldName = identifier;
         mgenc.addLiteralIfAbsent(fieldName);
         bcGen.emitPUSHFIELD(mgenc, fieldName);
       } else {
-        som.vmobjects.Symbol global = identifier;
+        som.vmobjects.SSymbol global = identifier;
         mgenc.addLiteralIfAbsent(global);
         bcGen.emitPUSHGLOBAL(mgenc, global);
       }

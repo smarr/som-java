@@ -29,9 +29,9 @@ import java.util.ArrayList;
 import som.interpreter.Bytecodes;
 import som.interpreter.Interpreter;
 
-public class Method extends Array implements Invokable {
+public class SMethod extends SArray implements SInvokable {
 
-  public Method(final Object nilObject) {
+  public SMethod(final SAbstractObject nilObject) {
     super(nilObject);
   }
 
@@ -40,60 +40,60 @@ public class Method extends Array implements Invokable {
     return false;
   }
 
-  public Integer getNumberOfLocals() {
+  public SInteger getNumberOfLocals() {
     // Get the number of locals (converted to a Java integer)
     return numberOfLocals;
   }
 
-  public void setNumberOfLocals(Integer value) {
+  public void setNumberOfLocals(SInteger value) {
     // Set the number of locals
     numberOfLocals = value;
   }
 
-  public Integer getMaximumNumberOfStackElements() {
+  public SInteger getMaximumNumberOfStackElements() {
     // Get the maximum number of stack elements (converted to a Java
     // integer)
     return maximumNumberOfStackElements;
   }
 
-  public void setMaximumNumberOfStackElements(Integer value) {
+  public void setMaximumNumberOfStackElements(SInteger value) {
     // Set the maximum number of stack elements
     maximumNumberOfStackElements = value;
   }
 
   @Override
-  public Symbol getSignature() {
+  public SSymbol getSignature() {
     // Get the signature of this method by reading the field with signature
     // index
-    return (Symbol) getField(signatureIndex);
+    return (SSymbol) getField(signatureIndex);
   }
 
-  public void setSignature(Symbol value) {
+  public void setSignature(SSymbol value) {
     // Set the signature of this method by writing to the field with
     // signature index
     setField(signatureIndex, value);
   }
 
   @Override
-  public Class getHolder() {
+  public SClass getHolder() {
     // Get the holder of this method by reading the field with holder index
-    return (Class) getField(holderIndex);
+    return (SClass) getField(holderIndex);
   }
 
   @Override
-  public void setHolder(Class value) {
+  public void setHolder(SClass value) {
     // Set the holder of this method by writing to the field with holder index
     setField(holderIndex, value);
 
     // Make sure all nested invokables have the same holder
     for (int i = 0; i < getNumberOfIndexableFields(); i++) {
-      if (getIndexableField(i) instanceof Invokable) {
-        ((Invokable) getIndexableField(i)).setHolder(value);
+      if (getIndexableField(i) instanceof SInvokable) {
+        ((SInvokable) getIndexableField(i)).setHolder(value);
       }
     }
   }
 
-  public Object getConstant(int bytecodeIndex) {
+  public SAbstractObject getConstant(int bytecodeIndex) {
     // Get the constant associated to a given bytecode index
     return getIndexableField(getBytecode(bytecodeIndex + 1));
   }
@@ -117,8 +117,8 @@ public class Method extends Array implements Invokable {
   public void setNumberOfBytecodes(int value) {
     // Set the number of bytecodes in this method
     bytecodes            = new byte[value];
-    inlineCacheClass     = new Class[value];
-    inlineCacheInvokable = new Invokable[value];
+    inlineCacheClass     = new SClass[value];
+    inlineCacheInvokable = new SInvokable[value];
   }
 
   public byte getBytecode(int index) {
@@ -140,11 +140,11 @@ public class Method extends Array implements Invokable {
   }
 
   @Override
-  public void invoke(final Frame frame, final Interpreter interpreter) {
+  public void invoke(final SFrame frame, final Interpreter interpreter) {
     // Increase the invocation counter
     invocationCount++;
     // Allocate and push a new frame on the interpreter stack
-    Frame newFrame = interpreter.pushNewFrame(this);
+    SFrame newFrame = interpreter.pushNewFrame(this);
     newFrame.copyArgumentsFrom(frame);
   }
 
@@ -183,16 +183,16 @@ public class Method extends Array implements Invokable {
     }
   }
 
-  public Class getReceiverClass(byte index) {
+  public SClass getReceiverClass(byte index) {
     return receiverClassTable.get(index);
   }
 
-  public Invokable getInvokedMethod(byte index) {
+  public SInvokable getInvokedMethod(byte index) {
     // return the last invoked method for a particular send
     return invokedMethods.get(index);
   }
 
-  public byte addReceiverClassAndMethod(Class recClass, Invokable invokable) {
+  public byte addReceiverClassAndMethod(SClass recClass, SInvokable invokable) {
     receiverClassTable.add(receiverClassIndex, recClass);
     invokedMethods.add(receiverClassIndex, invokable);
     receiverClassIndex++;
@@ -209,23 +209,23 @@ public class Method extends Array implements Invokable {
     return "Method(" + getHolder().getName().getString() + ">>" + getSignature().toString() + ")";
   }
 
-  public Class getInlineCacheClass(int bytecodeIndex) {
+  public SClass getInlineCacheClass(int bytecodeIndex) {
     return inlineCacheClass[bytecodeIndex];
   }
 
-  public Invokable getInlineCacheInvokable(int bytecodeIndex) {
+  public SInvokable getInlineCacheInvokable(int bytecodeIndex) {
     return inlineCacheInvokable[bytecodeIndex];
   }
 
-  public void setInlineCache(int bytecodeIndex, Class receiverClass, Invokable invokable) {
+  public void setInlineCache(int bytecodeIndex, SClass receiverClass, SInvokable invokable) {
     inlineCacheClass[bytecodeIndex]     = receiverClass;
     inlineCacheInvokable[bytecodeIndex] = invokable;
   }
 
 
   // Private variables for holding the last receiver class and invoked method
-  private final ArrayList<Class>         receiverClassTable                = new ArrayList<Class>();
-  private final ArrayList<Invokable>     invokedMethods                    = new ArrayList<Invokable>();
+  private final ArrayList<SClass>         receiverClassTable                = new ArrayList<SClass>();
+  private final ArrayList<SInvokable>     invokedMethods                    = new ArrayList<SInvokable>();
   private int                            receiverClassIndex                = 0;
 
   // Private variable holding number of invocations and back edges
@@ -233,12 +233,12 @@ public class Method extends Array implements Invokable {
 
   // Private variable holding byte array of bytecodes
   private byte[]                         bytecodes;
-  private Class[]                        inlineCacheClass;
-  private Invokable[]                    inlineCacheInvokable;
+  private SClass[]                        inlineCacheClass;
+  private SInvokable[]                    inlineCacheInvokable;
 
   // Meta information
-  private Integer                        numberOfLocals;
-  private Integer                        maximumNumberOfStackElements;
+  private SInteger                        numberOfLocals;
+  private SInteger                        maximumNumberOfStackElements;
 
   // Static field indices and number of method fields
   static final int                       signatureIndex               = numberOfObjectFields;

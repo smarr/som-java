@@ -27,11 +27,11 @@ package som.primitives;
 
 import som.interpreter.Interpreter;
 import som.vm.Universe;
-import som.vmobjects.Frame;
-import som.vmobjects.Integer;
-import som.vmobjects.Object;
-import som.vmobjects.Primitive;
-import som.vmobjects.String;
+import som.vmobjects.SFrame;
+import som.vmobjects.SInteger;
+import som.vmobjects.SAbstractObject;
+import som.vmobjects.SPrimitive;
+import som.vmobjects.SString;
 
 public class StringPrimitives extends Primitives {
 
@@ -40,39 +40,39 @@ public class StringPrimitives extends Primitives {
   }
 
   public void installPrimitives() {
-    installInstancePrimitive(new Primitive("concatenate:", universe) {
+    installInstancePrimitive(new SPrimitive("concatenate:", universe) {
 
-      public void invoke(final Frame frame, final Interpreter interpreter) {
-        String argument = (String) frame.pop();
-        String self = (String) frame.pop();
+      public void invoke(final SFrame frame, final Interpreter interpreter) {
+        SString argument = (SString) frame.pop();
+        SString self = (SString) frame.pop();
         frame.push(universe.newString(self.getEmbeddedString()
             + argument.getEmbeddedString()));
       }
     });
 
-    installInstancePrimitive(new Primitive("asSymbol", universe) {
+    installInstancePrimitive(new SPrimitive("asSymbol", universe) {
 
-      public void invoke(final Frame frame, final Interpreter interpreter) {
-        String self = (String) frame.pop();
+      public void invoke(final SFrame frame, final Interpreter interpreter) {
+        SString self = (SString) frame.pop();
         frame.push(universe.symbolFor(self.getEmbeddedString()));
       }
     });
 
-    installInstancePrimitive(new Primitive("length", universe) {
+    installInstancePrimitive(new SPrimitive("length", universe) {
 
-      public void invoke(final Frame frame, final Interpreter interpreter) {
-        String self = (String) frame.pop();
+      public void invoke(final SFrame frame, final Interpreter interpreter) {
+        SString self = (SString) frame.pop();
         frame.push(universe.newInteger(self.getEmbeddedString().length()));
       }
     });
 
-    installInstancePrimitive(new Primitive("=", universe) {
+    installInstancePrimitive(new SPrimitive("=", universe) {
 
-      public void invoke(final Frame frame, final Interpreter interpreter) {
-        Object op1 = frame.pop();
-        String op2 = (String) frame.pop(); // self
+      public void invoke(final SFrame frame, final Interpreter interpreter) {
+        SAbstractObject op1 = frame.pop();
+        SString op2 = (SString) frame.pop(); // self
         if (op1.getSOMClass() == universe.stringClass) {
-          String s = (String) op1;
+          SString s = (SString) op1;
           if (s.getEmbeddedString().equals(op2.getEmbeddedString())) {
             frame.push(universe.trueObject);
             return;
@@ -83,13 +83,13 @@ public class StringPrimitives extends Primitives {
       }
     });
 
-    installInstancePrimitive(new Primitive("primSubstringFrom:to:", universe) {
+    installInstancePrimitive(new SPrimitive("primSubstringFrom:to:", universe) {
 
-      public void invoke(final Frame frame, final Interpreter interpreter) {
-        Integer end   = (Integer) frame.pop();
-        Integer start = (Integer) frame.pop();
+      public void invoke(final SFrame frame, final Interpreter interpreter) {
+        SInteger end   = (SInteger) frame.pop();
+        SInteger start = (SInteger) frame.pop();
 
-        String self = (String) frame.pop();
+        SString self = (SString) frame.pop();
 
         try {
           frame.push(universe.newString(self.getEmbeddedString().substring(
@@ -101,10 +101,10 @@ public class StringPrimitives extends Primitives {
       }
     });
 
-    installInstancePrimitive(new Primitive("hashcode", universe) {
+    installInstancePrimitive(new SPrimitive("hashcode", universe) {
 
-      public void invoke(final Frame frame, final Interpreter interpreter) {
-        String self = (String) frame.pop();
+      public void invoke(final SFrame frame, final Interpreter interpreter) {
+        SString self = (SString) frame.pop();
         frame.push(universe.newInteger(self.getEmbeddedString().hashCode()));
       }
     });

@@ -27,34 +27,34 @@ package som.vmobjects;
 import som.interpreter.Interpreter;
 import som.vm.Universe;
 
-public class Object {
+public class SAbstractObject {
 
-  public Object(final Object nilObject) {
+  public SAbstractObject(final SAbstractObject nilObject) {
     // Set the number of fields to the default value
     setNumberOfFieldsAndClear(getDefaultNumberOfFields(), nilObject);
   }
 
-  public Object(int numberOfFields, final Object nilObject) {
+  public SAbstractObject(int numberOfFields, final SAbstractObject nilObject) {
     // Set the number of fields to the given value
     setNumberOfFieldsAndClear(numberOfFields, nilObject);
   }
 
-  public Class getSOMClass() {
+  public SClass getSOMClass() {
     // Get the class of this object by reading the field with class index
     return clazz;
   }
 
-  public void setClass(Class value) {
+  public void setClass(SClass value) {
     // Set the class of this object by writing to the field with class index
     clazz = value;
   }
 
-  public Symbol getFieldName(int index) {
+  public SSymbol getFieldName(int index) {
     // Get the name of the field with the given index
     return getSOMClass().getInstanceFieldName(index);
   }
 
-  public int getFieldIndex(Symbol name) {
+  public int getFieldIndex(SSymbol name) {
     // Get the index for the field with the given name
     return getSOMClass().lookupFieldIndex(name);
   }
@@ -64,9 +64,9 @@ public class Object {
     return fields.length;
   }
 
-  public void setNumberOfFieldsAndClear(int value, final Object nilObject) {
+  public void setNumberOfFieldsAndClear(int value, final SAbstractObject nilObject) {
     // Allocate a new array of fields
-    fields = new Object[value];
+    fields = new SAbstractObject[value];
 
     // Clear each and every field by putting nil into them
     for (int i = 0; i < getNumberOfFields(); i++) {
@@ -79,63 +79,63 @@ public class Object {
     return numberOfObjectFields;
   }
 
-  public void send(java.lang.String selectorString, Object[] arguments,
+  public void send(java.lang.String selectorString, SAbstractObject[] arguments,
       final Universe universe, final Interpreter interpreter) {
     // Turn the selector string into a selector
-    Symbol selector = universe.symbolFor(selectorString);
+    SSymbol selector = universe.symbolFor(selectorString);
 
     // Push the receiver onto the stack
     interpreter.getFrame().push(this);
 
     // Push the arguments onto the stack
-    for (Object arg : arguments) {
+    for (SAbstractObject arg : arguments) {
       interpreter.getFrame().push(arg);
     }
 
     // Lookup the invokable
-    Invokable invokable = getSOMClass().lookupInvokable(selector);
+    SInvokable invokable = getSOMClass().lookupInvokable(selector);
 
     // Invoke the invokable
     invokable.invoke(interpreter.getFrame(), interpreter);
   }
 
-  public void sendDoesNotUnderstand(final Symbol selector,
+  public void sendDoesNotUnderstand(final SSymbol selector,
       final Universe universe, final Interpreter interpreter) {
     // Compute the number of arguments
     int numberOfArguments = selector.getNumberOfSignatureArguments();
 
-    Frame frame = interpreter.getFrame();
+    SFrame frame = interpreter.getFrame();
 
     // Allocate an array with enough room to hold all arguments
-    Array argumentsArray = universe.newArray(numberOfArguments);
+    SArray argumentsArray = universe.newArray(numberOfArguments);
 
     // Remove all arguments and put them in the freshly allocated array
     for (int i = numberOfArguments - 1; i >= 0; i--) {
       argumentsArray.setIndexableField(i, frame.pop());
     }
 
-    Object[] args = {selector, argumentsArray};
+    SAbstractObject[] args = {selector, argumentsArray};
     send("doesNotUnderstand:arguments:", args, universe, interpreter);
   }
 
-  public void sendUnknownGlobal(final Symbol globalName,
+  public void sendUnknownGlobal(final SSymbol globalName,
       final Universe universe, final Interpreter interpreter) {
-    Object[] arguments = {globalName};
+    SAbstractObject[] arguments = {globalName};
     send("unknownGlobal:", arguments, universe, interpreter);
   }
 
-  public void sendEscapedBlock(final Block block, final Universe universe,
+  public void sendEscapedBlock(final SBlock block, final Universe universe,
       final Interpreter interpreter) {
-    Object[] arguments = {block};
+    SAbstractObject[] arguments = {block};
     send("escapedBlock:", arguments, universe, interpreter);
   }
 
-  public Object getField(int index) {
+  public SAbstractObject getField(int index) {
     // Get the field with the given index
     return fields[index];
   }
 
-  public void setField(int index, Object value) {
+  public void setField(int index, SAbstractObject value) {
     // Set the field with the given index to the given value
     fields[index] = value;
   }
@@ -146,8 +146,8 @@ public class Object {
   }
 
   // Private array of fields
-  private Object[] fields;
-  private Class    clazz;
+  private SAbstractObject[] fields;
+  private SClass    clazz;
 
   // Static field indices and number of object fields
   static final int numberOfObjectFields = 0;

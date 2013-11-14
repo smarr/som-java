@@ -26,18 +26,18 @@ package som.vmobjects;
 
 import som.vm.Universe;
 
-public class Array extends Object {
+public class SArray extends SAbstractObject {
 
-  public Array(final Object nilObject) {
+  public SArray(final SAbstractObject nilObject) {
     super(nilObject);
   }
 
-  public Object getIndexableField(int index) {
+  public SAbstractObject getIndexableField(int index) {
     // Get the indexable field with the given index
     return indexableFields[index];
   }
 
-  public void setIndexableField(int index, Object value) {
+  public void setIndexableField(int index, SAbstractObject value) {
     // Set the indexable field with the given index to the given value
     indexableFields[index] = value;
   }
@@ -48,9 +48,9 @@ public class Array extends Object {
   }
 
   public void setNumberOfIndexableFieldsAndClear(int value,
-      final Object nilObject) {
+      final SAbstractObject nilObject) {
     // Allocate a new array of indexable fields
-    indexableFields = new Object[value];
+    indexableFields = new SAbstractObject[value];
 
     // Clear each and every field by putting nil into them
     for (int i = 0; i < getNumberOfIndexableFields(); i++) {
@@ -58,10 +58,10 @@ public class Array extends Object {
     }
   }
 
-  public Array copyAndExtendWith(Object value, final Universe universe) {
+  public SArray copyAndExtendWith(SAbstractObject value, final Universe universe) {
     // Allocate a new array which has one indexable field more than this
     // array
-    Array result = universe.newArray(getNumberOfIndexableFields() + 1);
+    SArray result = universe.newArray(getNumberOfIndexableFields() + 1);
 
     // Copy the indexable fields from this array to the new array
     copyIndexableFieldsTo(result);
@@ -73,7 +73,7 @@ public class Array extends Object {
     return result;
   }
 
-  protected void copyIndexableFieldsTo(Array destination) {
+  protected void copyIndexableFieldsTo(SArray destination) {
     // Copy all indexable fields from this array to the destination array
     for (int i = 0; i < getNumberOfIndexableFields(); i++) {
       destination.setIndexableField(i, getIndexableField(i));
@@ -81,5 +81,5 @@ public class Array extends Object {
   }
 
   // Private array of indexable fields
-  public Object[] indexableFields;
+  public SAbstractObject[] indexableFields;
 }

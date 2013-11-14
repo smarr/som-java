@@ -26,20 +26,20 @@ package som.vmobjects;
 
 import som.interpreter.Interpreter;
 
-public interface Invokable {
+public interface SInvokable {
 
   // Tells whether this is a primitive
   boolean isPrimitive();
 
   // Invoke this invokable object in a given frame
-  void invoke(final Frame frame, final Interpreter interpreter);
+  void invoke(final SFrame frame, final Interpreter interpreter);
 
   // Get the signature for this invokable object
-  Symbol getSignature();
+  SSymbol getSignature();
 
   // Get the holder for this invokable object
-  Class getHolder();
+  SClass getHolder();
 
   // Set the holder for this invokable object
-  void setHolder(final Class value);
+  void setHolder(final SClass value);
 }
