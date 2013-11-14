@@ -119,16 +119,12 @@ public class Parser {
     }
     cgenc.setSuperName(superName);
 
-    // Load the super class
-    if (superName.getEmbeddedString().equals("nil")) {    // Break the dependency cycle by hard coding the values for Object
-      cgenc.setNumberOfInstanceFieldsOfSuper(0);  // Object's super class is nil, has no fields
-      cgenc.setNumberOfClassFieldsOfSuper(4);     // Object's class has the fields of Class
-    } else {
+    // Load the super class, if it is not nil (break the dependency cycle)
+    if (!superName.getEmbeddedString().equals("nil")) {
       som.vmobjects.SClass superClass = universe.loadClass(superName);
-      cgenc.setNumberOfInstanceFieldsOfSuper(superClass.getNumberOfInstanceFields());
-      cgenc.setNumberOfClassFieldsOfSuper(superClass.getSOMClass().getNumberOfInstanceFields());
+      cgenc.setInstanceFieldsOfSuper(superClass.getInstanceFields());
+      cgenc.setClassFieldsOfSuper(superClass.getSOMClass().getInstanceFields());
     }
-
 
     expect(NewTerm);
     instanceFields(cgenc);

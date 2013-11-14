@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import som.vm.Universe;
-import som.vmobjects.SAbstractObject;
+import som.vmobjects.SArray;
 import som.vmobjects.SInvokable;
 import som.vmobjects.SSymbol;
 
@@ -40,15 +40,13 @@ public class ClassGenerationContext {
     this.universe = universe;
   }
 
-  private SSymbol                       name;
-  private SSymbol                       superName;
-  private boolean                       classSide;
-  private int                           numberOfInstanceFieldsOfSuper;
-  private int                           numberOfClassFieldsOfSuper;
-  private final List<SAbstractObject>   instanceFields  = new ArrayList<SAbstractObject>();
-  private final List<SInvokable>        instanceMethods = new ArrayList<SInvokable>();
-  private final List<SAbstractObject>   classFields     = new ArrayList<SAbstractObject>();
-  private final List<SInvokable>        classMethods    = new ArrayList<SInvokable>();
+  private SSymbol                 name;
+  private SSymbol                 superName;
+  private boolean                 classSide;
+  private final List<SSymbol>     instanceFields  = new ArrayList<SSymbol>();
+  private final List<SInvokable>  instanceMethods = new ArrayList<SInvokable>();
+  private final List<SSymbol>     classFields     = new ArrayList<SSymbol>();
+  private final List<SInvokable>  classMethods    = new ArrayList<SInvokable>();
 
   public void setName(final SSymbol name) {
     this.name = name;
@@ -58,12 +56,18 @@ public class ClassGenerationContext {
     this.superName = superName;
   }
 
-  public void setNumberOfInstanceFieldsOfSuper(int numberOfInstanceFields) {
-    this.numberOfInstanceFieldsOfSuper = numberOfInstanceFields;
+  public void setInstanceFieldsOfSuper(final SArray fieldNames) {
+    int numFields = fieldNames.getNumberOfIndexableFields();
+    for (int i = 0; i < numFields; i++) {
+      instanceFields.add((SSymbol) fieldNames.getIndexableField(i));
+    }
   }
 
-  public void setNumberOfClassFieldsOfSuper(int numberOfClassFields) {
-    this.numberOfClassFieldsOfSuper = numberOfClassFields;
+  public void setClassFieldsOfSuper(final SArray fieldNames) {
+    int numFields = fieldNames.getNumberOfIndexableFields();
+    for (int i = 0; i < numFields; i++) {
+      classFields.add((SSymbol) fieldNames.getIndexableField(i));
+    }
   }
 
   public void addInstanceMethod(final som.vmobjects.SInvokable meth) {
@@ -91,8 +95,11 @@ public class ClassGenerationContext {
   }
 
   public byte getFieldIndex(final SSymbol field) {
-    int localIndex = (isClassSide() ? classFields : instanceFields).indexOf(field);
-    return (byte) (localIndex + (isClassSide() ? numberOfClassFieldsOfSuper : numberOfInstanceFieldsOfSuper));
+    if (isClassSide()) {
+      return (byte) classFields.indexOf(field);
+    } else {
+      return (byte) instanceFields.indexOf(field);
+    }
   }
 
   public boolean isClassSide() {
