@@ -32,17 +32,18 @@ import java.util.StringTokenizer;
 
 import som.compiler.Disassembler;
 import som.interpreter.Bytecodes;
+import som.interpreter.Frame;
 import som.interpreter.Interpreter;
+import som.vmobjects.SAbstractObject;
 import som.vmobjects.SArray;
 import som.vmobjects.SBigInteger;
 import som.vmobjects.SBlock;
 import som.vmobjects.SClass;
 import som.vmobjects.SDouble;
-import som.vmobjects.SFrame;
 import som.vmobjects.SInteger;
 import som.vmobjects.SInvokable;
 import som.vmobjects.SMethod;
-import som.vmobjects.SAbstractObject;
+import som.vmobjects.SObject;
 import som.vmobjects.SString;
 import som.vmobjects.SSymbol;
 
@@ -64,7 +65,7 @@ public class Universe {
     arguments = handleArguments(arguments);
 
     // Initialize the known universe
-    initialize(arguments);
+    return initialize(arguments);
   }
 
   static { /* static initializer */
@@ -246,7 +247,73 @@ public class Universe {
     System.exit(0);
   }
 
-  private void initialize(java.lang.String[] arguments) {
+  /**
+   * Start interpretation by sending the selector to the given class.
+   * This is mostly meant for testing currently.
+   *
+   * @param className
+   * @param selector
+   * @return
+   */
+  public SAbstractObject interpret(final String className,
+      final String selector) {
+    initializeObjectSystem();
+
+    SClass clazz = loadClass(symbolFor(className));
+
+    // Lookup the initialize invokable on the system class
+    SMethod initialize = (SMethod) clazz.getSOMClass(this).
+                                        lookupInvokable(symbolFor(selector));
+
+    return interpretMethod(clazz, initialize, newArray(0));
+  }
+
+  private SAbstractObject initialize(String[] arguments) {
+    SAbstractObject systemObject = initializeObjectSystem();
+
+    // Start the shell if no filename is given
+    if (arguments.length == 0) {
+      Shell shell = new Shell(this, interpreter);
+      SMethod bootstrapMethod = createBootstrapMethod();
+      shell.setBootstrapMethod(bootstrapMethod);
+      return shell.start();
+    }
+
+    // Lookup the initialize invokable on the system class
+    SInvokable initialize = systemClass.lookupInvokable(symbolFor("initialize:"));
+
+    // Convert the arguments into an array
+    SArray argumentsArray = newArray(arguments);
+
+    return interpretMethod(systemObject, initialize,
+        argumentsArray);
+  }
+
+  private SMethod createBootstrapMethod() {
+    // Create a fake bootstrap method to simplify later frame traversal
+    SMethod bootstrapMethod = newMethod(symbolFor("bootstrap"), 1, 0, newInteger(0), newInteger(2), null);
+    bootstrapMethod.setBytecode(0, Bytecodes.halt);
+    bootstrapMethod.setHolder(systemClass);
+    return bootstrapMethod;
+  }
+
+  private SAbstractObject interpretMethod(SAbstractObject receiver,
+      SInvokable invokable, SArray arguments) {
+    SMethod bootstrapMethod = createBootstrapMethod();
+
+    // Create a fake bootstrap frame with the system object on the stack
+    Frame bootstrapFrame = interpreter.pushNewFrame(bootstrapMethod);
+    bootstrapFrame.push(receiver);
+    bootstrapFrame.push(arguments);
+
+    // Invoke the initialize invokable
+    invokable.invoke(bootstrapFrame, interpreter);
+
+    // Start the interpreter
+    return interpreter.start();
+  }
+
+  private SAbstractObject initializeObjectSystem() {
     // Allocate the nil object
     nilObject = new SObject(null);
 
@@ -323,38 +390,7 @@ public class Universe {
 
     setGlobal(trueSymbol,  trueClass);
     setGlobal(falseSymbol, falseClass);
-
-    // Create a fake bootstrap method to simplify later frame traversal
-    SMethod bootstrapMethod = newMethod(symbolFor("bootstrap"), 1, 0);
-    bootstrapMethod.setBytecode(0, Bytecodes.halt);
-    bootstrapMethod.setNumberOfLocals(newInteger(0));
-    bootstrapMethod.setMaximumNumberOfStackElements(newInteger(2));
-    bootstrapMethod.setHolder(systemClass);
-
-    // Start the shell if no filename is given
-    if (arguments.length == 0) {
-      Shell shell = new Shell(this, interpreter);
-      shell.setBootstrapMethod(bootstrapMethod);
-      shell.start();
-      return;
-    }
-
-    // Convert the arguments into an array
-    SArray argumentsArray = newArray(arguments);
-
-    // Create a fake bootstrap frame with the system object on the stack
-    SFrame bootstrapFrame = interpreter.pushNewFrame(bootstrapMethod);
-    bootstrapFrame.push(systemObject);
-    bootstrapFrame.push(argumentsArray);
-
-    // Lookup the initialize invokable on the system class
-    SInvokable initialize = systemClass.lookupInvokable(symbolFor("initialize:"));
-
-    // Invoke the initialize invokable
-    initialize.invoke(bootstrapFrame, interpreter);
-
-    // Start the interpreter
-    interpreter.start();
+    return systemObject;
   }
 
   public SSymbol symbolFor(String string) {

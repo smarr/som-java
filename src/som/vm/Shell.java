@@ -29,10 +29,10 @@ import java.io.InputStreamReader;
 
 import som.interpreter.Frame;
 import som.interpreter.Interpreter;
+import som.vmobjects.SAbstractObject;
 import som.vmobjects.SClass;
 import som.vmobjects.SInvokable;
 import som.vmobjects.SMethod;
-import som.vmobjects.SAbstractObject;
 
 public class Shell {
 
@@ -50,7 +50,7 @@ public class Shell {
     bootstrapMethod = method;
   }
 
-  public void start() {
+  public SAbstractObject start() {
 
     BufferedReader in;
     String stmt;
@@ -80,7 +80,7 @@ public class Shell {
         // Read a statement from the keyboard
         stmt = in.readLine();
         if (stmt.equals("quit")) {
-          return;
+          return it;
         }
 
         // Generate a temporary class with a run method

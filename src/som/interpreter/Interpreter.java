@@ -202,7 +202,7 @@ public class Interpreter {
     send(signature, receiver.getSOMClass(universe), bytecodeIndex);
   }
 
-  public void start() {
+  public SAbstractObject start() {
     // Iterate through the bytecodes
     while (true) {
 
@@ -226,7 +226,7 @@ public class Interpreter {
 
         case Bytecodes.halt: {
           // Handle the halt bytecode
-          return;
+          return getFrame().getStackElement(0);
         }
 
         case Bytecodes.dup: {
