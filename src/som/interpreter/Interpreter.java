@@ -131,7 +131,8 @@ public class Interpreter {
 
     // Send the message
     // Lookup the invokable with the given signature
-    SInvokable invokable = getMethod().getHolder().getSuperClass().lookupInvokable(signature);
+    SClass holderSuper = (SClass) getMethod().getHolder().getSuperClass();
+    SInvokable invokable = holderSuper.lookupInvokable(signature);
 
     if (invokable != null) {
       // Invoke the invokable in the current frame

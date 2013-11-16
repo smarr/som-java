@@ -53,19 +53,19 @@ public class SClass extends SObject {
     return universe;
   }
 
-  public SClass getSuperClass() {
+  public SObject getSuperClass() {
     // Get the super class by reading the field with super class index
     return superclass;
   }
 
-  public void setSuperClass(SClass value) {
+  public void setSuperClass(SObject value) {
     // Set the super class by writing to the field with super class index
     superclass = value;
   }
 
   public boolean hasSuperClass() {
     // Check whether or not this class has a super class
-    return superclass != null;
+    return superclass != universe.nilObject;
   }
 
   public SSymbol getName() {
@@ -152,7 +152,7 @@ public class SClass extends SObject {
 
     // Traverse the super class chain by calling lookup on the super class
     if (hasSuperClass()) {
-      invokable = getSuperClass().lookupInvokable(signature);
+      invokable = ((SClass) getSuperClass()).lookupInvokable(signature);
       if (invokable != null) {
         invokablesTable.put(signature, invokable);
         return invokable;
@@ -211,7 +211,7 @@ public class SClass extends SObject {
       return (SSymbol) getInstanceFields().getIndexableField(index);
     } else {
       // Ask the super class to return the name of the instance field
-      return getSuperClass().getInstanceFieldName(index);
+      return ((SClass) getSuperClass()).getInstanceFieldName(index);
     }
   }
 
@@ -224,7 +224,7 @@ public class SClass extends SObject {
   private int getNumberOfSuperInstanceFields() {
     // Get the total number of instance fields defined in super classes
     if (hasSuperClass()) {
-      return getSuperClass().getNumberOfInstanceFields();
+      return ((SClass) getSuperClass()).getNumberOfInstanceFields();
     } else {
       return 0;
     }
@@ -283,7 +283,7 @@ public class SClass extends SObject {
   }
 
   // Implementation specific fields
-  private SClass  superclass;
+  private SObject superclass;
   private SSymbol name;
   private SArray  instanceInvokables;
   private SArray  instanceFields;

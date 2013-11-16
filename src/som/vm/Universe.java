@@ -364,6 +364,9 @@ public class Universe {
     loadSystemClass(stringClass);
     loadSystemClass(doubleClass);
 
+    // Fix up objectClass
+    objectClass.setSuperClass(nilObject);
+
     // Load the generic block class
     blockClass = loadClass(symbolFor("Block"));
 
