@@ -230,7 +230,7 @@ public class SClass extends SObject {
     }
   }
 
-  public void setInstanceFields(java.lang.String[] fields) {
+  public void setInstanceFields(String[] fields) {
     // Allocate an array of the right size
     SArray instanceFields = universe.newArray(fields.length);
 
