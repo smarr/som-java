@@ -158,5 +158,12 @@ public class ObjectPrimitives extends Primitives {
         frame.push(self.getSOMClass(universe));
       }
     });
+
+    installInstancePrimitive(new SPrimitive("halt", universe) {
+      @Override
+      public void invoke(final Frame frame, final Interpreter interpreter) {
+        Universe.errorPrintln("BREAKPOINT");
+      }
+    });
   }
 }
