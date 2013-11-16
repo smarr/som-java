@@ -634,6 +634,9 @@ public class Universe {
 
     // Load primitives (if necessary) and return the resulting class
     if (result != null && result.hasPrimitives()) { result.loadPrimitives(); }
+
+    setGlobal(name, result);
+
     return result;
   }
 
