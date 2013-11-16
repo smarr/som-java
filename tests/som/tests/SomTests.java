@@ -21,7 +21,7 @@
  */
 package som.tests;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
 
@@ -42,6 +42,7 @@ public class SomTests {
         {"BigInteger"    },
         {"Block"         },
         {"ClassLoading"  },
+        {"ClassStructure"},
 
         {"Closure"       },
         {"Coercion"      },
@@ -65,7 +66,7 @@ public class SomTests {
       });
   }
 
-  private String testName;
+  private final String testName;
 
   public SomTests(String testName) {
     this.testName = testName;
