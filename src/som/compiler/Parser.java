@@ -63,6 +63,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import som.vm.Universe;
+import som.vmobjects.SClass;
+import som.vmobjects.SSymbol;
 
 public class Parser {
 
@@ -110,21 +112,7 @@ public class Parser {
     expect(Identifier);
     expect(Equal);
 
-    som.vmobjects.SSymbol superName;
-    if (sym == Identifier) {
-      superName = universe.symbolFor(text);
-      accept(Identifier);
-    } else {
-      superName = universe.symbolFor("Object");
-    }
-    cgenc.setSuperName(superName);
-
-    // Load the super class, if it is not nil (break the dependency cycle)
-    if (!superName.getEmbeddedString().equals("nil")) {
-      som.vmobjects.SClass superClass = universe.loadClass(superName);
-      cgenc.setInstanceFieldsOfSuper(superClass.getInstanceFields());
-      cgenc.setClassFieldsOfSuper(superClass.getSOMClass().getInstanceFields());
-    }
+    superclass(cgenc);
 
     expect(NewTerm);
     instanceFields(cgenc);
@@ -162,6 +150,24 @@ public class Parser {
       }
     }
     expect(EndTerm);
+  }
+
+  private void superclass(final ClassGenerationContext cgenc) {
+    SSymbol superName;
+    if (sym == Identifier) {
+      superName = universe.symbolFor(text);
+      accept(Identifier);
+    } else {
+      superName = universe.symbolFor("Object");
+    }
+    cgenc.setSuperName(superName);
+
+    // Load the super class, if it is not nil (break the dependency cycle)
+    if (!superName.getEmbeddedString().equals("nil")) {
+      SClass superClass = universe.loadClass(superName);
+      cgenc.setInstanceFieldsOfSuper(superClass.getInstanceFields());
+      cgenc.setClassFieldsOfSuper(superClass.getSOMClass().getInstanceFields());
+    }
   }
 
   private boolean symIn(List<Symbol> ss) {
