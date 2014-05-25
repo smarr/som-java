@@ -90,10 +90,12 @@ public class Disassembler {
           Universe.errorPrintln("argument: " + m.getBytecode(b + 1) + ", context "
               + m.getBytecode(b + 2));
           break;
-        case Bytecodes.push_field:
-          Universe.errorPrintln("(index: " + m.getBytecode(b + 1) + ") field: "
-              + ((SSymbol) m.getConstant(b)).toString());
+        case Bytecodes.push_field: {
+          int idx          = m.getBytecode(b + 1);
+          String fieldName = ((SSymbol) m.getHolder().getInstanceFields().getIndexableField(idx)).getEmbeddedString();
+          Universe.errorPrintln("(index: " + idx + ") field: " + fieldName);
           break;
+        }
         case Bytecodes.push_block:
           Universe.errorPrint("block: (index: " + m.getBytecode(b + 1) + ") ");
           dumpMethod((SMethod) m.getConstant(b), indent + "\t");
@@ -116,10 +118,12 @@ public class Disassembler {
           Universe.errorPrintln("argument: " + m.getBytecode(b + 1)
               + ", context: " + m.getBytecode(b + 2));
           break;
-        case Bytecodes.pop_field:
-          Universe.errorPrintln("(index: " + m.getBytecode(b + 1) + ") field: "
-              + ((SSymbol) m.getConstant(b)).toString());
+        case Bytecodes.pop_field: {
+          int idx          = m.getBytecode(b + 1);
+          String fieldName = ((SSymbol) m.getHolder().getInstanceFields().getIndexableField(idx)).getEmbeddedString();
+          Universe.errorPrintln("(index: " + idx + ") field: " + fieldName);
           break;
+        }
         case Bytecodes.send:
           Universe.errorPrintln("(index: " + m.getBytecode(b + 1)
               + ") signature: " + ((SSymbol) m.getConstant(b)).toString());
