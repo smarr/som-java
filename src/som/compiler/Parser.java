@@ -31,6 +31,7 @@ import static som.compiler.Symbol.At;
 import static som.compiler.Symbol.Colon;
 import static som.compiler.Symbol.Comma;
 import static som.compiler.Symbol.Div;
+import static som.compiler.Symbol.Double;
 import static som.compiler.Symbol.EndBlock;
 import static som.compiler.Symbol.EndTerm;
 import static som.compiler.Symbol.Equal;
@@ -63,6 +64,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import som.vm.Universe;
+import som.vmobjects.SAbstractObject;
 import som.vmobjects.SClass;
 import som.vmobjects.SSymbol;
 
@@ -614,37 +616,43 @@ public class Parser {
   }
 
   private void literalNumber(final MethodGenerationContext mgenc) {
-    long val;
-    if (sym == Minus) {
-      val = negativeDecimal();
-    } else {
-      val = literalDecimal();
-    }
+    SAbstractObject lit;
 
-    som.vmobjects.SAbstractObject lit;
-    if (val < java.lang.Integer.MIN_VALUE || val > java.lang.Integer.MAX_VALUE) {
-      lit = universe.newBigInteger(val);
+    if (sym == Minus) {
+      lit = negativeDecimal();
     } else {
-      lit = universe.newInteger((int) val);
+      lit = literalDecimal(false);
     }
     mgenc.addLiteralIfAbsent(lit);
     bcGen.emitPUSHCONSTANT(mgenc, lit);
   }
 
-  private long literalDecimal() {
-    return literalInteger();
+  private SAbstractObject literalDecimal(boolean isNegative) {
+    if (sym == Integer) {
+      return literalInteger(isNegative);
+    } else {
+      assert sym == Double;
+      return literalDouble(isNegative);
+    }
   }
 
-  private long negativeDecimal() {
+  private SAbstractObject negativeDecimal() {
     expect(Minus);
-    return -literalInteger();
+    return literalDecimal(true);
   }
 
-  private long literalInteger() {
+  private SAbstractObject literalInteger(boolean isNegative) {
     try {
-      long i = java.lang.Long.parseLong(text);
+      long i = Long.parseLong(text);
+      if (isNegative) {
+        i = 0 - i;
+      }
       expect(Integer);
-      return i;
+      if (i < java.lang.Integer.MIN_VALUE || i > java.lang.Integer.MAX_VALUE) {
+        return universe.newBigInteger(i);
+      } else {
+        return universe.newInteger((int) i);
+      }
     } catch (NumberFormatException e) {
       StringBuffer err = new StringBuffer("Error: " + filename + ":" +
           lexer.getCurrentLineNumber() +
@@ -652,6 +660,15 @@ public class Parser {
           + "'");
       throw new IllegalStateException(err.toString());
     }
+  }
+
+  private SAbstractObject literalDouble(boolean isNegative) {
+    double d = java.lang.Double.parseDouble(text);
+    if (isNegative) {
+      d = 0.0 - d;
+    }
+    expect(Double);
+    return universe.newDouble(d);
   }
 
   private void literalSymbol(final MethodGenerationContext mgenc) {
@@ -804,7 +821,7 @@ public class Parser {
   }
 
   private boolean printableSymbol() {
-    return sym == Integer || sym.compareTo(STString) >= 0;
+    return sym == Integer || sym == Double || sym.compareTo(STString) >= 0;
   }
 
 }
