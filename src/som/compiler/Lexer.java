@@ -35,7 +35,7 @@ public class Lexer {
 
   private int                 lineNumber;
   private int                 charsRead; // all characters read, excluding the current line
-  private BufferedReader      infile;
+  private final BufferedReader infile;
   private Symbol              sym;
   private char                symc;
   private StringBuffer        text;

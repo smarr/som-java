@@ -278,7 +278,7 @@ public class SClass extends SObject {
   }
 
   @Override
-  public java.lang.String toString() {
+  public String toString() {
     return "Class(" + getName().getEmbeddedString() + ")";
   }
 

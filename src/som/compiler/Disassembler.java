@@ -27,15 +27,15 @@ package som.compiler;
 
 import som.interpreter.Bytecodes;
 import som.vm.Universe;
+import som.vmobjects.SAbstractObject;
 import som.vmobjects.SClass;
 import som.vmobjects.SInvokable;
 import som.vmobjects.SMethod;
-import som.vmobjects.SAbstractObject;
 import som.vmobjects.SSymbol;
 
 public class Disassembler {
 
-  public static void dump(SClass cl) {
+  public static void dump(final SClass cl) {
     for (int i = 0; i < cl.getNumberOfInstanceInvokables(); i++) {
       SInvokable inv = cl.getInstanceInvokable(i);
 
@@ -52,7 +52,7 @@ public class Disassembler {
     }
   }
 
-  public static void dumpMethod(SMethod m, String indent) {
+  public static void dumpMethod(final SMethod m, final String indent) {
     Universe.errorPrintln("(");
 
     // output stack information
