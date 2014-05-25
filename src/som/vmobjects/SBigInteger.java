@@ -28,7 +28,11 @@ import java.math.BigInteger;
 
 import som.vm.Universe;
 
-public class SBigInteger extends SAbstractObject {
+public final class SBigInteger extends SNumber {
+
+  // Private variable holding the embedded big integer
+  private final BigInteger embeddedBiginteger;
+
 
   public SBigInteger(final BigInteger value) {
     embeddedBiginteger = value;
@@ -41,9 +45,135 @@ public class SBigInteger extends SAbstractObject {
 
   @Override
   public SClass getSOMClass(final Universe universe) {
-    return universe.bigintegerClass;
+    return universe.integerClass;
   }
 
-  // Private variable holding the embedded big integer
-  private final BigInteger embeddedBiginteger;
+
+  @Override
+  public SString primAsString(final Universe universe) {
+    return universe.newString(embeddedBiginteger.toString());
+  }
+
+  private SNumber asSNumber(BigInteger result, final Universe universe) {
+    if (result.bitLength() >= Long.SIZE) {
+      return universe.newBigInteger(result);
+    } else {
+      return universe.newInteger(result.longValue());
+    }
+  }
+
+  private BigInteger asBigInteger(final SNumber right) {
+    BigInteger r;
+    if (right instanceof SInteger) {
+      r = BigInteger.valueOf(((SInteger) right).getEmbeddedInteger());
+    } else {
+      r = ((SBigInteger) right).embeddedBiginteger;
+    }
+    return r;
+  }
+
+  @Override
+  public SNumber primAdd(final SNumber right, final Universe universe) {
+    BigInteger r = asBigInteger(right);
+    BigInteger result = embeddedBiginteger.add(r);
+    return asSNumber(result, universe);
+  }
+
+  @Override
+  public SNumber primSubtract(final SNumber right, final Universe universe) {
+    BigInteger r = asBigInteger(right);
+    BigInteger result = embeddedBiginteger.subtract(r);
+    return asSNumber(result, universe);
+  }
+
+
+  @Override
+  public SNumber primMultiply(final SNumber right, final Universe universe) {
+    BigInteger r = asBigInteger(right);
+    BigInteger result = embeddedBiginteger.multiply(r);
+    return asSNumber(result, universe);
+  }
+
+  @Override
+  public SNumber primDoubleDivide(final SNumber right, final Universe universe) {
+    double r;
+    if (right instanceof SInteger) {
+      r = ((SInteger) right).getEmbeddedInteger();
+    } else {
+      r = ((SBigInteger) right).embeddedBiginteger.doubleValue();
+    }
+    double result = embeddedBiginteger.doubleValue() / r;
+    return universe.newDouble(result);
+  }
+
+  @Override
+  public SNumber primIntegerDivide(final SNumber right, final Universe universe) {
+    BigInteger r = asBigInteger(right);
+    BigInteger result = embeddedBiginteger.divide(r);
+    return asSNumber(result, universe);
+  }
+
+  @Override
+  public SNumber primModulo(final SNumber right, final Universe universe) {
+    BigInteger r = asBigInteger(right);
+    BigInteger result = embeddedBiginteger.mod(r);
+    return asSNumber(result, universe);
+  }
+
+  @Override
+  public SNumber primSqrt(final Universe universe) {
+    double result = Math.sqrt(embeddedBiginteger.doubleValue());
+
+    if (result == Math.rint(result)) {
+      return intOrBigInt(result, universe);
+    } else {
+      return universe.newDouble(result);
+    }
+  }
+
+  @Override
+  public SNumber primBitAnd(final SNumber right, final Universe universe) {
+    BigInteger r = asBigInteger(right);
+    BigInteger result = embeddedBiginteger.and(r);
+    return asSNumber(result, universe);
+  }
+
+  @Override
+  public SObject primEqual(final SAbstractObject right, final Universe universe) {
+    if (!(right instanceof SNumber)) {
+      return universe.falseObject;
+    }
+
+    BigInteger r = asBigInteger((SNumber) right);
+
+    if (embeddedBiginteger.compareTo(r) == 0) {
+      return universe.trueObject;
+    } else {
+      return universe.falseObject;
+    }
+  }
+
+
+  @Override
+  public SObject primLessThan(final SNumber right, final Universe universe) {
+    BigInteger r = asBigInteger(right);
+    if (embeddedBiginteger.compareTo(r) < 0) {
+      return universe.trueObject;
+    } else {
+      return universe.falseObject;
+    }
+  }
+
+  @Override
+  public SNumber primLeftShift(final SNumber right, final Universe universe) {
+    BigInteger r = asBigInteger(right);
+    return universe.newBigInteger(embeddedBiginteger.shiftLeft(r.intValue()));
+  }
+
+  @Override
+  public SNumber primBitXor(final SNumber right, final Universe universe) {
+    BigInteger r = asBigInteger(right);
+    BigInteger result = embeddedBiginteger.xor(r);
+    return asSNumber(result, universe);
+  }
 }

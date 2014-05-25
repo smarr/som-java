@@ -44,11 +44,11 @@ import som.vmobjects.SObject;
 public class Frame {
 
   public Frame(final SObject nilObject, final Frame previousFrame,
-      final Frame context, final SMethod method, int stackElements) {
+      final Frame context, final SMethod method, long stackElements) {
     this.previousFrame = previousFrame;
     this.context       = context;
     this.method        = method;
-    this.stack         = new SAbstractObject[stackElements];
+    this.stack         = new SAbstractObject[(int) stackElements];
 
     for (int i = 0; i < stackElements; i++) {
       stack[i] = nilObject;
@@ -143,7 +143,7 @@ public class Frame {
 
     // Set the stack pointer to its initial value thereby clearing the stack
     setStackPointer(localOffset
-        + getMethod().getNumberOfLocals().getEmbeddedInteger() - 1);
+        + (int) getMethod().getNumberOfLocals().getEmbeddedInteger() - 1);
   }
 
   public int getBytecodeIndex() {

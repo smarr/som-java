@@ -24,15 +24,20 @@
 
 package som.vmobjects;
 
+import java.math.BigInteger;
+
 import som.vm.Universe;
 
-public class SInteger extends SAbstractObject {
+public final class SInteger extends SNumber {
 
-  public SInteger(final int value) {
+  // Private variable holding the embedded integer
+  private final long embeddedInteger;
+
+  public SInteger(final long value) {
     embeddedInteger = value;
   }
 
-  public int getEmbeddedInteger() {
+  public long getEmbeddedInteger() {
     // Get the embedded integer
     return embeddedInteger;
   }
@@ -47,6 +52,220 @@ public class SInteger extends SAbstractObject {
     return universe.integerClass;
   }
 
-  // Private variable holding the embedded integer
-  private final int embeddedInteger;
+  @Override
+  public SString primAsString(final Universe universe) {
+    return universe.newString(Long.toString(embeddedInteger));
+  }
+
+  @Override
+  public SNumber primSqrt(final Universe universe) {
+    double result = Math.sqrt(embeddedInteger);
+
+    if (result == Math.rint(result)) {
+      return intOrBigInt(result, universe);
+    } else {
+      return universe.newDouble(result);
+    }
+  }
+
+  @Override
+  public SNumber primAdd(final SNumber right, final Universe universe) {
+    if (right instanceof SBigInteger) {
+      BigInteger result = BigInteger.valueOf(embeddedInteger).add(
+          ((SBigInteger) right).getEmbeddedBiginteger());
+      return universe.newBigInteger(result);
+    } else if (right instanceof SDouble) {
+      double result = embeddedInteger + ((SDouble) right).getEmbeddedDouble();
+      return universe.newDouble(result);
+    } else {
+      SInteger r = (SInteger) right;
+
+      try {
+        long result = Math.addExact(embeddedInteger, r.getEmbeddedInteger());
+        return universe.newInteger(result);
+      } catch (ArithmeticException e) {
+        BigInteger result = BigInteger.valueOf(embeddedInteger).add(
+            BigInteger.valueOf(r.getEmbeddedInteger()));
+        return universe.newBigInteger(result);
+      }
+    }
+  }
+
+  @Override
+  public SNumber primSubtract(final SNumber right, final Universe universe) {
+    if (right instanceof SBigInteger) {
+      BigInteger result = BigInteger.valueOf(embeddedInteger).subtract(
+          ((SBigInteger) right).getEmbeddedBiginteger());
+      return universe.newBigInteger(result);
+    } else if (right instanceof SDouble) {
+      double result = embeddedInteger - ((SDouble) right).getEmbeddedDouble();
+      return universe.newDouble(result);
+    } else {
+      SInteger r = (SInteger) right;
+
+      try {
+        long result = Math.subtractExact(embeddedInteger, r.getEmbeddedInteger());
+        return universe.newInteger(result);
+      } catch (ArithmeticException e) {
+        BigInteger result = BigInteger.valueOf(embeddedInteger).subtract(
+            BigInteger.valueOf(r.getEmbeddedInteger()));
+        return universe.newBigInteger(result);
+      }
+    }
+  }
+
+  @Override
+  public SNumber primMultiply(final SNumber right, final Universe universe) {
+    if (right instanceof SBigInteger) {
+      BigInteger result = BigInteger.valueOf(embeddedInteger).multiply(
+          ((SBigInteger) right).getEmbeddedBiginteger());
+      return universe.newBigInteger(result);
+    } else if (right instanceof SDouble) {
+      double result = embeddedInteger * ((SDouble) right).getEmbeddedDouble();
+      return universe.newDouble(result);
+    } else {
+      SInteger r = (SInteger) right;
+
+      try {
+        long result = Math.multiplyExact(embeddedInteger, r.getEmbeddedInteger());
+        return universe.newInteger(result);
+      } catch (ArithmeticException e) {
+        BigInteger result = BigInteger.valueOf(embeddedInteger).multiply(
+            BigInteger.valueOf(r.getEmbeddedInteger()));
+        return universe.newBigInteger(result);
+      }
+    }
+  }
+
+  @Override
+  public SNumber primDoubleDivide(final SNumber right, final Universe universe) {
+    double result;
+
+    if (right instanceof SBigInteger) {
+      result = embeddedInteger / ((SBigInteger) right).getEmbeddedBiginteger().doubleValue();
+    } else if (right instanceof SDouble) {
+      result = embeddedInteger / ((SDouble) right).getEmbeddedDouble();
+    } else {
+      result = (double) embeddedInteger / ((SInteger) right).getEmbeddedInteger();
+    }
+
+    return universe.newDouble(result);
+  }
+
+  @Override
+  public SNumber primIntegerDivide(final SNumber right, final Universe universe) {
+    if (right instanceof SBigInteger) {
+      BigInteger result = BigInteger.valueOf(embeddedInteger).divide(
+          ((SBigInteger) right).getEmbeddedBiginteger());
+      return universe.newBigInteger(result);
+    } else if (right instanceof SDouble) {
+      long result = (long) (embeddedInteger / ((SDouble) right).getEmbeddedDouble());
+      return universe.newInteger(result);
+    } else {
+      long result = embeddedInteger / ((SInteger) right).getEmbeddedInteger();
+      return universe.newInteger(result);
+    }
+  }
+
+  @Override
+  public SNumber primModulo(final SNumber right, final Universe universe) {
+    if (right instanceof SBigInteger) {
+      // Note: modulo semantics of SOM differ from Java, with respect to
+      //       negative operands, but BigInteger doesn't support a negative
+      //       second operand, so, we should get an exception, which we can
+      //       properly handle once an application actually needs it.
+      BigInteger result = BigInteger.valueOf(embeddedInteger).mod(
+          ((SBigInteger) right).getEmbeddedBiginteger());
+      return universe.newBigInteger(result);
+    } else if (right instanceof SDouble) {
+      double result = embeddedInteger % ((SDouble) right).getEmbeddedDouble();
+      return universe.newDouble(result);
+    } else {
+      long r = ((SInteger) right).getEmbeddedInteger();
+      long result = embeddedInteger % r;
+
+      if (embeddedInteger > 0 && r < 0) {
+        try {
+          result = Math.addExact(result, r);
+        } catch (ArithmeticException e) {
+          BigInteger bigRes = BigInteger.valueOf(result).add(
+              BigInteger.valueOf(r));
+          return universe.newBigInteger(bigRes);
+        }
+      }
+
+      return universe.newInteger(result);
+    }
+  }
+
+  @Override
+  public SNumber primBitAnd(final SNumber right, final Universe universe) {
+    if (right instanceof SBigInteger) {
+      BigInteger result = BigInteger.valueOf(embeddedInteger).and(
+          ((SBigInteger) right).getEmbeddedBiginteger());
+      return universe.newBigInteger(result);
+    } else {
+      long result = embeddedInteger & ((SInteger) right).embeddedInteger;
+      return universe.newInteger(result);
+    }
+  }
+
+  @Override
+  public SNumber primBitXor(final SNumber right, final Universe universe) {
+    if (right instanceof SBigInteger) {
+      BigInteger result = BigInteger.valueOf(embeddedInteger).xor(
+          ((SBigInteger) right).getEmbeddedBiginteger());
+      return universe.newBigInteger(result);
+    } else {
+      long result = embeddedInteger ^ ((SInteger) right).embeddedInteger;
+      return universe.newInteger(result);
+    }
+  }
+
+  @Override
+  public SNumber primLeftShift(final SNumber right, final Universe universe) {
+    long r = ((SInteger) right).embeddedInteger;
+    assert  r > 0;
+
+    if (Long.SIZE - Long.numberOfLeadingZeros(embeddedInteger) + r > Long.SIZE - 1) {
+      BigInteger result = BigInteger.valueOf(embeddedInteger).shiftLeft((int) r);
+      return universe.newBigInteger(result);
+    }
+
+    long result = embeddedInteger << r;
+    return universe.newInteger(result);
+  }
+
+  @Override
+  public SObject primEqual(final SAbstractObject right, final Universe universe) {
+    boolean result;
+
+    if (right instanceof SBigInteger) {
+      result = BigInteger.valueOf(embeddedInteger).equals(
+          ((SBigInteger) right).getEmbeddedBiginteger());
+    } else if (right instanceof SDouble) {
+      result = embeddedInteger == ((SDouble) right).getEmbeddedDouble();
+    } else if (right instanceof SInteger) {
+      result = embeddedInteger == ((SInteger) right).getEmbeddedInteger();
+    } else {
+      result = false;
+    }
+
+    return asSBoolean(result, universe);
+  }
+
+  @Override
+  public SObject primLessThan(final SNumber right, final Universe universe) {
+    boolean result;
+    if (right instanceof SBigInteger) {
+      result = BigInteger.valueOf(embeddedInteger).compareTo(
+          ((SBigInteger) right).getEmbeddedBiginteger()) < 0;
+    } else if (right instanceof SDouble) {
+      result = embeddedInteger < ((SDouble) right).getEmbeddedDouble();
+    } else {
+      result = embeddedInteger < ((SInteger) right).getEmbeddedInteger();
+    }
+
+    return asSBoolean(result, universe);
+  }
 }

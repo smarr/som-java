@@ -52,14 +52,14 @@ public class SObject extends SAbstractObject {
     return numberOfObjectFields;
   }
 
-  public SAbstractObject getField(int index) {
+  public SAbstractObject getField(long index) {
     // Get the field with the given index
-    return fields[index];
+    return fields[(int) index];
   }
 
-  public void setField(int index, SAbstractObject value) {
+  public void setField(long index, SAbstractObject value) {
     // Set the field with the given index to the given value
-    fields[index] = value;
+    fields[(int) index] = value;
   }
 
   @Override

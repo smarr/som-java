@@ -28,8 +28,8 @@ import som.vm.Universe;
 
 public class SArray extends SAbstractObject {
 
-  public SArray(final SObject nilObject, int numElements) {
-    indexableFields = new SAbstractObject[numElements];
+  public SArray(final SObject nilObject, long numElements) {
+    indexableFields = new SAbstractObject[(int) numElements];
 
     // Clear each and every field by putting nil into them
     for (int i = 0; i < getNumberOfIndexableFields(); i++) {
@@ -37,12 +37,12 @@ public class SArray extends SAbstractObject {
     }
   }
 
-  public SAbstractObject getIndexableField(int index) {
-    return indexableFields[index];
+  public SAbstractObject getIndexableField(long index) {
+    return indexableFields[(int) index];
   }
 
-  public void setIndexableField(int index, SAbstractObject value) {
-    indexableFields[index] = value;
+  public void setIndexableField(long index, SAbstractObject value) {
+    indexableFields[(int) index] = value;
   }
 
   public int getNumberOfIndexableFields() {

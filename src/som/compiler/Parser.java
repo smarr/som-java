@@ -60,6 +60,7 @@ import static som.compiler.Symbol.Separator;
 import static som.compiler.Symbol.Star;
 
 import java.io.Reader;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -648,17 +649,22 @@ public class Parser {
         i = 0 - i;
       }
       expect(Integer);
-      if (i < java.lang.Integer.MIN_VALUE || i > java.lang.Integer.MAX_VALUE) {
-        return universe.newBigInteger(i);
-      } else {
-        return universe.newInteger((int) i);
+      return universe.newInteger(i);
+    } catch (NumberFormatException first) {
+      try {
+        BigInteger big = new BigInteger(text);
+        if (isNegative) {
+          big = big.negate();
+        }
+        expect(Integer);
+        return universe.newBigInteger(big);
+      } catch (NumberFormatException e) {
+        StringBuffer err = new StringBuffer("Error: " + filename + ":" +
+            lexer.getCurrentLineNumber() +
+            ": parsing number literal failed: '" + text.toString()
+            + "'");
+        throw new IllegalStateException(err.toString());
       }
-    } catch (NumberFormatException e) {
-      StringBuffer err = new StringBuffer("Error: " + filename + ":" +
-          lexer.getCurrentLineNumber() +
-          ": parsing number literal failed: '" + text.toString()
-          + "'");
-      throw new IllegalStateException(err.toString());
     }
   }
 

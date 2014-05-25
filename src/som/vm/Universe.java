@@ -99,12 +99,12 @@ public class Universe {
     return interpreter;
   }
 
-  public void exit(int errorCode) {
+  public void exit(long errorCode) {
     // Exit from the Java system
     if (!avoidExit) {
-      System.exit(errorCode);
+      System.exit((int) errorCode);
     } else {
-      lastExitCode = errorCode;
+      lastExitCode = (int) errorCode;
     }
   }
 
@@ -328,7 +328,6 @@ public class Universe {
     symbolClass     = newSystemClass();
     methodClass     = newSystemClass();
     integerClass    = newSystemClass();
-    bigintegerClass = newSystemClass();
     primitiveClass  = newSystemClass();
     stringClass     = newSystemClass();
     doubleClass     = newSystemClass();
@@ -345,7 +344,6 @@ public class Universe {
     initializeSystemClass(methodClass,      arrayClass, "Method");
     initializeSystemClass(symbolClass,     objectClass, "Symbol");
     initializeSystemClass(integerClass,    objectClass, "Integer");
-    initializeSystemClass(bigintegerClass, objectClass, "BigInteger");
     initializeSystemClass(primitiveClass,  objectClass, "Primitive");
     initializeSystemClass(stringClass,     objectClass, "String");
     initializeSystemClass(doubleClass,     objectClass, "Double");
@@ -359,7 +357,6 @@ public class Universe {
     loadSystemClass(methodClass);
     loadSystemClass(symbolClass);
     loadSystemClass(integerClass);
-    loadSystemClass(bigintegerClass);
     loadSystemClass(primitiveClass);
     loadSystemClass(stringClass);
     loadSystemClass(doubleClass);
@@ -406,7 +403,7 @@ public class Universe {
     return result;
   }
 
-  public SArray newArray(int length) {
+  public SArray newArray(long length) {
     return new SArray(nilObject, length);
   }
 
@@ -457,7 +454,7 @@ public class Universe {
     // Compute the maximum number of stack locations (including arguments,
     // locals and extra buffer to support doesNotUnderstand) and set the number
     // of indexable fields accordingly
-    int length = method.getNumberOfArguments()
+    long length = method.getNumberOfArguments()
         + method.getNumberOfLocals().getEmbeddedInteger()
         + method.getMaximumNumberOfStackElements().getEmbeddedInteger() + 2;
 
@@ -490,19 +487,13 @@ public class Universe {
     return result;
   }
 
-  public SInteger newInteger(int value) {
+  public SInteger newInteger(long value) {
     SInteger result = new SInteger(value);
     return result;
   }
 
-  public SBigInteger newBigInteger(java.math.BigInteger value) {
+  public SBigInteger newBigInteger(BigInteger value) {
     SBigInteger result = new SBigInteger(value);
-    return result;
-  }
-
-  public SBigInteger newBigInteger(long value) {
-    SBigInteger result = new SBigInteger(new BigInteger(new Long(
-        value).toString()));
     return result;
   }
 
@@ -730,7 +721,6 @@ public class Universe {
 
   public SClass                                  nilClass;
   public SClass                                  integerClass;
-  public SClass                                  bigintegerClass;
   public SClass                                  arrayClass;
   public SClass                                  methodClass;
   public SClass                                  symbolClass;
