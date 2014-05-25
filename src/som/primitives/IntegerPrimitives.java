@@ -348,6 +348,33 @@ public class IntegerPrimitives extends Primitives {
       }
     });
 
+    installInstancePrimitive(new SPrimitive("<<", universe) {
+
+      @Override
+      public void invoke(final Frame frame, final Interpreter interpreter) {
+        SInteger right = (SInteger) frame.pop();
+        SInteger left  = (SInteger) frame.pop();
+
+        assert  right.getEmbeddedInteger() > 0;
+
+        long result = left.getEmbeddedInteger() << right.getEmbeddedInteger();
+
+        pushLongResult(frame, result);
+      }
+    });
+
+    installInstancePrimitive(new SPrimitive("bitXor:", universe) {
+
+      @Override
+      public void invoke(final Frame frame, final Interpreter interpreter) {
+        SInteger right = (SInteger) frame.pop();
+        SInteger left  = (SInteger) frame.pop();
+
+        int result = left.getEmbeddedInteger() ^ right.getEmbeddedInteger();
+        frame.push(universe.newInteger(result));
+      }
+    });
+
     installClassPrimitive(new SPrimitive("fromString:", universe) {
 
       @Override
