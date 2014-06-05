@@ -44,78 +44,81 @@ import som.vmobjects.SSymbol;
 
 public class BytecodeGenerator {
 
-  public void emitPOP(MethodGenerationContext mgenc) {
+  public void emitPOP(final MethodGenerationContext mgenc) {
     emit1(mgenc, pop);
   }
 
-  public void emitPUSHARGUMENT(MethodGenerationContext mgenc, byte idx, byte ctx) {
+  public void emitPUSHARGUMENT(final MethodGenerationContext mgenc, final byte idx, final byte ctx) {
     emit3(mgenc, push_argument, idx, ctx);
   }
 
-  public void emitRETURNLOCAL(MethodGenerationContext mgenc) {
+  public void emitRETURNLOCAL(final MethodGenerationContext mgenc) {
     emit1(mgenc, return_local);
   }
 
-  public void emitRETURNNONLOCAL(MethodGenerationContext mgenc) {
+  public void emitRETURNNONLOCAL(final MethodGenerationContext mgenc) {
     emit1(mgenc, return_non_local);
   }
 
-  public void emitDUP(MethodGenerationContext mgenc) {
+  public void emitDUP(final MethodGenerationContext mgenc) {
     emit1(mgenc, dup);
   }
 
-  public void emitPUSHBLOCK(MethodGenerationContext mgenc, SMethod blockMethod) {
+  public void emitPUSHBLOCK(final MethodGenerationContext mgenc, final SMethod blockMethod) {
     emit2(mgenc, push_block, mgenc.findLiteralIndex(blockMethod));
   }
 
-  public void emitPUSHLOCAL(MethodGenerationContext mgenc, byte idx, byte ctx) {
+  public void emitPUSHLOCAL(final MethodGenerationContext mgenc, final byte idx, final byte ctx) {
+    assert idx >= 0;
     emit3(mgenc, push_local, idx, ctx);
   }
 
-  public void emitPUSHFIELD(MethodGenerationContext mgenc, SSymbol fieldName) {
+  public void emitPUSHFIELD(final MethodGenerationContext mgenc, final SSymbol fieldName) {
+    assert mgenc.hasField(fieldName);
     emit2(mgenc, push_field, mgenc.getFieldIndex(fieldName));
   }
 
-  public void emitPUSHGLOBAL(MethodGenerationContext mgenc, SSymbol global) {
+  public void emitPUSHGLOBAL(final MethodGenerationContext mgenc, final SSymbol global) {
     emit2(mgenc, push_global, mgenc.findLiteralIndex(global));
   }
 
-  public void emitPOPARGUMENT(MethodGenerationContext mgenc, byte idx, byte ctx) {
+  public void emitPOPARGUMENT(final MethodGenerationContext mgenc, final byte idx, final byte ctx) {
     emit3(mgenc, pop_argument, idx, ctx);
   }
 
-  public void emitPOPLOCAL(MethodGenerationContext mgenc, byte idx, byte ctx) {
+  public void emitPOPLOCAL(final MethodGenerationContext mgenc, final byte idx, final byte ctx) {
     emit3(mgenc, pop_local, idx, ctx);
   }
 
-  public void emitPOPFIELD(MethodGenerationContext mgenc, SSymbol fieldName) {
+  public void emitPOPFIELD(final MethodGenerationContext mgenc, final SSymbol fieldName) {
+    assert mgenc.hasField(fieldName);
     emit2(mgenc, pop_field, mgenc.getFieldIndex(fieldName));
   }
 
-  public void emitSUPERSEND(MethodGenerationContext mgenc, SSymbol msg) {
+  public void emitSUPERSEND(final MethodGenerationContext mgenc, final SSymbol msg) {
     emit2(mgenc, super_send, mgenc.findLiteralIndex(msg));
   }
 
-  public void emitSEND(MethodGenerationContext mgenc, SSymbol msg) {
+  public void emitSEND(final MethodGenerationContext mgenc, final SSymbol msg) {
     emit2(mgenc, send, mgenc.findLiteralIndex(msg));
   }
 
-  public void emitPUSHCONSTANT(MethodGenerationContext mgenc,
-      som.vmobjects.SAbstractObject lit) {
+  public void emitPUSHCONSTANT(final MethodGenerationContext mgenc,
+      final som.vmobjects.SAbstractObject lit) {
     emit2(mgenc, push_constant, mgenc.findLiteralIndex(lit));
   }
 
-  private void emit1(MethodGenerationContext mgenc, byte code) {
+  private void emit1(final MethodGenerationContext mgenc, final byte code) {
     mgenc.addBytecode(code);
   }
 
-  private void emit2(MethodGenerationContext mgenc, byte code, byte idx) {
+  private void emit2(final MethodGenerationContext mgenc, final byte code, final byte idx) {
     mgenc.addBytecode(code);
     mgenc.addBytecode(idx);
   }
 
-  private void emit3(MethodGenerationContext mgenc, byte code, byte idx,
-      byte ctx) {
+  private void emit3(final MethodGenerationContext mgenc, final byte code, final byte idx,
+      final byte ctx) {
     mgenc.addBytecode(code);
     mgenc.addBytecode(idx);
     mgenc.addBytecode(ctx);
