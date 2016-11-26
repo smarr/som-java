@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2016 Michael Haupt, github@haupz.de
  * Copyright (c) 2009 Michael Haupt, michael.haupt@hpi.uni-potsdam.de
  * Software Architecture Group, Hasso Plattner Institute, Potsdam, Germany
  * http://www.hpi.uni-potsdam.de/swa/
@@ -24,17 +25,36 @@
 
 package som.vmobjects;
 
-import java.math.BigInteger;
-
 import som.vm.Universe;
 
+import java.math.BigInteger;
+import java.util.HashMap;
+import java.util.Map;
+
 public final class SInteger extends SNumber {
+
+  /**
+   * Language convention requires integers up to this value to be identical.
+   */
+  private static final long MAX_IDENTICAL_INT = 1073741823L;
+
+  /**
+   * Cache to store integers up to {@link #MAX_IDENTICAL_INT}.
+   */
+  private static Map<Long, SInteger> CACHE = new HashMap<>();
 
   // Private variable holding the embedded integer
   private final long embeddedInteger;
 
-  public SInteger(final long value) {
+  private SInteger(final long value) {
     embeddedInteger = value;
+  }
+
+  public static SInteger getInteger(final long value) {
+    if (value > MAX_IDENTICAL_INT) {
+      return new SInteger(value);
+    }
+    return CACHE.computeIfAbsent(value, SInteger::new);
   }
 
   public long getEmbeddedInteger() {

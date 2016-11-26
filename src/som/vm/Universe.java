@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2016 Michael Haupt, github@haupz.de
  * Copyright (c) 2009 Michael Haupt, michael.haupt@hpi.uni-potsdam.de
  * Software Architecture Group, Hasso Plattner Institute, Potsdam, Germany
  * http://www.hpi.uni-potsdam.de/swa/
@@ -24,12 +25,6 @@
 
 package som.vm;
 
-import java.io.IOException;
-import java.math.BigInteger;
-import java.util.HashMap;
-import java.util.List;
-import java.util.StringTokenizer;
-
 import som.compiler.Disassembler;
 import som.interpreter.Bytecodes;
 import som.interpreter.Frame;
@@ -46,6 +41,12 @@ import som.vmobjects.SMethod;
 import som.vmobjects.SObject;
 import som.vmobjects.SString;
 import som.vmobjects.SSymbol;
+
+import java.io.IOException;
+import java.math.BigInteger;
+import java.util.HashMap;
+import java.util.List;
+import java.util.StringTokenizer;
 
 public class Universe {
 
@@ -488,7 +489,7 @@ public class Universe {
   }
 
   public SInteger newInteger(long value) {
-    SInteger result = new SInteger(value);
+    SInteger result = SInteger.getInteger(value);
     return result;
   }
 
