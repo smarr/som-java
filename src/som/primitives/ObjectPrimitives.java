@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2016 Michael Haupt, github@haupz.de
  * Copyright (c) 2009 Michael Haupt, michael.haupt@hpi.uni-potsdam.de
  * Software Architecture Group, Hasso Plattner Institute, Potsdam, Germany
  * http://www.hpi.uni-potsdam.de/swa/
@@ -70,7 +71,7 @@ public class ObjectPrimitives extends Primitives {
       @Override
       public void invoke(final Frame frame, final Interpreter interpreter) {
         SAbstractObject self = frame.pop();
-        int size = 0;
+        int size = 1; // each object holds its class as an implicit member that contributes to its size
         if (self instanceof SArray) {
           size += ((SArray) self).getNumberOfIndexableFields();
         }
