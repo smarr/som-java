@@ -24,6 +24,8 @@ Make sure to initialize the shared Smalltalk standard library, tests, and exampl
 
     $ git submodule update --init
 
+To build and run SOM, Java 8 or newer is required.
+
 SOM can be built with Ant:
 
     $ ant jar
