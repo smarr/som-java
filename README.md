@@ -20,6 +20,9 @@ Hello = (
 
 This repository contains a plain Java implementation of SOM, including an implementation of the SOM standard library. Please see the [main project page][SOMst] for links to the VM implementation.
 
+Make sure to initialize the shared Smalltalk standard library, tests, and examples by importing the git submodule:
+
+    $ git submodule update --init
 
 SOM can be build with Ant:
 
