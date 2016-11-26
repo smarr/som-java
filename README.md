@@ -20,19 +20,27 @@ Hello = (
 
 This repository contains a plain Java implementation of SOM, including an implementation of the SOM standard library. Please see the [main project page][SOMst] for links to the VM implementation.
 
+Make sure to initialize the shared Smalltalk standard library, tests, and examples by importing the git submodule:
 
-SOM can be build with Ant:
+    $ git submodule update --init
+
+To build and run SOM, Java 8 or newer is required.
+
+SOM can be built with Ant:
 
     $ ant jar
 
 Afterwards, the tests can be executed with:
 
-    ./som.sh -cp Smalltalk TestSuite/TestHarness.som
-   
+    $ ./som.sh -cp Smalltalk TestSuite/TestHarness.som
+
+or with:
+
+    $ ant test
+ 
 A simple Hello World program is executed with:
 
-    ./som.sh -cp Smalltalk Examples/Hello/Hello.som
-
+    $ ./som.sh -cp Smalltalk Examples/Hello/Hello.som
 
 Information on previous authors are included in the AUTHORS file. This code is
 distributed under the MIT License. Please see the LICENSE file for details.
