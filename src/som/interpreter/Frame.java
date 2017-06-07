@@ -29,7 +29,9 @@ import som.vmobjects.SAbstractObject;
 import som.vmobjects.SMethod;
 import som.vmobjects.SObject;
 
+
 /**
+ * @formatter:off
  * Frame layout:
  *
  * +-----------------+
@@ -40,15 +42,16 @@ import som.vmobjects.SObject;
  * | Stack           | <-- stackPointer
  * | ...             |
  * +-----------------+
+ * @formatter:on
  */
 public class Frame {
 
   public Frame(final SObject nilObject, final Frame previousFrame,
-      final Frame context, final SMethod method, long stackElements) {
+      final Frame context, final SMethod method, final long stackElements) {
     this.previousFrame = previousFrame;
-    this.context       = context;
-    this.method        = method;
-    this.stack         = new SAbstractObject[(int) stackElements];
+    this.context = context;
+    this.method = method;
+    this.stack = new SAbstractObject[(int) stackElements];
 
     for (int i = 0; i < stackElements; i++) {
       stack[i] = nilObject;
@@ -63,11 +66,11 @@ public class Frame {
     previousFrame = null;
   }
 
-  public boolean hasPreviousFrame(SAbstractObject nilObject) {
+  public boolean hasPreviousFrame(final SAbstractObject nilObject) {
     return previousFrame != null;
   }
 
-  public boolean isBootstrapFrame(SAbstractObject nilObject) {
+  public boolean isBootstrapFrame(final SAbstractObject nilObject) {
     return !hasPreviousFrame(nilObject);
   }
 
@@ -96,7 +99,7 @@ public class Frame {
     return frame;
   }
 
-  public Frame getOuterContext(SAbstractObject nilObject) {
+  public Frame getOuterContext(final SAbstractObject nilObject) {
     // Compute the outer context of this frame
     Frame frame = this;
 
@@ -120,7 +123,7 @@ public class Frame {
     return stack[stackPointer];
   }
 
-  public void push(SAbstractObject value) {
+  public void push(final SAbstractObject value) {
     // Push an object onto the expression stack
     int stackPointer = getStackPointer() + 1;
     stack[stackPointer] = value;
@@ -132,7 +135,7 @@ public class Frame {
     return stackPointer;
   }
 
-  public void setStackPointer(int value) {
+  public void setStackPointer(final int value) {
     // Set the current stack pointer for this frame
     stackPointer = value;
   }
@@ -151,43 +154,43 @@ public class Frame {
     return bytecodeIndex;
   }
 
-  public void setBytecodeIndex(int value) {
+  public void setBytecodeIndex(final int value) {
     // Set the current bytecode index for this frame
     bytecodeIndex = value;
   }
 
-  public SAbstractObject getStackElement(int index) {
+  public SAbstractObject getStackElement(final int index) {
     // Get the stack element with the given index
     // (an index of zero yields the top element)
     return stack[getStackPointer() - index];
   }
 
-  public void setStackElement(int index, SAbstractObject value) {
+  public void setStackElement(final int index, final SAbstractObject value) {
     // Set the stack element with the given index to the given value
     // (an index of zero yields the top element)
     stack[getStackPointer() - index] = value;
   }
 
-  private SAbstractObject getLocal(int index) {
+  private SAbstractObject getLocal(final int index) {
     return stack[localOffset + index];
   }
 
-  private void setLocal(int index, SAbstractObject value) {
+  private void setLocal(final int index, final SAbstractObject value) {
     stack[localOffset + index] = value;
   }
 
-  public SAbstractObject getLocal(int index, int contextLevel) {
+  public SAbstractObject getLocal(final int index, final int contextLevel) {
     // Get the local with the given index in the given context
     return getContext(contextLevel).getLocal(index);
   }
 
-  public void setLocal(int index, int contextLevel, SAbstractObject value) {
+  public void setLocal(final int index, final int contextLevel, final SAbstractObject value) {
     // Set the local with the given index in the given context to the given
     // value
     getContext(contextLevel).setLocal(index, value);
   }
 
-  public SAbstractObject getArgument(int index, int contextLevel) {
+  public SAbstractObject getArgument(final int index, final int contextLevel) {
     // Get the context
     Frame context = getContext(contextLevel);
 
@@ -195,7 +198,8 @@ public class Frame {
     return context.stack[index];
   }
 
-  public void setArgument(int index, int contextLevel, SAbstractObject value) {
+  public void setArgument(final int index, final int contextLevel,
+      final SAbstractObject value) {
     // Get the context
     Frame context = getContext(contextLevel);
 
@@ -203,7 +207,7 @@ public class Frame {
     context.stack[index] = value;
   }
 
-  public void copyArgumentsFrom(Frame frame) {
+  public void copyArgumentsFrom(final Frame frame) {
     // copy arguments from frame:
     // - arguments are at the top of the stack of frame.
     // - copy them into the argument area of the current frame
@@ -213,7 +217,7 @@ public class Frame {
     }
   }
 
-  public void printStackTrace(SAbstractObject nilObject) {
+  public void printStackTrace(final SAbstractObject nilObject) {
     // Print a stack trace starting in this frame
     Universe.print(getMethod().getHolder().getName().getEmbeddedString());
     Universe.print(getBytecodeIndex() + "@"
@@ -224,14 +228,14 @@ public class Frame {
   }
 
   // Private variables holding the stack pointer and the bytecode index
-  private int      stackPointer;
-  private int      bytecodeIndex;
+  private int stackPointer;
+  private int bytecodeIndex;
 
   // the offset at which local variables start
-  private int      localOffset;
+  private int localOffset;
 
-  private final SMethod method;
-  private final Frame   context;
-  private       Frame   previousFrame;
+  private final SMethod           method;
+  private final Frame             context;
+  private Frame                   previousFrame;
   private final SAbstractObject[] stack;
 }

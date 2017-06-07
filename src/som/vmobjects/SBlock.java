@@ -28,10 +28,11 @@ import som.interpreter.Frame;
 import som.interpreter.Interpreter;
 import som.vm.Universe;
 
+
 public class SBlock extends SAbstractObject {
 
   public SBlock(final SMethod method, final Frame context, final SClass blockClass) {
-    this.method  = method;
+    this.method = method;
     this.context = context;
     this.blockClass = blockClass;
   }
@@ -78,7 +79,9 @@ public class SBlock extends SAbstractObject {
     private static java.lang.String computeSignatureString(int numberOfArguments) {
       // Compute the signature string
       java.lang.String signatureString = "value";
-      if (numberOfArguments > 1) { signatureString += ":"; }
+      if (numberOfArguments > 1) {
+        signatureString += ":";
+      }
 
       // Add extra value: selector elements if necessary
       for (int i = 2; i < numberOfArguments; i++) {

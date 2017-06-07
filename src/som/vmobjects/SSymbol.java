@@ -26,6 +26,7 @@ package som.vmobjects;
 
 import som.vm.Universe;
 
+
 public class SSymbol extends SString {
 
   public SSymbol(final String value) {
@@ -43,7 +44,9 @@ public class SSymbol extends SString {
 
       // Iterate through every character in the signature string
       for (char c : getEmbeddedString().toCharArray()) {
-        if (c == ':') { numberOfColons++; }
+        if (c == ':') {
+          numberOfColons++;
+        }
       }
 
       // The number of arguments is equal to the number of colons plus one
@@ -65,7 +68,9 @@ public class SSymbol extends SString {
     for (char c : getEmbeddedString().toCharArray()) {
       if (c != '~' && c != '&' && c != '|' && c != '*' && c != '/' && c != '@'
           && c != '+' && c != '-' && c != '=' && c != '>' && c != '<'
-          && c != ',' && c != '%' && c != '\\') { return false; }
+          && c != ',' && c != '%' && c != '\\') {
+        return false;
+      }
     }
     return true;
   }

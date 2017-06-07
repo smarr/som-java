@@ -26,6 +26,7 @@ package som.vmobjects;
 
 import som.vm.Universe;
 
+
 public final class SDouble extends SNumber {
 
   private final double embeddedDouble;
@@ -45,7 +46,9 @@ public final class SDouble extends SNumber {
   }
 
   private double coerceToDouble(final SNumber o, final Universe universe) {
-    if (o instanceof SDouble) { return ((SDouble) o).embeddedDouble; }
+    if (o instanceof SDouble) {
+      return ((SDouble) o).embeddedDouble;
+    }
     if (o instanceof SInteger) {
       return ((SInteger) o).getEmbeddedInteger();
     }

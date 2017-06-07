@@ -33,6 +33,7 @@ import som.vmobjects.SInvokable;
 import som.vmobjects.SMethod;
 import som.vmobjects.SSymbol;
 
+
 public class Disassembler {
 
   public static void dump(final SClass cl) {
@@ -61,15 +62,18 @@ public class Disassembler {
         + m.getNumberOfBytecodes() + " bc_count>");
 
     // output bytecodes
-    for (int b = 0;
-         b < m.getNumberOfBytecodes();
-         b += Bytecodes.getBytecodeLength(m.getBytecode(b))) {
+    for (int b = 0; b < m.getNumberOfBytecodes(); b +=
+        Bytecodes.getBytecodeLength(m.getBytecode(b))) {
 
       Universe.errorPrint(indent);
 
       // bytecode index
-      if (b < 10)  { Universe.errorPrint(" "); }
-      if (b < 100) { Universe.errorPrint(" "); }
+      if (b < 10) {
+        Universe.errorPrint(" ");
+      }
+      if (b < 100) {
+        Universe.errorPrint(" ");
+      }
       Universe.errorPrint(" " + b + ":");
 
       // mnemonic
@@ -91,8 +95,9 @@ public class Disassembler {
               + m.getBytecode(b + 2));
           break;
         case Bytecodes.push_field: {
-          int idx          = m.getBytecode(b + 1);
-          String fieldName = ((SSymbol) m.getHolder().getInstanceFields().getIndexableField(idx)).getEmbeddedString();
+          int idx = m.getBytecode(b + 1);
+          String fieldName = ((SSymbol) m.getHolder().getInstanceFields()
+                                         .getIndexableField(idx)).getEmbeddedString();
           Universe.errorPrintln("(index: " + idx + ") field: " + fieldName);
           break;
         }
@@ -119,8 +124,9 @@ public class Disassembler {
               + ", context: " + m.getBytecode(b + 2));
           break;
         case Bytecodes.pop_field: {
-          int idx          = m.getBytecode(b + 1);
-          String fieldName = ((SSymbol) m.getHolder().getInstanceFields().getIndexableField(idx)).getEmbeddedString();
+          int idx = m.getBytecode(b + 1);
+          String fieldName = ((SSymbol) m.getHolder().getInstanceFields()
+                                         .getIndexableField(idx)).getEmbeddedString();
           Universe.errorPrintln("(index: " + idx + ") field: " + fieldName);
           break;
         }
@@ -140,4 +146,3 @@ public class Disassembler {
   }
 
 }
-

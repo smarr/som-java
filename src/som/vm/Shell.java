@@ -34,6 +34,7 @@ import som.vmobjects.SClass;
 import som.vmobjects.SInvokable;
 import som.vmobjects.SMethod;
 
+
 public class Shell {
 
   private final Universe    universe;

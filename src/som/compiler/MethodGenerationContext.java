@@ -52,18 +52,19 @@ import som.vmobjects.SMethod;
 import som.vmobjects.SPrimitive;
 import som.vmobjects.SSymbol;
 
+
 public class MethodGenerationContext {
 
-  private ClassGenerationContext     holderGenc;
-  private MethodGenerationContext    outerGenc;
-  private boolean                    blockMethod;
-  private som.vmobjects.SSymbol      signature;
-  private final List<String>         arguments = new ArrayList<String>();
-  private boolean                    primitive;
-  private final List<String>         locals    = new ArrayList<String>();
+  private ClassGenerationContext      holderGenc;
+  private MethodGenerationContext     outerGenc;
+  private boolean                     blockMethod;
+  private som.vmobjects.SSymbol       signature;
+  private final List<String>          arguments = new ArrayList<String>();
+  private boolean                     primitive;
+  private final List<String>          locals    = new ArrayList<String>();
   private final List<SAbstractObject> literals  = new ArrayList<SAbstractObject>();
-  private boolean                    finished;
-  private final Vector<Byte>         bytecode  = new Vector<Byte>();
+  private boolean                     finished;
+  private final Vector<Byte>          bytecode  = new Vector<Byte>();
 
   public void setHolder(ClassGenerationContext cgenc) {
     holderGenc = cgenc;
@@ -144,8 +145,8 @@ public class MethodGenerationContext {
         case super_send: {
           // these are special: they need to look at the number of
           // arguments (extractable from the signature)
-          som.vmobjects.SSymbol sig = (som.vmobjects.SSymbol) literals.
-               get(bytecode.elementAt(i + 1));
+          som.vmobjects.SSymbol sig =
+              (som.vmobjects.SSymbol) literals.get(bytecode.elementAt(i + 1));
 
           depth -= sig.getNumberOfSignatureArguments();
 

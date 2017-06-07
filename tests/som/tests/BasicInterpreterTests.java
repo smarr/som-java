@@ -35,64 +35,65 @@ import som.vm.Universe;
 import som.vmobjects.SClass;
 import som.vmobjects.SInteger;
 
+
 @RunWith(Parameterized.class)
 public class BasicInterpreterTests {
 
   @Parameters
   public static Iterable<Object[]> data() {
     return Arrays.asList(new Object[][] {
-        {"MethodCall",     "test",  42, SInteger.class },
-        {"MethodCall",     "test2", 42, SInteger.class },
+        {"MethodCall", "test", 42, SInteger.class},
+        {"MethodCall", "test2", 42, SInteger.class},
 
-        {"NonLocalReturn", "test",  "NonLocalReturn", SClass.class },
-        {"NonLocalReturn", "test1", 42, SInteger.class },
-        {"NonLocalReturn", "test2", 43, SInteger.class },
-        {"NonLocalReturn", "test3",  3, SInteger.class },
-        {"NonLocalReturn", "test4", 42, SInteger.class },
-        {"NonLocalReturn", "test5", 22, SInteger.class },
+        {"NonLocalReturn", "test", "NonLocalReturn", SClass.class},
+        {"NonLocalReturn", "test1", 42, SInteger.class},
+        {"NonLocalReturn", "test2", 43, SInteger.class},
+        {"NonLocalReturn", "test3", 3, SInteger.class},
+        {"NonLocalReturn", "test4", 42, SInteger.class},
+        {"NonLocalReturn", "test5", 22, SInteger.class},
 
-        {"Blocks", "arg1",  42, SInteger.class },
-        {"Blocks", "arg2",  77, SInteger.class },
-        {"Blocks", "argAndLocal",    8, SInteger.class },
-        {"Blocks", "argAndContext",  8, SInteger.class },
+        {"Blocks", "arg1", 42, SInteger.class},
+        {"Blocks", "arg2", 77, SInteger.class},
+        {"Blocks", "argAndLocal", 8, SInteger.class},
+        {"Blocks", "argAndContext", 8, SInteger.class},
 
-        {"Return", "returnSelf",           "Return", SClass.class },
-        {"Return", "returnSelfImplicitly", "Return", SClass.class },
-        {"Return", "noReturnReturnsSelf",  "Return", SClass.class },
-        {"Return", "blockReturnsImplicitlyLastValue", 4, SInteger.class },
+        {"Return", "returnSelf", "Return", SClass.class},
+        {"Return", "returnSelfImplicitly", "Return", SClass.class},
+        {"Return", "noReturnReturnsSelf", "Return", SClass.class},
+        {"Return", "blockReturnsImplicitlyLastValue", 4, SInteger.class},
 
-        {"IfTrueIfFalse", "test",  42, SInteger.class },
-        {"IfTrueIfFalse", "test2", 33, SInteger.class },
-        {"IfTrueIfFalse", "test3",  4, SInteger.class },
+        {"IfTrueIfFalse", "test", 42, SInteger.class},
+        {"IfTrueIfFalse", "test2", 33, SInteger.class},
+        {"IfTrueIfFalse", "test3", 4, SInteger.class},
     });
   }
 
-  private final String testClass;
-  private final String testSelector;
-  private final Object expectedResult;
+  private final String   testClass;
+  private final String   testSelector;
+  private final Object   expectedResult;
   private final Class<?> resultType;
 
   public BasicInterpreterTests(final String testClass,
       final String testSelector,
       final Object expectedResult,
       final Class<?> resultType) {
-    this.testClass      = testClass;
-    this.testSelector   = testSelector;
+    this.testClass = testClass;
+    this.testSelector = testSelector;
     this.expectedResult = expectedResult;
-    this.resultType     = resultType;
+    this.resultType = resultType;
   }
 
   protected void assertEqualsSOMValue(final Object expectedResult, final Object actualResult) {
     if (resultType == SInteger.class) {
       long expected = (Long) expectedResult;
-      long actual   = ((SInteger) actualResult).getEmbeddedInteger();
+      long actual = ((SInteger) actualResult).getEmbeddedInteger();
       assertEquals(expected, actual);
       return;
     }
 
     if (resultType == SClass.class) {
       String expected = (String) expectedResult;
-      String actual   = ((SClass) actualResult).getName().getEmbeddedString();
+      String actual = ((SClass) actualResult).getName().getEmbeddedString();
       assertEquals(expected, actual);
       return;
     }

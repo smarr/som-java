@@ -32,6 +32,7 @@ import som.vmobjects.SDouble;
 import som.vmobjects.SNumber;
 import som.vmobjects.SPrimitive;
 
+
 public class DoublePrimitives extends Primitives {
 
   public DoublePrimitives(final Universe universe) {

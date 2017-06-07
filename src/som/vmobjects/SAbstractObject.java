@@ -28,11 +28,12 @@ import som.interpreter.Frame;
 import som.interpreter.Interpreter;
 import som.vm.Universe;
 
+
 public abstract class SAbstractObject {
 
-  public abstract SClass getSOMClass(final Universe universe);
+  public abstract SClass getSOMClass(Universe universe);
 
-  public void send(String selectorString, SAbstractObject[] arguments,
+  public void send(final String selectorString, final SAbstractObject[] arguments,
       final Universe universe, final Interpreter interpreter) {
     // Turn the selector string into a selector
     SSymbol selector = universe.symbolFor(selectorString);

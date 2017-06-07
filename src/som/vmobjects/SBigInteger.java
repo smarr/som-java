@@ -28,11 +28,11 @@ import java.math.BigInteger;
 
 import som.vm.Universe;
 
+
 public final class SBigInteger extends SNumber {
 
   // Private variable holding the embedded big integer
   private final BigInteger embeddedBiginteger;
-
 
   public SBigInteger(final BigInteger value) {
     embeddedBiginteger = value;
@@ -47,7 +47,6 @@ public final class SBigInteger extends SNumber {
   public SClass getSOMClass(final Universe universe) {
     return universe.integerClass;
   }
-
 
   @Override
   public SString primAsString(final Universe universe) {
@@ -85,7 +84,6 @@ public final class SBigInteger extends SNumber {
     BigInteger result = embeddedBiginteger.subtract(r);
     return asSNumber(result, universe);
   }
-
 
   @Override
   public SNumber primMultiply(final SNumber right, final Universe universe) {
@@ -152,7 +150,6 @@ public final class SBigInteger extends SNumber {
       return universe.falseObject;
     }
   }
-
 
   @Override
   public SObject primLessThan(final SNumber right, final Universe universe) {

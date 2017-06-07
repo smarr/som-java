@@ -48,6 +48,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.StringTokenizer;
 
+
 public class Universe {
 
   public static void main(String[] arguments) {
@@ -75,18 +76,18 @@ public class Universe {
   }
 
   public Universe() {
-    this.interpreter  = new Interpreter(this);
-    this.symbolTable  = new HashMap<String, SSymbol>();
-    this.avoidExit    = false;
+    this.interpreter = new Interpreter(this);
+    this.symbolTable = new HashMap<String, SSymbol>();
+    this.avoidExit = false;
     this.lastExitCode = 0;
 
     current = this;
   }
 
   public Universe(boolean avoidExit) {
-    this.interpreter  = new Interpreter(this);
-    this.symbolTable  = new HashMap<String, SSymbol>();
-    this.avoidExit    = avoidExit;
+    this.interpreter = new Interpreter(this);
+    this.symbolTable = new HashMap<String, SSymbol>();
+    this.avoidExit = avoidExit;
     this.lastExitCode = 0;
 
     current = this;
@@ -263,8 +264,8 @@ public class Universe {
     SClass clazz = loadClass(symbolFor(className));
 
     // Lookup the initialize invokable on the system class
-    SMethod initialize = (SMethod) clazz.getSOMClass(this).
-                                        lookupInvokable(symbolFor(selector));
+    SMethod initialize =
+        (SMethod) clazz.getSOMClass(this).lookupInvokable(symbolFor(selector));
 
     return interpretMethod(clazz, initialize, newArray(0));
   }
@@ -292,7 +293,8 @@ public class Universe {
 
   private SMethod createBootstrapMethod() {
     // Create a fake bootstrap method to simplify later frame traversal
-    SMethod bootstrapMethod = newMethod(symbolFor("bootstrap"), 1, 0, newInteger(0), newInteger(2), null);
+    SMethod bootstrapMethod =
+        newMethod(symbolFor("bootstrap"), 1, 0, newInteger(0), newInteger(2), null);
     bootstrapMethod.setBytecode(0, Bytecodes.halt);
     bootstrapMethod.setHolder(systemClass);
     return bootstrapMethod;
@@ -322,32 +324,32 @@ public class Universe {
     metaclassClass = newMetaclassClass();
 
     // Allocate the rest of the system classes
-    objectClass     = newSystemClass();
-    nilClass        = newSystemClass();
-    classClass      = newSystemClass();
-    arrayClass      = newSystemClass();
-    symbolClass     = newSystemClass();
-    methodClass     = newSystemClass();
-    integerClass    = newSystemClass();
-    primitiveClass  = newSystemClass();
-    stringClass     = newSystemClass();
-    doubleClass     = newSystemClass();
+    objectClass = newSystemClass();
+    nilClass = newSystemClass();
+    classClass = newSystemClass();
+    arrayClass = newSystemClass();
+    symbolClass = newSystemClass();
+    methodClass = newSystemClass();
+    integerClass = newSystemClass();
+    primitiveClass = newSystemClass();
+    stringClass = newSystemClass();
+    doubleClass = newSystemClass();
 
     // Setup the class reference for the nil object
     nilObject.setClass(nilClass);
 
     // Initialize the system classes.
-    initializeSystemClass(objectClass,            null, "Object");
-    initializeSystemClass(classClass,      objectClass, "Class");
-    initializeSystemClass(metaclassClass,   classClass, "Metaclass");
-    initializeSystemClass(nilClass,        objectClass, "Nil");
-    initializeSystemClass(arrayClass,      objectClass, "Array");
-    initializeSystemClass(methodClass,      arrayClass, "Method");
-    initializeSystemClass(symbolClass,     objectClass, "Symbol");
-    initializeSystemClass(integerClass,    objectClass, "Integer");
-    initializeSystemClass(primitiveClass,  objectClass, "Primitive");
-    initializeSystemClass(stringClass,     objectClass, "String");
-    initializeSystemClass(doubleClass,     objectClass, "Double");
+    initializeSystemClass(objectClass, null, "Object");
+    initializeSystemClass(classClass, objectClass, "Class");
+    initializeSystemClass(metaclassClass, classClass, "Metaclass");
+    initializeSystemClass(nilClass, objectClass, "Nil");
+    initializeSystemClass(arrayClass, objectClass, "Array");
+    initializeSystemClass(methodClass, arrayClass, "Method");
+    initializeSystemClass(symbolClass, objectClass, "Symbol");
+    initializeSystemClass(integerClass, objectClass, "Integer");
+    initializeSystemClass(primitiveClass, objectClass, "Primitive");
+    initializeSystemClass(stringClass, objectClass, "String");
+    initializeSystemClass(doubleClass, objectClass, "Double");
 
     // Load methods and fields into the system classes
     loadSystemClass(objectClass);
@@ -370,11 +372,11 @@ public class Universe {
 
     // Setup the true and false objects
     SSymbol trueSymbol = symbolFor("True");
-    trueClass   = loadClass(trueSymbol);
-    trueObject  = newInstance(trueClass);
+    trueClass = loadClass(trueSymbol);
+    trueObject = newInstance(trueClass);
 
     SSymbol falseSymbol = symbolFor("False");
-    falseClass  = loadClass(falseSymbol);
+    falseClass = loadClass(falseSymbol);
     falseObject = newInstance(falseClass);
 
     // Load the system class and create an instance of it
@@ -382,14 +384,14 @@ public class Universe {
     SAbstractObject systemObject = newInstance(systemClass);
 
     // Put special objects and classes into the dictionary of globals
-    setGlobal(symbolFor("nil"),    nilObject);
-    setGlobal(symbolFor("true"),   trueObject);
-    setGlobal(symbolFor("false"),  falseObject);
+    setGlobal(symbolFor("nil"), nilObject);
+    setGlobal(symbolFor("true"), trueObject);
+    setGlobal(symbolFor("false"), falseObject);
     setGlobal(symbolFor("system"), systemObject);
     setGlobal(symbolFor("System"), systemClass);
-    setGlobal(symbolFor("Block"),  blockClass);
+    setGlobal(symbolFor("Block"), blockClass);
 
-    setGlobal(trueSymbol,  trueClass);
+    setGlobal(trueSymbol, trueClass);
     setGlobal(falseSymbol, falseClass);
     return systemObject;
   }
@@ -397,7 +399,9 @@ public class Universe {
   public SSymbol symbolFor(String string) {
     // Lookup the symbol in the symbol table
     SSymbol result = symbolTable.get(string);
-    if (result != null) { return result; }
+    if (result != null) {
+      return result;
+    }
 
     // Create a new symbol and return it
     result = newSymbol(string);
@@ -575,7 +579,9 @@ public class Universe {
   public SAbstractObject getGlobal(SSymbol name) {
     // Return the global with the given name if it's in the dictionary of
     // globals
-    if (hasGlobal(name)) { return globals.get(name); }
+    if (hasGlobal(name)) {
+      return globals.get(name);
+    }
 
     // Global not found
     return null;
@@ -604,7 +610,9 @@ public class Universe {
 
     // Lookup the specific block class in the dictionary of globals and
     // return it
-    if (hasGlobal(name)) { return (SClass) getGlobal(name); }
+    if (hasGlobal(name)) {
+      return (SClass) getGlobal(name);
+    }
 
     // Get the block class for blocks with the given number of arguments
     SClass result = loadClass(name, null);
@@ -622,13 +630,17 @@ public class Universe {
 
   public SClass loadClass(SSymbol name) {
     // Check if the requested class is already in the dictionary of globals
-    if (hasGlobal(name)) { return (SClass) getGlobal(name); }
+    if (hasGlobal(name)) {
+      return (SClass) getGlobal(name);
+    }
 
     // Load the class
     SClass result = loadClass(name, null);
 
     // Load primitives (if necessary) and return the resulting class
-    if (result != null && result.hasPrimitives()) { result.loadPrimitives(); }
+    if (result != null && result.hasPrimitives()) {
+      result.loadPrimitives();
+    }
 
     setGlobal(name, result);
 
@@ -640,7 +652,9 @@ public class Universe {
     SClass result = loadClass(systemClass.getName(), systemClass);
 
     // Load primitives if necessary
-    if (result.hasPrimitives()) { result.loadPrimitives(); }
+    if (result.hasPrimitives()) {
+      result.loadPrimitives();
+    }
   }
 
   private SClass loadClass(SSymbol name, SClass systemClass) {
@@ -672,7 +686,9 @@ public class Universe {
     // Load the class from a stream and return the loaded class
     SClass result = som.compiler.SourcecodeCompiler.compileClass(stmt, null,
         this);
-    if (dumpBytecodes) { Disassembler.dump(result); }
+    if (dumpBytecodes) {
+      Disassembler.dump(result);
+    }
     return result;
   }
 
@@ -712,41 +728,42 @@ public class Universe {
     // Checkstyle: resume
   }
 
-  public SObject                                 nilObject;
-  public SObject                                 trueObject;
-  public SObject                                 falseObject;
+  public SObject nilObject;
+  public SObject trueObject;
+  public SObject falseObject;
 
-  public SClass                                  objectClass;
-  public SClass                                  classClass;
-  public SClass                                  metaclassClass;
+  public SClass objectClass;
+  public SClass classClass;
+  public SClass metaclassClass;
 
-  public SClass                                  nilClass;
-  public SClass                                  integerClass;
-  public SClass                                  arrayClass;
-  public SClass                                  methodClass;
-  public SClass                                  symbolClass;
-  public SClass                                  primitiveClass;
-  public SClass                                  stringClass;
-  public SClass                                  systemClass;
-  public SClass                                  blockClass;
-  public SClass                                  doubleClass;
+  public SClass nilClass;
+  public SClass integerClass;
+  public SClass arrayClass;
+  public SClass methodClass;
+  public SClass symbolClass;
+  public SClass primitiveClass;
+  public SClass stringClass;
+  public SClass systemClass;
+  public SClass blockClass;
+  public SClass doubleClass;
 
-  public SClass                                  trueClass;
-  public SClass                                  falseClass;
+  public SClass trueClass;
+  public SClass falseClass;
 
-  private final HashMap<SSymbol, SAbstractObject> globals = new HashMap<SSymbol, SAbstractObject>();
-  private String[]                              classPath;
-  private boolean                               dumpBytecodes;
+  private final HashMap<SSymbol, SAbstractObject> globals =
+      new HashMap<SSymbol, SAbstractObject>();
+  private String[]                                classPath;
+  private boolean                                 dumpBytecodes;
 
-  public static final String                    pathSeparator;
-  public static final String                    fileSeparator;
-  private final Interpreter                     interpreter;
-  private final HashMap<String, SSymbol>        symbolTable;
+  public static final String             pathSeparator;
+  public static final String             fileSeparator;
+  private final Interpreter              interpreter;
+  private final HashMap<String, SSymbol> symbolTable;
 
   // TODO: this is not how it is supposed to be... it is just a hack to cope
-  //       with the use of system.exit in SOM to enable testing
-  private final boolean                         avoidExit;
-  private int                                   lastExitCode;
+  // with the use of system.exit in SOM to enable testing
+  private final boolean avoidExit;
+  private int           lastExitCode;
 
   private static Universe current;
 }
