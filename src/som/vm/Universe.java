@@ -269,7 +269,7 @@ public class Universe {
     SMethod initialize =
         (SMethod) clazz.getSOMClass(this).lookupInvokable(symbolFor(selector));
 
-    return interpretMethod(clazz, initialize, newArray(0));
+    return interpretMethod(clazz, initialize, null);
   }
 
   private SAbstractObject initialize(final String[] arguments) {
@@ -309,7 +309,10 @@ public class Universe {
     // Create a fake bootstrap frame with the system object on the stack
     Frame bootstrapFrame = interpreter.pushNewFrame(bootstrapMethod);
     bootstrapFrame.push(receiver);
-    bootstrapFrame.push(arguments);
+
+    if (arguments != null) {
+      bootstrapFrame.push(arguments);
+    }
 
     // Invoke the initialize invokable
     invokable.invoke(bootstrapFrame, interpreter);

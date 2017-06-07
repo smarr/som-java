@@ -85,7 +85,7 @@ public class BasicInterpreterTests {
 
   protected void assertEqualsSOMValue(final Object expectedResult, final Object actualResult) {
     if (resultType == SInteger.class) {
-      long expected = (Long) expectedResult;
+      long expected = (Integer) expectedResult;
       long actual = ((SInteger) actualResult).getEmbeddedInteger();
       assertEquals(expected, actual);
       return;
