@@ -129,7 +129,7 @@ public class BasicInterpreterTests {
       return;
     }
 
-    if (resultType == Double.class) {
+    if (resultType == SDouble.class) {
       double expected = (double) expectedResult;
       double actual   = ((SDouble) actualResult).getEmbeddedDouble();
       assertEquals(expected, actual, 1e-15);

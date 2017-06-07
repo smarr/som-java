@@ -67,6 +67,7 @@ import java.util.List;
 import som.vm.Universe;
 import som.vmobjects.SAbstractObject;
 import som.vmobjects.SClass;
+import som.vmobjects.SInteger;
 import som.vmobjects.SMethod;
 import som.vmobjects.SString;
 import som.vmobjects.SSymbol;
@@ -686,7 +687,12 @@ public class Parser {
   private void literal(final MethodGenerationContext mgenc) throws ParseError {
     switch (sym) {
       case Pound: {
-        literalSymbol(mgenc);
+        peekForNextSymbolFromLexerIfNecessary();
+        if (nextSym == NewTerm) {
+          literalArray(mgenc);
+        } else {
+          literalSymbol(mgenc);
+        }
         break;
       }
       case STString: {
@@ -787,6 +793,42 @@ public class Parser {
     mgenc.addLiteralIfAbsent(str);
 
     bcGen.emitPUSHCONSTANT(mgenc, str);
+  }
+
+  private void literalArray(final MethodGenerationContext mgenc) throws ParseError {
+    expect(Pound);
+    expect(NewTerm);
+
+    SSymbol arrayClassName = universe.symbolFor("Array");
+    SSymbol arraySizePlaceholder = universe.symbolFor("ArraySizeLiteralPlaceholder");
+    SSymbol newMessage = universe.symbolFor("new:");
+    SSymbol atPutMessage = universe.symbolFor("at:put:");
+
+    mgenc.addLiteralIfAbsent(arrayClassName);
+    mgenc.addLiteralIfAbsent(newMessage);
+    mgenc.addLiteralIfAbsent(atPutMessage);
+    final byte arraySizeLiteralIndex = mgenc.addLiteral(arraySizePlaceholder);
+
+    // create empty array
+    bcGen.emitPUSHGLOBAL(mgenc, arrayClassName);
+    bcGen.emitPUSHCONSTANT(mgenc, arraySizeLiteralIndex);
+    bcGen.emitSEND(mgenc, newMessage);
+
+    int i = 1;
+
+    while (sym != EndTerm) {
+      SInteger pushIndex = universe.newInteger(i);
+      mgenc.addLiteralIfAbsent(pushIndex);
+      bcGen.emitPUSHCONSTANT(mgenc, pushIndex);
+      literal(mgenc);
+      bcGen.emitSEND(mgenc, atPutMessage);
+      i += 1;
+    }
+
+    // replace the placeholder with the actual array size
+    mgenc.updateLiteral(
+        arraySizePlaceholder, arraySizeLiteralIndex, universe.newInteger(i - 1));
+    expect(EndTerm);
   }
 
   private SSymbol selector() {
@@ -910,6 +952,12 @@ public class Parser {
   private void getSymbolFromLexer() {
     sym = lexer.getSym();
     text = lexer.getText();
+  }
+
+  private void peekForNextSymbolFromLexerIfNecessary() {
+    if (!lexer.getPeekDone()) {
+      peekForNextSymbolFromLexer();
+    }
   }
 
   private void peekForNextSymbolFromLexer() {

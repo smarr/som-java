@@ -241,8 +241,17 @@ public class MethodGenerationContext {
     outerGenc = mgenc;
   }
 
-  public void addLiteral(final SAbstractObject lit) {
+  public byte addLiteral(final SAbstractObject lit) {
+    int i = literals.size();
+    assert i < 128;
     literals.add(lit);
+    return (byte) i;
+  }
+
+  public void updateLiteral(final SAbstractObject oldVal, final byte index,
+      final SAbstractObject newVal) {
+    assert literals.get(index) == oldVal;
+    literals.set(index, newVal);
   }
 
   public boolean findVar(final String var, final Triplet<Byte, Byte, Boolean> tri) {

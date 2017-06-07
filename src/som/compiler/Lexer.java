@@ -47,13 +47,17 @@ public class Lexer {
   private String               buf;
   private int                  bufp;
 
-  protected Lexer(Reader reader) {
+  protected Lexer(final Reader reader) {
     infile = new BufferedReader(reader);
     peekDone = false;
     buf = "";
     text = new StringBuffer();
     bufp = 0;
     lineNumber = 0;
+  }
+
+  protected boolean getPeekDone() {
+    return peekDone;
   }
 
   protected Symbol getSym() {
@@ -329,20 +333,20 @@ public class Lexer {
     return bufp >= buf.length();
   }
 
-  private boolean isOperator(char c) {
+  private boolean isOperator(final char c) {
     return c == '~' || c == '&' || c == '|' || c == '*' || c == '/'
         || c == '\\' || c == '+' || c == '=' || c == '>' || c == '<'
         || c == ',' || c == '@' || c == '%';
   }
 
-  private void match(Symbol s) {
+  private void match(final Symbol s) {
     sym = s;
     symc = currentChar();
     text = new StringBuffer("" + symc);
     bufp++;
   }
 
-  private char bufchar(int p) {
+  private char bufchar(final int p) {
     return p >= buf.length() ? '\0' : buf.charAt(p);
   }
 
