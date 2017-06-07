@@ -532,7 +532,7 @@ public class Universe {
     return result;
   }
 
-  public SSymbol newSymbol(final String string) {
+  private SSymbol newSymbol(final String string) {
     // Allocate a new symbol and set its class to be the symbol class
     SSymbol result = new SSymbol(string);
 
