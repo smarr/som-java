@@ -29,27 +29,28 @@ import java.io.IOException;
 import java.io.StringReader;
 
 import som.vm.Universe;
+import som.vmobjects.SClass;
 
 
 public class SourcecodeCompiler {
 
   private Parser parser;
 
-  public static som.vmobjects.SClass compileClass(String path, String file,
-      som.vmobjects.SClass systemClass, final Universe universe)
-      throws IOException {
+  public static SClass compileClass(final String path, final String file,
+      final SClass systemClass, final Universe universe)
+      throws IOException, ProgramDefinitionError {
     return new SourcecodeCompiler().compile(path, file, systemClass, universe);
   }
 
-  public static som.vmobjects.SClass compileClass(String stmt,
-      som.vmobjects.SClass systemClass, final Universe universe) {
+  public static SClass compileClass(final String stmt, final SClass systemClass,
+      final Universe universe) throws ProgramDefinitionError {
     return new SourcecodeCompiler().compileClassString(stmt, systemClass,
         universe);
   }
 
-  private som.vmobjects.SClass compile(String path, String file,
-      som.vmobjects.SClass systemClass, final Universe universe)
-      throws IOException {
+  private som.vmobjects.SClass compile(final String path, final String file,
+      final som.vmobjects.SClass systemClass, final Universe universe)
+      throws IOException, ProgramDefinitionError {
     String fname = path + Universe.fileSeparator + file + ".som";
 
     parser = new Parser(new FileReader(fname), universe, fname);
@@ -67,16 +68,17 @@ public class SourcecodeCompiler {
     return result;
   }
 
-  private som.vmobjects.SClass compileClassString(String stream,
-      som.vmobjects.SClass systemClass, final Universe universe) {
+  private som.vmobjects.SClass compileClassString(final String stream,
+      final som.vmobjects.SClass systemClass, final Universe universe)
+      throws ProgramDefinitionError {
     parser = new Parser(new StringReader(stream), universe, "$string$");
 
     som.vmobjects.SClass result = compile(systemClass, universe);
     return result;
   }
 
-  private som.vmobjects.SClass compile(som.vmobjects.SClass systemClass,
-      final Universe universe) {
+  private som.vmobjects.SClass compile(final som.vmobjects.SClass systemClass,
+      final Universe universe) throws ProgramDefinitionError {
     ClassGenerationContext cgc = new ClassGenerationContext(universe);
 
     som.vmobjects.SClass result = systemClass;

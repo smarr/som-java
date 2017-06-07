@@ -100,6 +100,78 @@ public class Parser {
     }
   }
 
+  public static class ParseError extends ProgramDefinitionError {
+    private static final long serialVersionUID = 425390202979033628L;
+
+    private final int line;
+    private final int column;
+
+    private final String text;
+    private final String rawBuffer;
+    private final String fileName;
+    private final Symbol expected;
+    private final Symbol found;
+
+    ParseError(final String message, final Symbol expected, final Parser parser) {
+      super(message);
+      if (parser.lexer == null) {
+        this.line = 0;
+        this.column = 0;
+        this.rawBuffer = "";
+      } else {
+        this.line = parser.lexer.getCurrentLineNumber();
+        this.column = parser.lexer.getCurrentColumn();
+        this.rawBuffer = parser.lexer.getRawBuffer();
+      }
+      this.text = parser.text;
+      this.fileName = parser.filename;
+      this.expected = expected;
+      this.found = parser.sym;
+    }
+
+    protected String expectedSymbolAsString() {
+      return expected.toString();
+    }
+
+    @Override
+    public String getMessage() {
+      String msg = super.getMessage();
+
+      String foundStr;
+      if (Parser.printableSymbol(found)) {
+        foundStr = found + " (" + text + ")";
+      } else {
+        foundStr = found.toString();
+      }
+      String expectedStr = expectedSymbolAsString();
+
+      msg = msg.replace("%(expected)s", expectedStr);
+      msg = msg.replace("%(found)s", foundStr);
+
+      return msg;
+    }
+
+    @Override
+    public String toString() {
+      String msg = "%(file)s:%(line)d:%(column)d: error: " + super.getMessage();
+      String foundStr;
+      if (Parser.printableSymbol(found)) {
+        foundStr = found + " (" + text + ")";
+      } else {
+        foundStr = found.toString();
+      }
+      msg += ": " + rawBuffer;
+      String expectedStr = expectedSymbolAsString();
+
+      msg = msg.replace("%(file)s", fileName);
+      msg = msg.replace("%(line)d", "" + line);
+      msg = msg.replace("%(column)d", "" + column);
+      msg = msg.replace("%(expected)s", expectedStr);
+      msg = msg.replace("%(found)s", foundStr);
+      return msg;
+    }
+  }
+
   public Parser(final Reader reader, final Universe universe, final String filename) {
     this.universe = universe;
     this.filename = filename;
@@ -111,7 +183,7 @@ public class Parser {
     getSymbolFromLexer();
   }
 
-  public void classdef(final ClassGenerationContext cgenc) {
+  public void classdef(final ClassGenerationContext cgenc) throws ProgramDefinitionError {
     cgenc.setName(universe.symbolFor(text));
     expect(Identifier);
     expect(Equal);
@@ -202,7 +274,7 @@ public class Parser {
         lexer.getCurrentLineNumber() +
         ": unexpected symbol, expected: " + s.toString()
         + ", but found: " + sym.toString());
-    if (printableSymbol()) {
+    if (printableSymbol(sym)) {
       err.append(" (" + text + ")");
     }
     err.append(": " + lexer.getRawBuffer());
@@ -219,7 +291,7 @@ public class Parser {
       err.append(s.toString() + ", ");
     }
     err.append("but found: " + sym.toString());
-    if (printableSymbol()) {
+    if (printableSymbol(sym)) {
       err.append(" (" + text + ")");
     }
     err.append(": " + lexer.getRawBuffer());
@@ -246,7 +318,7 @@ public class Parser {
     }
   }
 
-  private void method(final MethodGenerationContext mgenc) {
+  private void method(final MethodGenerationContext mgenc) throws ProgramDefinitionError {
     pattern(mgenc);
     expect(Equal);
     if (sym == Primitive) {
@@ -294,7 +366,7 @@ public class Parser {
     mgenc.setSignature(universe.symbolFor(kw.toString()));
   }
 
-  private void methodBlock(final MethodGenerationContext mgenc) {
+  private void methodBlock(final MethodGenerationContext mgenc) throws ProgramDefinitionError {
     expect(NewTerm);
     blockContents(mgenc);
     // if no return has been generated so far, we can be sure there was no .
@@ -351,7 +423,7 @@ public class Parser {
     return variable();
   }
 
-  private void blockContents(final MethodGenerationContext mgenc) {
+  private void blockContents(final MethodGenerationContext mgenc) throws ProgramDefinitionError {
     if (accept(Or)) {
       locals(mgenc);
       expect(Or);
@@ -365,7 +437,8 @@ public class Parser {
     }
   }
 
-  private void blockBody(final MethodGenerationContext mgenc, final boolean seenPeriod) {
+  private void blockBody(final MethodGenerationContext mgenc, final boolean seenPeriod)
+      throws ProgramDefinitionError {
     if (accept(Exit)) {
       result(mgenc);
     } else if (sym == EndBlock) {
@@ -395,7 +468,7 @@ public class Parser {
     }
   }
 
-  private void result(final MethodGenerationContext mgenc) {
+  private void result(final MethodGenerationContext mgenc) throws ProgramDefinitionError {
     expression(mgenc);
 
     if (mgenc.isBlockMethod()) {
@@ -408,7 +481,7 @@ public class Parser {
     accept(Period);
   }
 
-  private void expression(final MethodGenerationContext mgenc) {
+  private void expression(final MethodGenerationContext mgenc) throws ProgramDefinitionError {
     peekForNextSymbolFromLexer();
 
     if (nextSym == Assign) {
@@ -418,7 +491,7 @@ public class Parser {
     }
   }
 
-  private void assignation(final MethodGenerationContext mgenc) {
+  private void assignation(final MethodGenerationContext mgenc) throws ProgramDefinitionError {
     List<String> l = new ArrayList<String>();
 
     assignments(mgenc, l);
@@ -452,7 +525,7 @@ public class Parser {
     return v;
   }
 
-  private void evaluation(final MethodGenerationContext mgenc) {
+  private void evaluation(final MethodGenerationContext mgenc) throws ProgramDefinitionError {
     // single: superSend
     Single<Boolean> si = new Single<Boolean>(false);
 
@@ -463,7 +536,8 @@ public class Parser {
     }
   }
 
-  private void primary(final MethodGenerationContext mgenc, final Single<Boolean> superSend) {
+  private void primary(final MethodGenerationContext mgenc, final Single<Boolean> superSend)
+      throws ProgramDefinitionError {
     superSend.set(false);
     switch (sym) {
       case Identifier: {
@@ -503,7 +577,8 @@ public class Parser {
     return identifier();
   }
 
-  private void messages(final MethodGenerationContext mgenc, final Single<Boolean> superSend) {
+  private void messages(final MethodGenerationContext mgenc, final Single<Boolean> superSend)
+      throws ProgramDefinitionError {
     if (sym == Identifier) {
       do {
         // only the first message in a sequence can be a super send
@@ -546,7 +621,7 @@ public class Parser {
   }
 
   private void binaryMessage(final MethodGenerationContext mgenc,
-      final Single<Boolean> superSend) {
+      final Single<Boolean> superSend) throws ProgramDefinitionError {
     som.vmobjects.SSymbol msg = binarySelector();
     mgenc.addLiteralIfAbsent(msg);
 
@@ -560,7 +635,7 @@ public class Parser {
   }
 
   private void binaryOperand(final MethodGenerationContext mgenc,
-      final Single<Boolean> superSend) {
+      final Single<Boolean> superSend) throws ProgramDefinitionError {
     primary(mgenc, superSend);
 
     while (sym == Identifier) {
@@ -569,7 +644,7 @@ public class Parser {
   }
 
   private void keywordMessage(final MethodGenerationContext mgenc,
-      final Single<Boolean> superSend) {
+      final Single<Boolean> superSend) throws ProgramDefinitionError {
     StringBuffer kw = new StringBuffer();
     do {
       kw.append(keyword());
@@ -587,7 +662,7 @@ public class Parser {
     }
   }
 
-  private void formula(final MethodGenerationContext mgenc) {
+  private void formula(final MethodGenerationContext mgenc) throws ProgramDefinitionError {
     Single<Boolean> superSend = new Single<Boolean>(false);
     binaryOperand(mgenc, superSend);
 
@@ -600,13 +675,13 @@ public class Parser {
     }
   }
 
-  private void nestedTerm(final MethodGenerationContext mgenc) {
+  private void nestedTerm(final MethodGenerationContext mgenc) throws ProgramDefinitionError {
     expect(NewTerm);
     expression(mgenc);
     expect(EndTerm);
   }
 
-  private void literal(final MethodGenerationContext mgenc) {
+  private void literal(final MethodGenerationContext mgenc) throws ParseError {
     switch (sym) {
       case Pound: {
         literalSymbol(mgenc);
@@ -623,7 +698,7 @@ public class Parser {
     }
   }
 
-  private void literalNumber(final MethodGenerationContext mgenc) {
+  private void literalNumber(final MethodGenerationContext mgenc) throws ParseError {
     SAbstractObject lit;
 
     if (sym == Minus) {
@@ -635,7 +710,7 @@ public class Parser {
     bcGen.emitPUSHCONSTANT(mgenc, lit);
   }
 
-  private SAbstractObject literalDecimal(final boolean isNegative) {
+  private SAbstractObject literalDecimal(final boolean isNegative) throws ParseError {
     if (sym == Integer) {
       return literalInteger(isNegative);
     } else {
@@ -644,7 +719,7 @@ public class Parser {
     }
   }
 
-  private SAbstractObject negativeDecimal() {
+  private SAbstractObject negativeDecimal() throws ParseError {
     expect(Minus);
     return literalDecimal(true);
   }
@@ -675,13 +750,18 @@ public class Parser {
     }
   }
 
-  private SAbstractObject literalDouble(final boolean isNegative) {
-    double d = java.lang.Double.parseDouble(text);
-    if (isNegative) {
-      d = 0.0 - d;
+  private SAbstractObject literalDouble(final boolean isNegative) throws ParseError {
+    try {
+      double d = java.lang.Double.parseDouble(text);
+      if (isNegative) {
+        d = 0.0 - d;
+      }
+      expect(Double);
+      return universe.newDouble(d);
+    } catch (NumberFormatException e) {
+      throw new ParseError("Could not parse double. Expected a number but " +
+          "got '" + text + "'", NONE, this);
     }
-    expect(Double);
-    return universe.newDouble(d);
   }
 
   private void literalSymbol(final MethodGenerationContext mgenc) {
@@ -730,7 +810,7 @@ public class Parser {
     return s;
   }
 
-  private void nestedBlock(final MethodGenerationContext mgenc) {
+  private void nestedBlock(final MethodGenerationContext mgenc) throws ProgramDefinitionError {
     mgenc.addArgumentIfAbsent("$block self");
 
     expect(NewBlock);
@@ -834,8 +914,7 @@ public class Parser {
     nextSym = lexer.peek();
   }
 
-  private boolean printableSymbol() {
+  private static boolean printableSymbol(final Symbol sym) {
     return sym == Integer || sym == Double || sym.compareTo(STString) >= 0;
   }
-
 }

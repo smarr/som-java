@@ -25,7 +25,15 @@
 
 package som.vm;
 
+import java.io.IOException;
+import java.math.BigInteger;
+import java.util.HashMap;
+import java.util.List;
+import java.util.StringTokenizer;
+
 import som.compiler.Disassembler;
+import som.compiler.ProgramDefinitionError;
+import som.compiler.SourcecodeCompiler;
 import som.interpreter.Bytecodes;
 import som.interpreter.Frame;
 import som.interpreter.Interpreter;
@@ -42,16 +50,10 @@ import som.vmobjects.SObject;
 import som.vmobjects.SString;
 import som.vmobjects.SSymbol;
 
-import java.io.IOException;
-import java.math.BigInteger;
-import java.util.HashMap;
-import java.util.List;
-import java.util.StringTokenizer;
-
 
 public class Universe {
 
-  public static void main(String[] arguments) {
+  public static void main(final String[] arguments) {
     // Create Universe
     Universe u = new Universe();
 
@@ -84,7 +86,7 @@ public class Universe {
     current = this;
   }
 
-  public Universe(boolean avoidExit) {
+  public Universe(final boolean avoidExit) {
     this.interpreter = new Interpreter(this);
     this.symbolTable = new HashMap<String, SSymbol>();
     this.avoidExit = avoidExit;
@@ -101,7 +103,7 @@ public class Universe {
     return interpreter;
   }
 
-  public void exit(long errorCode) {
+  public void exit(final long errorCode) {
     // Exit from the Java system
     if (!avoidExit) {
       System.exit((int) errorCode);
@@ -114,7 +116,7 @@ public class Universe {
     return lastExitCode;
   }
 
-  public void errorExit(String message) {
+  public void errorExit(final String message) {
     errorPrintln("Runtime Error: " + message);
     exit(1);
   }
@@ -169,7 +171,7 @@ public class Universe {
 
   // take argument of the form "../foo/Test.som" and return
   // "../foo", "Test", "som"
-  private String[] getPathClassExt(String arg) {
+  private String[] getPathClassExt(final String arg) {
     // Create a new tokenizer to split up the string of dirs
     StringTokenizer tokenizer = new StringTokenizer(arg,
         fileSeparator, true);
@@ -199,7 +201,7 @@ public class Universe {
     return result;
   }
 
-  public void setupClassPath(String cp) {
+  public void setupClassPath(final String cp) {
     // Create a new tokenizer to split up the string of directories
     StringTokenizer tokenizer = new StringTokenizer(cp,
         pathSeparator);
@@ -213,7 +215,7 @@ public class Universe {
     }
   }
 
-  private String[] setupDefaultClassPath(int directories) {
+  private String[] setupDefaultClassPath(final int directories) {
     // Get the default system class path
     String systemClassPath = System.getProperty("system.class.path");
 
@@ -270,7 +272,7 @@ public class Universe {
     return interpretMethod(clazz, initialize, newArray(0));
   }
 
-  private SAbstractObject initialize(String[] arguments) {
+  private SAbstractObject initialize(final String[] arguments) {
     SAbstractObject systemObject = initializeObjectSystem();
 
     // Start the shell if no filename is given
@@ -300,8 +302,8 @@ public class Universe {
     return bootstrapMethod;
   }
 
-  private SAbstractObject interpretMethod(SAbstractObject receiver,
-      SInvokable invokable, SArray arguments) {
+  private SAbstractObject interpretMethod(final SAbstractObject receiver,
+      final SInvokable invokable, final SArray arguments) {
     SMethod bootstrapMethod = createBootstrapMethod();
 
     // Create a fake bootstrap frame with the system object on the stack
@@ -396,7 +398,7 @@ public class Universe {
     return systemObject;
   }
 
-  public SSymbol symbolFor(String string) {
+  public SSymbol symbolFor(final String string) {
     // Lookup the symbol in the symbol table
     SSymbol result = symbolTable.get(string);
     if (result != null) {
@@ -408,11 +410,11 @@ public class Universe {
     return result;
   }
 
-  public SArray newArray(long length) {
+  public SArray newArray(final long length) {
     return new SArray(nilObject, length);
   }
 
-  public SArray newArray(List<?> list) {
+  public SArray newArray(final List<?> list) {
     // Allocate a new array with the same length as the list
     SArray result = newArray(list.size());
 
@@ -425,7 +427,7 @@ public class Universe {
     return result;
   }
 
-  public SArray newArray(String[] stringArray) {
+  public SArray newArray(final String[] stringArray) {
     // Allocate a new array with the same length as the string array
     SArray result = newArray(stringArray.length);
 
@@ -438,13 +440,13 @@ public class Universe {
     return result;
   }
 
-  public SBlock newBlock(SMethod method, Frame context, int arguments) {
+  public SBlock newBlock(final SMethod method, final Frame context, final int arguments) {
     // Allocate a new block and set its class to be the block class
     SBlock result = new SBlock(method, context, getBlockClass(arguments));
     return result;
   }
 
-  public SClass newClass(SClass classClass) {
+  public SClass newClass(final SClass classClass) {
     // Allocate a new class and set its class to be the given class class
     SClass result = new SClass(classClass.getNumberOfInstanceFields(), this);
     result.setClass(classClass);
@@ -473,8 +475,8 @@ public class Universe {
     return result;
   }
 
-  public SMethod newMethod(SSymbol signature, int numberOfBytecodes,
-      int numberOfLiterals, final SInteger numberOfLocals,
+  public SMethod newMethod(final SSymbol signature, final int numberOfBytecodes,
+      final int numberOfLiterals, final SInteger numberOfLocals,
       final SInteger maxNumStackElements, final List<SAbstractObject> literals) {
     // Allocate a new method and set its class to be the method class
     SMethod result = new SMethod(nilObject, signature, numberOfBytecodes,
@@ -482,7 +484,7 @@ public class Universe {
     return result;
   }
 
-  public SObject newInstance(SClass instanceClass) {
+  public SObject newInstance(final SClass instanceClass) {
     // Allocate a new instance and set its class to be the given class
     SObject result = new SObject(instanceClass.getNumberOfInstanceFields(),
         nilObject);
@@ -492,17 +494,17 @@ public class Universe {
     return result;
   }
 
-  public SInteger newInteger(long value) {
+  public SInteger newInteger(final long value) {
     SInteger result = SInteger.getInteger(value);
     return result;
   }
 
-  public SBigInteger newBigInteger(BigInteger value) {
+  public SBigInteger newBigInteger(final BigInteger value) {
     SBigInteger result = new SBigInteger(value);
     return result;
   }
 
-  public SDouble newDouble(double value) {
+  public SDouble newDouble(final double value) {
     SDouble result = new SDouble(value);
     return result;
   }
@@ -519,7 +521,7 @@ public class Universe {
     return result;
   }
 
-  public SString newString(String embeddedString) {
+  public SString newString(final String embeddedString) {
     // Allocate a new string and set its class to be the string class
     SString result = new SString(embeddedString);
 
@@ -527,7 +529,7 @@ public class Universe {
     return result;
   }
 
-  public SSymbol newSymbol(String string) {
+  public SSymbol newSymbol(final String string) {
     // Allocate a new symbol and set its class to be the symbol class
     SSymbol result = new SSymbol(string);
 
@@ -550,8 +552,8 @@ public class Universe {
     return systemClass;
   }
 
-  public void initializeSystemClass(SClass systemClass, SClass superClass,
-      String name) {
+  public void initializeSystemClass(final SClass systemClass, final SClass superClass,
+      final String name) {
     // Initialize the superclass hierarchy
     if (superClass != null) {
       systemClass.setSuperClass(superClass);
@@ -576,7 +578,7 @@ public class Universe {
     setGlobal(systemClass.getName(), systemClass);
   }
 
-  public SAbstractObject getGlobal(SSymbol name) {
+  public SAbstractObject getGlobal(final SSymbol name) {
     // Return the global with the given name if it's in the dictionary of
     // globals
     if (hasGlobal(name)) {
@@ -587,12 +589,12 @@ public class Universe {
     return null;
   }
 
-  public void setGlobal(SSymbol name, SAbstractObject value) {
+  public void setGlobal(final SSymbol name, final SAbstractObject value) {
     // Insert the given value into the dictionary of globals
     globals.put(name, value);
   }
 
-  public boolean hasGlobal(SSymbol name) {
+  public boolean hasGlobal(final SSymbol name) {
     // Returns if the universe has a value for the global of the given name
     return globals.containsKey(name);
   }
@@ -602,7 +604,7 @@ public class Universe {
     return blockClass;
   }
 
-  public SClass getBlockClass(int numberOfArguments) {
+  public SClass getBlockClass(final int numberOfArguments) {
     // Compute the name of the block class with the given number of
     // arguments
     SSymbol name = symbolFor("Block"
@@ -628,7 +630,7 @@ public class Universe {
     return result;
   }
 
-  public SClass loadClass(SSymbol name) {
+  public SClass loadClass(final SSymbol name) {
     // Check if the requested class is already in the dictionary of globals
     if (hasGlobal(name)) {
       return (SClass) getGlobal(name);
@@ -647,7 +649,7 @@ public class Universe {
     return result;
   }
 
-  public void loadSystemClass(SClass systemClass) {
+  public void loadSystemClass(final SClass systemClass) {
     // Load the system class
     SClass result = loadClass(systemClass.getName(), systemClass);
 
@@ -657,12 +659,12 @@ public class Universe {
     }
   }
 
-  private SClass loadClass(SSymbol name, SClass systemClass) {
+  private SClass loadClass(final SSymbol name, final SClass systemClass) {
     // Try loading the class from all different paths
     for (String cpEntry : classPath) {
       try {
         // Load the class from a file and return the loaded class
-        SClass result = som.compiler.SourcecodeCompiler.compileClass(cpEntry,
+        SClass result = SourcecodeCompiler.compileClass(cpEntry,
             name.getEmbeddedString(), systemClass, this);
         if (dumpBytecodes) {
           Disassembler.dump(result.getSOMClass());
@@ -672,6 +674,8 @@ public class Universe {
 
       } catch (IOException e) {
         // Continue trying different paths
+      } catch (ProgramDefinitionError e) {
+        errorExit(e.toString());
       }
     }
 
@@ -679,26 +683,30 @@ public class Universe {
     return null;
   }
 
-  public SClass loadShellClass(String stmt) throws IOException {
+  public SClass loadShellClass(final String stmt) throws IOException {
     // java.io.ByteArrayInputStream in = new
     // java.io.ByteArrayInputStream(stmt.getBytes());
 
     // Load the class from a stream and return the loaded class
-    SClass result = som.compiler.SourcecodeCompiler.compileClass(stmt, null,
-        this);
-    if (dumpBytecodes) {
-      Disassembler.dump(result);
+    try {
+      SClass result = SourcecodeCompiler.compileClass(stmt, null, this);
+      if (dumpBytecodes) {
+        Disassembler.dump(result);
+      }
+      return result;
+    } catch (ProgramDefinitionError e) {
+      errorExit(e.toString());
+      throw new RuntimeException(e);
     }
-    return result;
   }
 
-  public static void errorPrint(String msg) {
+  public static void errorPrint(final String msg) {
     // Checkstyle: stop
     System.err.print(msg);
     // Checkstyle: resume
   }
 
-  public static void errorPrintln(String msg) {
+  public static void errorPrintln(final String msg) {
     // Checkstyle: stop
     System.err.println(msg);
     // Checkstyle: resume
@@ -710,13 +718,13 @@ public class Universe {
     // Checkstyle: resume
   }
 
-  public static void print(String msg) {
+  public static void print(final String msg) {
     // Checkstyle: stop
     System.err.print(msg);
     // Checkstyle: resume
   }
 
-  public static void println(String msg) {
+  public static void println(final String msg) {
     // Checkstyle: stop
     System.err.println(msg);
     // Checkstyle: resume
