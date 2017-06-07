@@ -33,7 +33,9 @@ import org.junit.runners.Parameterized.Parameters;
 
 import som.vm.Universe;
 import som.vmobjects.SClass;
+import som.vmobjects.SDouble;
 import som.vmobjects.SInteger;
+import som.vmobjects.SSymbol;
 
 
 @RunWith(Parameterized.class)
@@ -65,6 +67,42 @@ public class BasicInterpreterTests {
         {"IfTrueIfFalse", "test", 42, SInteger.class},
         {"IfTrueIfFalse", "test2", 33, SInteger.class},
         {"IfTrueIfFalse", "test3", 4, SInteger.class},
+
+        {"CompilerSimplification", "returnConstantSymbol", "constant", SSymbol.class},
+        {"CompilerSimplification", "returnConstantInt", 42, SInteger.class},
+        {"CompilerSimplification", "returnSelf", "CompilerSimplification", SClass.class},
+        {"CompilerSimplification", "returnSelfImplicitly", "CompilerSimplification",
+            SClass.class},
+        {"CompilerSimplification", "testReturnArgumentN", 55, SInteger.class},
+        {"CompilerSimplification", "testReturnArgumentA", 44, SInteger.class},
+        {"CompilerSimplification", "testSetField", "foo", SSymbol.class},
+        {"CompilerSimplification", "testGetField", 40, SInteger.class},
+
+        {"Arrays", "testEmptyToInts", 3, SInteger.class},
+        {"Arrays", "testPutAllInt", 5, SInteger.class},
+        {"Arrays", "testPutAllNil", "Nil", SClass.class},
+        {"Arrays", "testNewWithAll", 1, SInteger.class},
+
+        {"BlockInlining", "testNoInlining", 1, SInteger.class},
+        {"BlockInlining", "testOneLevelInlining", 1, SInteger.class},
+        {"BlockInlining", "testOneLevelInliningWithLocalShadowTrue", 2, SInteger.class},
+        {"BlockInlining", "testOneLevelInliningWithLocalShadowFalse", 1, SInteger.class},
+
+        {"BlockInlining", "testBlockNestedInIfTrue", 2, SInteger.class},
+        {"BlockInlining", "testBlockNestedInIfFalse", 42, SInteger.class},
+
+        {"BlockInlining", "testDeepNestedInlinedIfTrue", 3, SInteger.class},
+        {"BlockInlining", "testDeepNestedInlinedIfFalse", 42, SInteger.class},
+
+        {"BlockInlining", "testDeepNestedBlocksInInlinedIfTrue", 5, SInteger.class},
+        {"BlockInlining", "testDeepNestedBlocksInInlinedIfFalse", 43, SInteger.class},
+
+        {"BlockInlining", "testDeepDeepNestedTrue", 9, SInteger.class},
+        {"BlockInlining", "testDeepDeepNestedFalse", 43, SInteger.class},
+
+        {"BlockInlining", "testToDoNestDoNestIfTrue", 2, SInteger.class},
+
+        {"NonLocalVars", "writeDifferentTypes", 3.75, SDouble.class}
     });
   }
 
@@ -85,15 +123,29 @@ public class BasicInterpreterTests {
 
   protected void assertEqualsSOMValue(final Object expectedResult, final Object actualResult) {
     if (resultType == SInteger.class) {
-      long expected = (Integer) expectedResult;
+      long expected = (int) expectedResult;
       long actual = ((SInteger) actualResult).getEmbeddedInteger();
       assertEquals(expected, actual);
+      return;
+    }
+
+    if (resultType == Double.class) {
+      double expected = (double) expectedResult;
+      double actual   = ((SDouble) actualResult).getEmbeddedDouble();
+      assertEquals(expected, actual, 1e-15);
       return;
     }
 
     if (resultType == SClass.class) {
       String expected = (String) expectedResult;
       String actual = ((SClass) actualResult).getName().getEmbeddedString();
+      assertEquals(expected, actual);
+      return;
+    }
+
+    if (resultType == SSymbol.class) {
+      String expected = (String) expectedResult;
+      String actual   = ((SSymbol) actualResult).getEmbeddedString();
       assertEquals(expected, actual);
       return;
     }

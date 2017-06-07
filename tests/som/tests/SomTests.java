@@ -40,7 +40,6 @@ public class SomTests {
   public static Iterable<Object[]> data() {
     return Arrays.asList(new Object[][] {
         {"Array"},
-        {"BigInteger"},
         {"Block"},
         {"ClassLoading"},
         {"ClassStructure"},
@@ -48,18 +47,21 @@ public class SomTests {
         {"Closure"},
         {"Coercion"},
         {"CompilerReturn"},
+        {"DoesNotUnderstand"},
         {"Double"},
 
         {"Empty"},
+        {"Global"},
         {"Hash"},
         {"Integer"},
-        {"ObjectSize"},
 
         {"Preliminary"},
         {"Reflection"},
         {"SelfBlock"},
+        {"SpecialSelectorsTest"},
         {"Super"},
 
+        {"Set"},
         {"String"},
         {"Symbol"},
         {"System"},
@@ -69,7 +71,7 @@ public class SomTests {
 
   private final String testName;
 
-  public SomTests(String testName) {
+  public SomTests(final String testName) {
     this.testName = testName;
   }
 
