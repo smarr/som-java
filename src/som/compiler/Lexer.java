@@ -174,16 +174,50 @@ public class Lexer {
     } while (Character.isDigit(currentChar()));
   }
 
+  private void lexEscapeChar() {
+    assert !endOfBuffer();
+
+    char current = currentChar();
+    switch (current) {
+      // @formatter:off
+      case 't': text.append("\t"); break;
+      case 'b': text.append("\b"); break;
+      case 'n': text.append("\n"); break;
+      case 'r': text.append("\r"); break;
+      case 'f': text.append("\f"); break;
+      case '\'': text.append('\''); break;
+      case '\\': text.append("\\"); break;
+      // @formatter:on
+    }
+    bufp++;
+  }
+
+  private void lexStringChar() {
+    if (currentChar() == '\\') {
+      bufp++;
+      lexEscapeChar();
+    } else {
+      text.append(currentChar());
+      bufp++;
+    }
+  }
+
   private void lexString() {
     sym = Symbol.STString;
     symc = 0;
     text = new StringBuffer();
+    bufp++;
 
-    do {
-      text.append(bufchar(++bufp));
-    } while (currentChar() != '\'');
+    while (currentChar() != '\'') {
+      lexStringChar();
+      while (endOfBuffer()) {
+        if (fillBuffer() == -1) {
+          return;
+        }
+        text.append('\n');
+      }
+    }
 
-    text.deleteCharAt(text.length() - 1);
     bufp++;
   }
 
