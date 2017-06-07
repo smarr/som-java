@@ -198,7 +198,8 @@ public class Frame {
     return context.stack[index];
   }
 
-  public void setArgument(final int index, final int contextLevel, final SAbstractObject value) {
+  public void setArgument(final int index, final int contextLevel,
+      final SAbstractObject value) {
     // Get the context
     Frame context = getContext(contextLevel);
 
