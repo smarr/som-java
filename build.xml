@@ -8,6 +8,8 @@
 
     <property name="checkstyle.version" value="7.8.1" />
 
+    <property environment="env"/>
+
     <target name="clean">
         <delete dir="${build.dir}"/>
     </target>
@@ -21,7 +23,7 @@
           <include name="**/*.java"/>
         </fileset>
       </pathconvert>
-      <exec executable="/Users/smarr/tmp/eclipe/Eclipse.app/Contents/MacOS/eclipse" dir="${basedir}">
+      <exec executable="${env.ECLIPSE_EXE}" dir="${basedir}">
           <arg value="-nosplash"/>
           <arg value="-application"/>
           <arg value="-consolelog"/>
@@ -33,6 +35,15 @@
           <arg value="-config"/>
           <arg value="${basedir}/.settings/org.eclipse.jdt.core.prefs"/>
           <arg line="${javafiles}"/>
+      </exec>
+      <exec executable="git" dir="${basedir}" failonerror="true">
+          <arg value="status" />
+          <arg value="*.java" />
+      </exec>
+      <exec executable="git" dir="${basedir}" failonerror="true">
+          <arg value="diff-index" />
+          <arg value="--quiet" />
+          <arg value="HEAD" />
       </exec>
     </target>
 
