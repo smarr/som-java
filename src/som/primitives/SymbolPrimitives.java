@@ -27,6 +27,7 @@ package som.primitives;
 import som.interpreter.Frame;
 import som.interpreter.Interpreter;
 import som.vm.Universe;
+import som.vmobjects.SAbstractObject;
 import som.vmobjects.SPrimitive;
 import som.vmobjects.SSymbol;
 
@@ -47,5 +48,19 @@ public class SymbolPrimitives extends Primitives {
         frame.push(universe.newString(self.getEmbeddedString()));
       }
     });
+
+    installInstancePrimitive(new SPrimitive("=", universe) {
+
+      @Override
+      public void invoke(final Frame frame, final Interpreter interpreter) {
+        SAbstractObject op1 = frame.pop();
+        SSymbol op2 = (SSymbol) frame.pop(); // self
+        if (op1 == op2) {
+          frame.push(universe.trueObject);
+        } else {
+          frame.push(universe.falseObject);
+        }
+      }
+    }, true);
   }
 }

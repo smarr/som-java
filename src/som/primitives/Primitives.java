@@ -38,7 +38,7 @@ public abstract class Primitives {
     this.universe = universe;
   }
 
-  public final void installPrimitivesIn(SClass value) {
+  public final void installPrimitivesIn(final SClass value) {
     // Save a reference to the holder class
     holder = value;
 
@@ -48,13 +48,17 @@ public abstract class Primitives {
 
   public abstract void installPrimitives();
 
-  protected void installInstancePrimitive(SPrimitive primitive) {
-    // Install the given primitive as an instance primitive in the holder
-    // class
-    holder.addInstancePrimitive(primitive);
+  protected void installInstancePrimitive(final SPrimitive primitive) {
+    installInstancePrimitive(primitive, false);
   }
 
-  protected void installClassPrimitive(SPrimitive primitive) {
+  protected void installInstancePrimitive(final SPrimitive primitive, final boolean suppressWarning) {
+    // Install the given primitive as an instance primitive in the holder
+    // class
+    holder.addInstancePrimitive(primitive, suppressWarning);
+  }
+
+  protected void installClassPrimitive(final SPrimitive primitive) {
     // Install the given primitive as an instance primitive in the class of
     // the holder class
     holder.getSOMClass().addInstancePrimitive(primitive);
