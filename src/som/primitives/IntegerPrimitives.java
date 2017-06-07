@@ -124,6 +124,15 @@ public class IntegerPrimitives extends Primitives {
       }
     });
 
+    installInstancePrimitive(new SPrimitive("rem:", universe) {
+      @Override
+      public void invoke(final Frame frame, final Interpreter interpreter) {
+        SNumber right = (SNumber) frame.pop();
+        SInteger left = (SInteger) frame.pop();
+        frame.push(left.primRemainder(right, universe));
+      }
+    });
+
     installInstancePrimitive(new SPrimitive("&", universe) {
       @Override
       public void invoke(final Frame frame, final Interpreter interpreter) {
@@ -169,9 +178,34 @@ public class IntegerPrimitives extends Primitives {
       }
     });
 
+    installInstancePrimitive(new SPrimitive("as32BitSignedValue", universe) {
+      @Override
+      public void invoke(final Frame frame, final Interpreter interpreter) {
+        SInteger rcvr = (SInteger) frame.pop();
+        frame.push(universe.newInteger((int) rcvr.getEmbeddedInteger()));
+      }
+    });
+
+    installInstancePrimitive(new SPrimitive("as32BitUnsignedValue", universe) {
+      @Override
+      public void invoke(final Frame frame, final Interpreter interpreter) {
+        SInteger rcvr = (SInteger) frame.pop();
+        frame.push(universe.newInteger(Integer.toUnsignedLong((int) rcvr.getEmbeddedInteger())));
+      }
+    });
+
+    installInstancePrimitive(new SPrimitive(">>>", universe) {
+      @Override
+      public void invoke(final Frame frame, final Interpreter interpreter) {
+        SInteger right = (SInteger) frame.pop();
+        SInteger rcvr = (SInteger) frame.pop();
+        frame.push(universe.newInteger(rcvr.getEmbeddedInteger() >>> right.getEmbeddedInteger()));
+      }
+    });
+
     installClassPrimitive(new SPrimitive("fromString:", universe) {
       @Override
-      public void invoke(Frame frame, Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         SString param = (SString) frame.pop();
         frame.pop();
 

@@ -49,6 +49,14 @@ public class DoublePrimitives extends Primitives {
       }
     });
 
+    installInstancePrimitive(new SPrimitive("asInteger", universe) {
+      @Override
+      public void invoke(final Frame frame, final Interpreter interpreter) {
+        SDouble self = (SDouble) frame.pop();
+        frame.push(self.primAsInteger(universe));
+      }
+    });
+
     installInstancePrimitive(new SPrimitive("sqrt", universe) {
       @Override
       public void invoke(final Frame frame, final Interpreter interpreter) {
@@ -113,7 +121,7 @@ public class DoublePrimitives extends Primitives {
 
     installInstancePrimitive(new SPrimitive("<", universe) {
       @Override
-      public void invoke(Frame frame, final Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         SNumber op1 = (SNumber) frame.pop();
         SDouble op2 = (SDouble) frame.pop();
         frame.push(op2.primLessThan(op1, universe));
@@ -122,10 +130,36 @@ public class DoublePrimitives extends Primitives {
 
     installInstancePrimitive(new SPrimitive("round", universe) {
       @Override
-      public void invoke(Frame frame, Interpreter interpreter) {
+      public void invoke(final Frame frame, final Interpreter interpreter) {
         SDouble rcvr = (SDouble) frame.pop();
         long result = Math.round(rcvr.getEmbeddedDouble());
         frame.push(universe.newInteger(result));
+      }
+    });
+
+    installInstancePrimitive(new SPrimitive("sin", universe) {
+      @Override
+      public void invoke(final Frame frame, final Interpreter interpreter) {
+        SDouble rcvr = (SDouble) frame.pop();
+        double result = Math.sin(rcvr.getEmbeddedDouble());
+        frame.push(universe.newDouble(result));
+      }
+    });
+
+    installInstancePrimitive(new SPrimitive("cos", universe) {
+      @Override
+      public void invoke(final Frame frame, final Interpreter interpreter) {
+        SDouble rcvr = (SDouble) frame.pop();
+        double result = Math.cos(rcvr.getEmbeddedDouble());
+        frame.push(universe.newDouble(result));
+      }
+    });
+
+    installClassPrimitive(new SPrimitive("PositiveInfinity", universe) {
+      @Override
+      public void invoke(final Frame frame, final Interpreter interpreter) {
+        frame.pop();
+        frame.push(universe.newDouble(Double.POSITIVE_INFINITY));
       }
     });
   }

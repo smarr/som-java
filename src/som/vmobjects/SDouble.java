@@ -56,67 +56,71 @@ public final class SDouble extends SNumber {
   }
 
   @Override
-  public SString primAsString(Universe universe) {
+  public SString primAsString(final Universe universe) {
     return universe.newString(Double.toString(embeddedDouble));
   }
 
+  public SInteger primAsInteger(final Universe universe) {
+    return universe.newInteger((long) embeddedDouble);
+  }
+
   @Override
-  public SNumber primSqrt(Universe universe) {
+  public SNumber primSqrt(final Universe universe) {
     return universe.newDouble(Math.sqrt(embeddedDouble));
   }
 
   @Override
-  public SNumber primAdd(SNumber right, Universe universe) {
+  public SNumber primAdd(final SNumber right, final Universe universe) {
     double r = coerceToDouble(right, universe);
     return universe.newDouble(embeddedDouble + r);
   }
 
   @Override
-  public SNumber primSubtract(SNumber right, Universe universe) {
+  public SNumber primSubtract(final SNumber right, final Universe universe) {
     double r = coerceToDouble(right, universe);
     return universe.newDouble(embeddedDouble - r);
   }
 
   @Override
-  public SNumber primMultiply(SNumber right, Universe universe) {
+  public SNumber primMultiply(final SNumber right, final Universe universe) {
     double r = coerceToDouble(right, universe);
     return universe.newDouble(embeddedDouble * r);
   }
 
   @Override
-  public SNumber primDoubleDivide(SNumber right, Universe universe) {
+  public SNumber primDoubleDivide(final SNumber right, final Universe universe) {
     double r = coerceToDouble(right, universe);
     return universe.newDouble(embeddedDouble / r);
   }
 
   @Override
-  public SNumber primIntegerDivide(SNumber right, Universe universe) {
+  public SNumber primIntegerDivide(final SNumber right, final Universe universe) {
     throw new RuntimeException("not yet implemented, SOM doesn't offer it");
   }
 
   @Override
-  public SNumber primModulo(SNumber right, Universe universe) {
+  public SNumber primModulo(final SNumber right, final Universe universe) {
     double r = coerceToDouble(right, universe);
     return universe.newDouble(embeddedDouble % r);
   }
 
   @Override
-  public SNumber primBitAnd(SNumber right, Universe universe) {
+  public SNumber primBitAnd(final SNumber right, final Universe universe) {
     throw new RuntimeException("Not supported for doubles");
   }
 
   @Override
-  public SNumber primBitXor(SNumber right, Universe universe) {
+  public SNumber primBitXor(final SNumber right, final Universe universe) {
     throw new RuntimeException("Not supported for doubles");
   }
 
   @Override
-  public SNumber primLeftShift(SNumber right, Universe universe) {
+  public SNumber primLeftShift(final SNumber right, final Universe universe) {
     throw new RuntimeException("Not supported for doubles");
   }
 
   @Override
-  public SObject primEqual(SAbstractObject right, Universe universe) {
+  public SObject primEqual(final SAbstractObject right, final Universe universe) {
     if (!(right instanceof SNumber)) {
       return universe.falseObject;
     }
@@ -126,7 +130,7 @@ public final class SDouble extends SNumber {
   }
 
   @Override
-  public SObject primLessThan(SNumber right, Universe universe) {
+  public SObject primLessThan(final SNumber right, final Universe universe) {
     double r = coerceToDouble(right, universe);
     return asSBoolean(embeddedDouble < r, universe);
   }
