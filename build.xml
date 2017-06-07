@@ -1,12 +1,54 @@
 <project name="som" basedir="." default="compile">
 
     <property name="src.dir"     value="src"/>
-
+    <property name="test.dir"    value="tests"/>
+    <property name="lib.dir"     value="libs" />
     <property name="build.dir"   value="build"/>
     <property name="classes.dir" value="${build.dir}/classes"/>
 
+    <property name="checkstyle.version" value="7.8.1" />
+
     <target name="clean">
         <delete dir="${build.dir}"/>
+    </target>
+
+    <target name="eclipseformat">
+      <pathconvert pathsep=" " property="javafiles">
+        <fileset dir="${src.dir}">
+          <include name="**/*.java"/>
+        </fileset>
+        <fileset dir="${test.dir}">
+          <include name="**/*.java"/>
+        </fileset>
+      </pathconvert>
+      <exec executable="/Users/smarr/tmp/eclipe/Eclipse.app/Contents/MacOS/eclipse" dir="${basedir}">
+          <arg value="-nosplash"/>
+          <arg value="-application"/>
+          <arg value="-consolelog"/>
+          <arg value="-data"/>
+          <arg value="${basedir}"/>
+          <arg value="-vm"/>
+          <arg value="${env.JAVA_HOME}/bin/java"/>
+          <arg value="org.eclipse.jdt.core.JavaCodeFormatter"/>
+          <arg value="-config"/>
+          <arg value="${basedir}/.settings/org.eclipse.jdt.core.prefs"/>
+          <arg line="${javafiles}"/>
+      </exec>
+    </target>
+
+    <target name="checkstyle-jar">
+        <mkdir dir="${lib.dir}" />
+        <get src="http://tenet.dl.sourceforge.net/project/checkstyle/checkstyle/${checkstyle.version}/checkstyle-${checkstyle.version}-all.jar"
+            usetimestamp="true"
+            dest="${lib.dir}/checkstyle-${checkstyle.version}-all.jar" />
+    </target>
+    
+    <target name="checkstyle" depends="checkstyle-jar" description="Check Code with Checkstyle">
+        <taskdef resource="com/puppycrawl/tools/checkstyle/ant/checkstyle-ant-task.properties" classpath="${lib.dir}/checkstyle-${checkstyle.version}-all.jar" />
+        <checkstyle config=".checkstyle_checks.xml">
+          <fileset dir="src" includes="**/*.java"/>
+          <formatter type="plain"/>
+        </checkstyle>
     </target>
 
     <target name="compile">
