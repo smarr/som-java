@@ -69,7 +69,7 @@ public class SObject extends SAbstractObject {
 
   // Private array of fields
   private final SAbstractObject[] fields;
-  private SClass    clazz;
+  private SClass                  clazz;
 
   // Static field indices and number of object fields
   static final int numberOfObjectFields = 0;

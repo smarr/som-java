@@ -27,6 +27,7 @@ package som.vmobjects;
 import som.interpreter.Frame;
 import som.interpreter.Interpreter;
 
+
 public interface SInvokable {
 
   // Tells whether this is a primitive

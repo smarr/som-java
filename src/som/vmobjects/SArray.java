@@ -26,6 +26,7 @@ package som.vmobjects;
 
 import som.vm.Universe;
 
+
 public class SArray extends SAbstractObject {
 
   public SArray(final SObject nilObject, long numElements) {

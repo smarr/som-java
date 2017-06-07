@@ -30,6 +30,7 @@ import som.vm.Universe;
 import som.vmobjects.SClass;
 import som.vmobjects.SPrimitive;
 
+
 public class ClassPrimitives extends Primitives {
 
   public ClassPrimitives(final Universe universe) {

@@ -26,6 +26,7 @@ package som.vmobjects;
 
 import som.vm.Universe;
 
+
 public class SString extends SAbstractObject {
 
   public SString(final String value) {

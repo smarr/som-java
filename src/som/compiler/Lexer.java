@@ -28,23 +28,24 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
 
+
 public class Lexer {
 
   private static final String SEPARATOR = "----";
   private static final String PRIMITIVE = "primitive";
 
-  private int                 lineNumber;
-  private int                 charsRead; // all characters read, excluding the current line
+  private int                  lineNumber;
+  private int                  charsRead; // all characters read, excluding the current line
   private final BufferedReader infile;
-  private Symbol              sym;
-  private char                symc;
-  private StringBuffer        text;
-  private boolean             peekDone;
-  private Symbol              nextSym;
-  private char                nextSymc;
-  private StringBuffer        nextText;
-  private String              buf;
-  private int                 bufp;
+  private Symbol               sym;
+  private char                 symc;
+  private StringBuffer         text;
+  private boolean              peekDone;
+  private Symbol               nextSym;
+  private char                 nextSymc;
+  private StringBuffer         nextText;
+  private String               buf;
+  private int                  bufp;
 
   protected Lexer(Reader reader) {
     infile = new BufferedReader(reader);
@@ -73,8 +74,7 @@ public class Lexer {
       }
       skipWhiteSpace();
       skipComment();
-    }
-    while (endOfBuffer() || Character.isWhitespace(currentChar())
+    } while (endOfBuffer() || Character.isWhitespace(currentChar())
         || currentChar() == '"');
 
     if (currentChar() == '\'') {
@@ -180,8 +180,7 @@ public class Lexer {
 
     do {
       text.append(bufchar(++bufp));
-    }
-    while (currentChar() != '\'');
+    } while (currentChar() != '\'');
 
     text.deleteCharAt(text.length() - 1);
     bufp++;
@@ -269,12 +268,16 @@ public class Lexer {
 
   private int fillBuffer() {
     try {
-      if (!infile.ready()) { return -1; }
+      if (!infile.ready()) {
+        return -1;
+      }
 
       charsRead += buf.length();
 
       buf = infile.readLine();
-      if (buf == null) { return -1; }
+      if (buf == null) {
+        return -1;
+      }
       ++lineNumber;
       bufp = 0;
       return buf.length();
@@ -309,10 +312,11 @@ public class Lexer {
       do {
         bufp++;
         while (endOfBuffer()) {
-          if (fillBuffer() == -1) { return; }
+          if (fillBuffer() == -1) {
+            return;
+          }
         }
-      }
-      while (currentChar() != '"');
+      } while (currentChar() != '"');
       bufp++;
     }
   }

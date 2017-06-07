@@ -30,6 +30,7 @@ import java.util.HashMap;
 import som.primitives.Primitives;
 import som.vm.Universe;
 
+
 public class SClass extends SObject {
 
   private final Universe universe;
@@ -136,7 +137,9 @@ public class SClass extends SObject {
 
     // Lookup invokable and return if found
     invokable = invokablesTable.get(signature);
-    if (invokable != null) { return invokable; }
+    if (invokable != null) {
+      return invokable;
+    }
 
     // Lookup invokable with given signature in array of instance invokables
     for (int i = 0; i < getNumberOfInstanceInvokables(); i++) {
@@ -167,7 +170,9 @@ public class SClass extends SObject {
     // Lookup field with given name in array of instance fields
     for (int i = getNumberOfInstanceFields() - 1; i >= 0; i--) {
       // Return the current index if the name matches
-      if (fieldName == getInstanceFieldName(i)) { return i; }
+      if (fieldName == getInstanceFieldName(i)) {
+        return i;
+      }
     }
 
     // Field not found
@@ -288,10 +293,9 @@ public class SClass extends SObject {
   private SArray  instanceInvokables;
   private SArray  instanceFields;
 
-
   // Mapping of symbols to invokables
   private final HashMap<SSymbol, SInvokable> invokablesTable;
 
   // Static field indices and number of class fields
-  static final int  numberOfClassFields = numberOfObjectFields;
+  static final int numberOfClassFields = numberOfObjectFields;
 }

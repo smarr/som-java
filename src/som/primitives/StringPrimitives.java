@@ -33,6 +33,7 @@ import som.vmobjects.SInteger;
 import som.vmobjects.SPrimitive;
 import som.vmobjects.SString;
 
+
 public class StringPrimitives extends Primitives {
 
   public StringPrimitives(final Universe universe) {
@@ -92,7 +93,7 @@ public class StringPrimitives extends Primitives {
 
       @Override
       public void invoke(final Frame frame, final Interpreter interpreter) {
-        SInteger end   = (SInteger) frame.pop();
+        SInteger end = (SInteger) frame.pop();
         SInteger start = (SInteger) frame.pop();
 
         SString self = (SString) frame.pop();

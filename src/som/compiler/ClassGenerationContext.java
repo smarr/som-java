@@ -32,6 +32,7 @@ import som.vmobjects.SArray;
 import som.vmobjects.SInvokable;
 import som.vmobjects.SSymbol;
 
+
 public class ClassGenerationContext {
 
   private final Universe universe;
@@ -40,13 +41,13 @@ public class ClassGenerationContext {
     this.universe = universe;
   }
 
-  private SSymbol                 name;
-  private SSymbol                 superName;
-  private boolean                 classSide;
-  private final List<SSymbol>     instanceFields  = new ArrayList<SSymbol>();
-  private final List<SInvokable>  instanceMethods = new ArrayList<SInvokable>();
-  private final List<SSymbol>     classFields     = new ArrayList<SSymbol>();
-  private final List<SInvokable>  classMethods    = new ArrayList<SInvokable>();
+  private SSymbol                name;
+  private SSymbol                superName;
+  private boolean                classSide;
+  private final List<SSymbol>    instanceFields  = new ArrayList<SSymbol>();
+  private final List<SInvokable> instanceMethods = new ArrayList<SInvokable>();
+  private final List<SSymbol>    classFields     = new ArrayList<SSymbol>();
+  private final List<SInvokable> classMethods    = new ArrayList<SInvokable>();
 
   public void setName(final SSymbol name) {
     this.name = name;

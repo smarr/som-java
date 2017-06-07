@@ -32,38 +32,39 @@ import org.junit.runners.Parameterized.Parameters;
 
 import som.vm.Universe;
 
+
 @RunWith(Parameterized.class)
 public class SomTests {
 
   @Parameters
   public static Iterable<Object[]> data() {
     return Arrays.asList(new Object[][] {
-        {"Array"         },
-        {"BigInteger"    },
-        {"Block"         },
-        {"ClassLoading"  },
+        {"Array"},
+        {"BigInteger"},
+        {"Block"},
+        {"ClassLoading"},
         {"ClassStructure"},
 
-        {"Closure"       },
-        {"Coercion"      },
+        {"Closure"},
+        {"Coercion"},
         {"CompilerReturn"},
-        {"Double"        },
+        {"Double"},
 
-        {"Empty"         },
-        {"Hash"          },
-        {"Integer"       },
-        {"ObjectSize"    },
+        {"Empty"},
+        {"Hash"},
+        {"Integer"},
+        {"ObjectSize"},
 
-        {"Preliminary"   },
-        {"Reflection"    },
-        {"SelfBlock"     },
-        {"Super"         },
+        {"Preliminary"},
+        {"Reflection"},
+        {"SelfBlock"},
+        {"Super"},
 
-        {"String"        },
-        {"Symbol"        },
-        {"System"        },
-        {"Vector"        }
-      });
+        {"String"},
+        {"Symbol"},
+        {"System"},
+        {"Vector"}
+    });
   }
 
   private final String testName;

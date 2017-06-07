@@ -28,6 +28,7 @@ import som.interpreter.Frame;
 import som.interpreter.Interpreter;
 import som.vm.Universe;
 
+
 public abstract class SAbstractObject {
 
   public abstract SClass getSOMClass(Universe universe);

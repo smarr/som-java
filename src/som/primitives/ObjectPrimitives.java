@@ -37,6 +37,7 @@ import som.vmobjects.SObject;
 import som.vmobjects.SPrimitive;
 import som.vmobjects.SSymbol;
 
+
 public class ObjectPrimitives extends Primitives {
 
   public ObjectPrimitives(final Universe universe) {
@@ -71,7 +72,9 @@ public class ObjectPrimitives extends Primitives {
       @Override
       public void invoke(final Frame frame, final Interpreter interpreter) {
         SAbstractObject self = frame.pop();
-        int size = 1; // each object holds its class as an implicit member that contributes to its size
+
+        // each object holds its class as an implicit member that contributes to its size
+        int size = 1;
         if (self instanceof SArray) {
           size += ((SArray) self).getNumberOfIndexableFields();
         }
@@ -85,7 +88,7 @@ public class ObjectPrimitives extends Primitives {
     installInstancePrimitive(new SPrimitive("perform:", universe) {
       @Override
       public void invoke(final Frame frame, final Interpreter interpreter) {
-        SAbstractObject arg  = frame.pop();
+        SAbstractObject arg = frame.pop();
         SAbstractObject self = frame.getStackElement(0);
         SSymbol selector = (SSymbol) arg;
 
@@ -98,11 +101,11 @@ public class ObjectPrimitives extends Primitives {
       @Override
       public void invoke(final Frame frame, final Interpreter interpreter) {
         SAbstractObject arg2 = frame.pop();
-        SAbstractObject arg  = frame.pop();
+        SAbstractObject arg = frame.pop();
         // Object self = frame.getStackElement(0);
 
         SSymbol selector = (SSymbol) arg;
-        SClass  clazz    = (SClass) arg2;
+        SClass clazz = (SClass) arg2;
 
         SInvokable invokable = clazz.lookupInvokable(selector);
         invokable.invoke(frame, interpreter);
@@ -113,11 +116,11 @@ public class ObjectPrimitives extends Primitives {
       @Override
       public void invoke(final Frame frame, final Interpreter interpreter) {
         SAbstractObject arg2 = frame.pop();
-        SAbstractObject arg  = frame.pop();
+        SAbstractObject arg = frame.pop();
         SAbstractObject self = frame.getStackElement(0);
 
         SSymbol selector = (SSymbol) arg;
-        SArray  args     = (SArray) arg2;
+        SArray args = (SArray) arg2;
 
         for (int i = 0; i < args.getNumberOfIndexableFields(); i++) {
           frame.push(args.getIndexableField(i));
@@ -131,7 +134,7 @@ public class ObjectPrimitives extends Primitives {
     installInstancePrimitive(new SPrimitive("instVarAt:", universe) {
       @Override
       public void invoke(final Frame frame, final Interpreter interpreter) {
-        SAbstractObject arg  = frame.pop();
+        SAbstractObject arg = frame.pop();
         SObject self = (SObject) frame.pop();
         SInteger idx = (SInteger) arg;
 
@@ -142,8 +145,8 @@ public class ObjectPrimitives extends Primitives {
     installInstancePrimitive(new SPrimitive("instVarAt:put:", universe) {
       @Override
       public void invoke(final Frame frame, final Interpreter interpreter) {
-        SAbstractObject val  = frame.pop();
-        SAbstractObject arg  = frame.pop();
+        SAbstractObject val = frame.pop();
+        SAbstractObject arg = frame.pop();
         SObject self = (SObject) frame.getStackElement(0);
 
         SInteger idx = (SInteger) arg;
@@ -155,7 +158,7 @@ public class ObjectPrimitives extends Primitives {
     installInstancePrimitive(new SPrimitive("class", universe) {
       @Override
       public void invoke(final Frame frame, final Interpreter interpreter) {
-        SAbstractObject self  = frame.pop();
+        SAbstractObject self = frame.pop();
         frame.push(self.getSOMClass(universe));
       }
     });

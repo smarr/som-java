@@ -30,15 +30,16 @@ import som.interpreter.Frame;
 import som.interpreter.Interpreter;
 import som.vm.Universe;
 
+
 public class SMethod extends SAbstractObject implements SInvokable {
 
   public SMethod(SObject nilObject, SSymbol signature, int numberOfBytecodes,
       SInteger numberOfLocals, SInteger maxNumStackElements,
       int numberOfLiterals, List<SAbstractObject> literals) {
     this.signature = signature;
-    this.numberOfLocals  = numberOfLocals;
-    this.bytecodes       = new byte[numberOfBytecodes];
-    inlineCacheClass     = new SClass[numberOfBytecodes];
+    this.numberOfLocals = numberOfLocals;
+    this.bytecodes = new byte[numberOfBytecodes];
+    inlineCacheClass = new SClass[numberOfBytecodes];
     inlineCacheInvokable = new SInvokable[numberOfBytecodes];
     maximumNumberOfStackElements = maxNumStackElements;
     this.literals = new SAbstractObject[numberOfLiterals];
@@ -106,7 +107,6 @@ public class SMethod extends SAbstractObject implements SInvokable {
     return bytecodes.length;
   }
 
-
   public byte getBytecode(int index) {
     // Get the bytecode at the given index
     return bytecodes[index];
@@ -126,7 +126,8 @@ public class SMethod extends SAbstractObject implements SInvokable {
 
   @Override
   public String toString() {
-    return "Method(" + getHolder().getName().getEmbeddedString() + ">>" + getSignature().toString() + ")";
+    return "Method(" + getHolder().getName().getEmbeddedString() + ">>"
+        + getSignature().toString() + ")";
   }
 
   public SClass getInlineCacheClass(int bytecodeIndex) {
@@ -138,7 +139,7 @@ public class SMethod extends SAbstractObject implements SInvokable {
   }
 
   public void setInlineCache(int bytecodeIndex, SClass receiverClass, SInvokable invokable) {
-    inlineCacheClass[bytecodeIndex]     = receiverClass;
+    inlineCacheClass[bytecodeIndex] = receiverClass;
     inlineCacheInvokable[bytecodeIndex] = invokable;
   }
 
@@ -148,16 +149,16 @@ public class SMethod extends SAbstractObject implements SInvokable {
   }
 
   // Private variable holding byte array of bytecodes
-  private final byte[]            bytecodes;
-  private final SClass[]          inlineCacheClass;
-  private final SInvokable[]      inlineCacheInvokable;
+  private final byte[]       bytecodes;
+  private final SClass[]     inlineCacheClass;
+  private final SInvokable[] inlineCacheInvokable;
 
   private final SAbstractObject[] literals;
 
-  private final SSymbol           signature;
-  private       SClass            holder;
+  private final SSymbol signature;
+  private SClass        holder;
 
   // Meta information
-  private final SInteger          numberOfLocals;
-  private final SInteger          maximumNumberOfStackElements;
+  private final SInteger numberOfLocals;
+  private final SInteger maximumNumberOfStackElements;
 }

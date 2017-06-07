@@ -31,6 +31,7 @@ import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 
+
 public final class SInteger extends SNumber {
 
   /**
@@ -191,9 +192,9 @@ public final class SInteger extends SNumber {
   public SNumber primModulo(final SNumber right, final Universe universe) {
     if (right instanceof SBigInteger) {
       // Note: modulo semantics of SOM differ from Java, with respect to
-      //       negative operands, but BigInteger doesn't support a negative
-      //       second operand, so, we should get an exception, which we can
-      //       properly handle once an application actually needs it.
+      // negative operands, but BigInteger doesn't support a negative
+      // second operand, so, we should get an exception, which we can
+      // properly handle once an application actually needs it.
       BigInteger result = BigInteger.valueOf(embeddedInteger).mod(
           ((SBigInteger) right).getEmbeddedBiginteger());
       return universe.newBigInteger(result);
@@ -245,7 +246,7 @@ public final class SInteger extends SNumber {
   @Override
   public SNumber primLeftShift(final SNumber right, final Universe universe) {
     long r = ((SInteger) right).embeddedInteger;
-    assert  r > 0;
+    assert r > 0;
 
     if (Long.SIZE - Long.numberOfLeadingZeros(embeddedInteger) + r > Long.SIZE - 1) {
       BigInteger result = BigInteger.valueOf(embeddedInteger).shiftLeft((int) r);

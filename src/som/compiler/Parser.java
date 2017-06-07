@@ -69,17 +69,18 @@ import som.vmobjects.SAbstractObject;
 import som.vmobjects.SClass;
 import som.vmobjects.SSymbol;
 
+
 public class Parser {
 
-  private final Universe            universe;
-  private final String              filename;
+  private final Universe universe;
+  private final String   filename;
 
-  private final Lexer               lexer;
-  private final BytecodeGenerator   bcGen;
+  private final Lexer             lexer;
+  private final BytecodeGenerator bcGen;
 
-  private Symbol                    sym;
-  private String                    text;
-  private Symbol                    nextSym;
+  private Symbol sym;
+  private String text;
+  private Symbol nextSym;
 
   private static final List<Symbol> singleOpSyms        = new ArrayList<Symbol>();
   private static final List<Symbol> binaryOpSyms        = new ArrayList<Symbol>();
@@ -99,7 +100,7 @@ public class Parser {
     }
   }
 
-  public Parser(Reader reader, final Universe universe, final String filename) {
+  public Parser(final Reader reader, final Universe universe, final String filename) {
     this.universe = universe;
     this.filename = filename;
 
@@ -110,7 +111,7 @@ public class Parser {
     getSymbolFromLexer();
   }
 
-  public void classdef(ClassGenerationContext cgenc) {
+  public void classdef(final ClassGenerationContext cgenc) {
     cgenc.setName(universe.symbolFor(text));
     expect(Identifier);
     expect(Equal);
@@ -173,11 +174,11 @@ public class Parser {
     }
   }
 
-  private boolean symIn(List<Symbol> ss) {
+  private boolean symIn(final List<Symbol> ss) {
     return ss.contains(sym);
   }
 
-  private boolean accept(Symbol s) {
+  private boolean accept(final Symbol s) {
     if (sym == s) {
       getSymbolFromLexer();
       return true;
@@ -185,7 +186,7 @@ public class Parser {
     return false;
   }
 
-  private boolean acceptOneOf(List<Symbol> ss) {
+  private boolean acceptOneOf(final List<Symbol> ss) {
     if (symIn(ss)) {
       getSymbolFromLexer();
       return true;
@@ -193,31 +194,39 @@ public class Parser {
     return false;
   }
 
-  private boolean expect(Symbol s) {
-    if (accept(s)) { return true; }
+  private boolean expect(final Symbol s) {
+    if (accept(s)) {
+      return true;
+    }
     StringBuffer err = new StringBuffer("Error: " + filename + ":" +
         lexer.getCurrentLineNumber() +
         ": unexpected symbol, expected: " + s.toString()
         + ", but found: " + sym.toString());
-    if (printableSymbol()) { err.append(" (" + text + ")"); }
+    if (printableSymbol()) {
+      err.append(" (" + text + ")");
+    }
     err.append(": " + lexer.getRawBuffer());
     throw new IllegalStateException(err.toString());
   }
 
-  private boolean expectOneOf(List<Symbol> ss) {
-    if (acceptOneOf(ss)) { return true; }
+  private boolean expectOneOf(final List<Symbol> ss) {
+    if (acceptOneOf(ss)) {
+      return true;
+    }
     StringBuffer err = new StringBuffer("Error: " + filename + ":" +
-    lexer.getCurrentLineNumber() + ": unexpected symbol, expected one of: ");
+        lexer.getCurrentLineNumber() + ": unexpected symbol, expected one of: ");
     for (Symbol s : ss) {
       err.append(s.toString() + ", ");
     }
     err.append("but found: " + sym.toString());
-    if (printableSymbol()) { err.append(" (" + text + ")"); }
+    if (printableSymbol()) {
+      err.append(" (" + text + ")");
+    }
     err.append(": " + lexer.getRawBuffer());
     throw new IllegalStateException(err.toString());
   }
 
-  private void instanceFields(ClassGenerationContext cgenc) {
+  private void instanceFields(final ClassGenerationContext cgenc) {
     if (accept(Or)) {
       while (sym == Identifier) {
         String var = variable();
@@ -227,7 +236,7 @@ public class Parser {
     }
   }
 
-  private void classFields(ClassGenerationContext cgenc) {
+  private void classFields(final ClassGenerationContext cgenc) {
     if (accept(Or)) {
       while (sym == Identifier) {
         String var = variable();
@@ -280,8 +289,7 @@ public class Parser {
     do {
       kw.append(keyword());
       mgenc.addArgumentIfAbsent(argument());
-    }
-    while (sym == Keyword);
+    } while (sym == Keyword);
 
     mgenc.setSignature(universe.symbolFor(kw.toString()));
   }
@@ -310,7 +318,7 @@ public class Parser {
   private som.vmobjects.SSymbol binarySelector() {
     String s = new String(text);
 
-    // Checkstyle: stop
+    // Checkstyle: stop @formatter:off
     if (accept(Or)) {
     } else if (accept(Comma)) {
     } else if (accept(Minus)) {
@@ -318,7 +326,7 @@ public class Parser {
     } else if (acceptOneOf(singleOpSyms)) {
     } else if (accept(OperatorSequence)) {
     } else { expect(NONE); }
-    // Checkstyle: resume
+    // Checkstyle: resume @formatter:on
 
     return universe.symbolFor(s);
   }
@@ -357,7 +365,7 @@ public class Parser {
     }
   }
 
-  private void blockBody(final MethodGenerationContext mgenc, boolean seenPeriod) {
+  private void blockBody(final MethodGenerationContext mgenc, final boolean seenPeriod) {
     if (accept(Exit)) {
       result(mgenc);
     } else if (sym == EndBlock) {
@@ -387,7 +395,7 @@ public class Parser {
     }
   }
 
-  private void result(MethodGenerationContext mgenc) {
+  private void result(final MethodGenerationContext mgenc) {
     expression(mgenc);
 
     if (mgenc.isBlockMethod()) {
@@ -424,11 +432,13 @@ public class Parser {
     }
   }
 
-  private void assignments(MethodGenerationContext mgenc, List<String> l) {
+  private void assignments(final MethodGenerationContext mgenc, final List<String> l) {
     if (sym == Identifier) {
       l.add(assignment(mgenc));
       peekForNextSymbolFromLexer();
-      if (nextSym == Assign) { assignments(mgenc, l); }
+      if (nextSym == Assign) {
+        assignments(mgenc, l);
+      }
     }
   }
 
@@ -442,7 +452,7 @@ public class Parser {
     return v;
   }
 
-  private void evaluation(MethodGenerationContext mgenc) {
+  private void evaluation(final MethodGenerationContext mgenc) {
     // single: superSend
     Single<Boolean> si = new Single<Boolean>(false);
 
@@ -453,7 +463,7 @@ public class Parser {
     }
   }
 
-  private void primary(final MethodGenerationContext mgenc, Single<Boolean> superSend) {
+  private void primary(final MethodGenerationContext mgenc, final Single<Boolean> superSend) {
     superSend.set(false);
     switch (sym) {
       case Identifier: {
@@ -493,14 +503,13 @@ public class Parser {
     return identifier();
   }
 
-  private void messages(MethodGenerationContext mgenc, Single<Boolean> superSend) {
+  private void messages(final MethodGenerationContext mgenc, final Single<Boolean> superSend) {
     if (sym == Identifier) {
       do {
         // only the first message in a sequence can be a super send
         unaryMessage(mgenc, superSend);
         superSend.set(false);
-      }
-      while (sym == Identifier);
+      } while (sym == Identifier);
 
       while (sym == OperatorSequence || symIn(binaryOpSyms)) {
         binaryMessage(mgenc, new Single<Boolean>(false));
@@ -514,8 +523,7 @@ public class Parser {
         // only the first message in a sequence can be a super send
         binaryMessage(mgenc, superSend);
         superSend.set(false);
-      }
-      while (sym == OperatorSequence || symIn(binaryOpSyms));
+      } while (sym == OperatorSequence || symIn(binaryOpSyms));
 
       if (sym == Keyword) {
         keywordMessage(mgenc, new Single<Boolean>(false));
@@ -526,7 +534,7 @@ public class Parser {
   }
 
   private void unaryMessage(final MethodGenerationContext mgenc,
-      Single<Boolean> superSend) {
+      final Single<Boolean> superSend) {
     som.vmobjects.SSymbol msg = unarySelector();
     mgenc.addLiteralIfAbsent(msg);
 
@@ -538,7 +546,7 @@ public class Parser {
   }
 
   private void binaryMessage(final MethodGenerationContext mgenc,
-      Single<Boolean> superSend) {
+      final Single<Boolean> superSend) {
     som.vmobjects.SSymbol msg = binarySelector();
     mgenc.addLiteralIfAbsent(msg);
 
@@ -552,7 +560,7 @@ public class Parser {
   }
 
   private void binaryOperand(final MethodGenerationContext mgenc,
-      Single<Boolean> superSend) {
+      final Single<Boolean> superSend) {
     primary(mgenc, superSend);
 
     while (sym == Identifier) {
@@ -561,13 +569,12 @@ public class Parser {
   }
 
   private void keywordMessage(final MethodGenerationContext mgenc,
-      Single<Boolean> superSend) {
+      final Single<Boolean> superSend) {
     StringBuffer kw = new StringBuffer();
     do {
       kw.append(keyword());
       formula(mgenc);
-    }
-    while (sym == Keyword);
+    } while (sym == Keyword);
 
     som.vmobjects.SSymbol msg = universe.symbolFor(kw.toString());
 
@@ -628,7 +635,7 @@ public class Parser {
     bcGen.emitPUSHCONSTANT(mgenc, lit);
   }
 
-  private SAbstractObject literalDecimal(boolean isNegative) {
+  private SAbstractObject literalDecimal(final boolean isNegative) {
     if (sym == Integer) {
       return literalInteger(isNegative);
     } else {
@@ -642,7 +649,7 @@ public class Parser {
     return literalDecimal(true);
   }
 
-  private SAbstractObject literalInteger(boolean isNegative) {
+  private SAbstractObject literalInteger(final boolean isNegative) {
     try {
       long i = Long.parseLong(text);
       if (isNegative) {
@@ -668,7 +675,7 @@ public class Parser {
     }
   }
 
-  private SAbstractObject literalDouble(boolean isNegative) {
+  private SAbstractObject literalDouble(final boolean isNegative) {
     double d = java.lang.Double.parseDouble(text);
     if (isNegative) {
       d = 0.0 - d;
@@ -727,7 +734,9 @@ public class Parser {
     mgenc.addArgumentIfAbsent("$block self");
 
     expect(NewBlock);
-    if (sym == Colon) { blockPattern(mgenc); }
+    if (sym == Colon) {
+      blockPattern(mgenc);
+    }
 
     // generate Block signature
     String blockSig = "$block method";
@@ -760,12 +769,11 @@ public class Parser {
     do {
       expect(Colon);
       mgenc.addArgumentIfAbsent(argument());
-    }
-    while (sym == Colon);
+    } while (sym == Colon);
   }
 
   private void genPushVariable(final MethodGenerationContext mgenc,
-                               final String var) {
+      final String var) {
     // The purpose of this function is to find out whether the variable to be
     // pushed on the stack is a local variable, argument, or object field.
     // This is done by examining all available lexical contexts, starting with
@@ -796,7 +804,7 @@ public class Parser {
   }
 
   private void genPopVariable(final MethodGenerationContext mgenc,
-                              final String var) {
+      final String var) {
     // The purpose of this function is to find out whether the variable to be
     // popped off the stack is a local variable, argument, or object field.
     // This is done by examining all available lexical contexts, starting with
@@ -818,7 +826,7 @@ public class Parser {
   }
 
   private void getSymbolFromLexer() {
-    sym  = lexer.getSym();
+    sym = lexer.getSym();
     text = lexer.getText();
   }
 

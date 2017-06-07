@@ -29,6 +29,7 @@ import som.interpreter.Frame;
 import som.interpreter.Interpreter;
 import som.vm.Universe;
 
+
 public abstract class SPrimitive extends SAbstractObject implements SInvokable {
 
   @Override
@@ -86,5 +87,5 @@ public abstract class SPrimitive extends SAbstractObject implements SInvokable {
   }
 
   private final SSymbol signature;
-  private       SClass  holder;
+  private SClass        holder;
 }

@@ -30,6 +30,7 @@ import som.vm.Universe;
 import som.vmobjects.SPrimitive;
 import som.vmobjects.SSymbol;
 
+
 public class SymbolPrimitives extends Primitives {
 
   public SymbolPrimitives(final Universe universe) {

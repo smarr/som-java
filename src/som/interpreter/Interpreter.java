@@ -33,6 +33,7 @@ import som.vmobjects.SMethod;
 import som.vmobjects.SObject;
 import som.vmobjects.SSymbol;
 
+
 public class Interpreter {
 
   private final Universe universe;
@@ -46,21 +47,21 @@ public class Interpreter {
     getFrame().push(getFrame().getStackElement(0));
   }
 
-  private void doPushLocal(int bytecodeIndex) {
+  private void doPushLocal(final int bytecodeIndex) {
     // Handle the push local bytecode
     getFrame().push(
         getFrame().getLocal(getMethod().getBytecode(bytecodeIndex + 1),
             getMethod().getBytecode(bytecodeIndex + 2)));
   }
 
-  private void doPushArgument(int bytecodeIndex) {
+  private void doPushArgument(final int bytecodeIndex) {
     // Handle the push argument bytecode
     getFrame().push(
         getFrame().getArgument(getMethod().getBytecode(bytecodeIndex + 1),
             getMethod().getBytecode(bytecodeIndex + 2)));
   }
 
-  private void doPushField(int bytecodeIndex) {
+  private void doPushField(final int bytecodeIndex) {
     // Handle the push field bytecode
     int fieldIndex = getMethod().getBytecode(bytecodeIndex + 1);
 
@@ -68,7 +69,7 @@ public class Interpreter {
     getFrame().push(((SObject) getSelf()).getField(fieldIndex));
   }
 
-  private void doPushBlock(int bytecodeIndex) {
+  private void doPushBlock(final int bytecodeIndex) {
     // Handle the push block bytecode
     SMethod blockMethod = (SMethod) getMethod().getConstant(bytecodeIndex);
 
@@ -79,12 +80,12 @@ public class Interpreter {
             blockMethod.getNumberOfArguments()));
   }
 
-  private void doPushConstant(int bytecodeIndex) {
+  private void doPushConstant(final int bytecodeIndex) {
     // Handle the push constant bytecode
     getFrame().push(getMethod().getConstant(bytecodeIndex));
   }
 
-  private void doPushGlobal(int bytecodeIndex) {
+  private void doPushGlobal(final int bytecodeIndex) {
     // Handle the push global bytecode
     SSymbol globalName = (SSymbol) getMethod().getConstant(bytecodeIndex);
 
@@ -105,19 +106,19 @@ public class Interpreter {
     getFrame().pop();
   }
 
-  private void doPopLocal(int bytecodeIndex) {
+  private void doPopLocal(final int bytecodeIndex) {
     // Handle the pop local bytecode
     getFrame().setLocal(getMethod().getBytecode(bytecodeIndex + 1),
         getMethod().getBytecode(bytecodeIndex + 2), getFrame().pop());
   }
 
-  private void doPopArgument(int bytecodeIndex) {
+  private void doPopArgument(final int bytecodeIndex) {
     // Handle the pop argument bytecode
     getFrame().setArgument(getMethod().getBytecode(bytecodeIndex + 1),
         getMethod().getBytecode(bytecodeIndex + 2), getFrame().pop());
   }
 
-  private void doPopField(int bytecodeIndex) {
+  private void doPopField(final int bytecodeIndex) {
     // Handle the pop field bytecode
     int fieldIndex = getMethod().getBytecode(bytecodeIndex + 1);
 
@@ -125,7 +126,7 @@ public class Interpreter {
     ((SObject) getSelf()).setField(fieldIndex, getFrame().pop());
   }
 
-  private void doSuperSend(int bytecodeIndex) {
+  private void doSuperSend(final int bytecodeIndex) {
     // Handle the super send bytecode
     SSymbol signature = (SSymbol) getMethod().getConstant(bytecodeIndex);
 
@@ -170,7 +171,8 @@ public class Interpreter {
       // the "sender" will be the surrounding block and not the object
       // that actually sent the 'value' message.
       SBlock block = (SBlock) getFrame().getArgument(0, 0);
-      SAbstractObject sender = getFrame().getPreviousFrame().getOuterContext(universe.nilObject).getArgument(0, 0);
+      SAbstractObject sender =
+          getFrame().getPreviousFrame().getOuterContext(universe.nilObject).getArgument(0, 0);
 
       // pop the frame of the currently executing block...
       popFrame();
@@ -189,7 +191,7 @@ public class Interpreter {
     popFrameAndPushResult(result);
   }
 
-  private void doSend(int bytecodeIndex) {
+  private void doSend(final int bytecodeIndex) {
     // Handle the send bytecode
     SSymbol signature = (SSymbol) getMethod().getConstant(bytecodeIndex);
 
@@ -339,7 +341,8 @@ public class Interpreter {
     return getFrame().getOuterContext(universe.nilObject).getArgument(0, 0);
   }
 
-  private void send(SSymbol selector, SClass receiverClass, int bytecodeIndex) {
+  private void send(final SSymbol selector, final SClass receiverClass,
+      final int bytecodeIndex) {
     // First try the inline cache
     SInvokable invokable;
 
@@ -353,7 +356,9 @@ public class Interpreter {
         invokable = receiverClass.lookupInvokable(selector);
         m.setInlineCache(bytecodeIndex, receiverClass, invokable);
       } else {
-        cachedClass = m.getInlineCacheClass(bytecodeIndex + 1); // the bytecode index after the send is used by the selector constant, and can be used safely as another cache item
+        // the bytecode index after the send is used by the selector constant, and can be used
+        // safely as another cache item
+        cachedClass = m.getInlineCacheClass(bytecodeIndex + 1);
         if (cachedClass == receiverClass) {
           invokable = m.getInlineCacheInvokable(bytecodeIndex + 1);
         } else {
@@ -392,7 +397,7 @@ public class Interpreter {
     return result;
   }
 
-  private void popFrameAndPushResult(SAbstractObject result) {
+  private void popFrameAndPushResult(final SAbstractObject result) {
     // Pop the top frame from the interpreter frame stack and compute the
     // number of arguments
     int numberOfArguments = popFrame().getMethod().getNumberOfArguments();

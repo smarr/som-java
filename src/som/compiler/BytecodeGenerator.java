@@ -42,13 +42,15 @@ import static som.interpreter.Bytecodes.super_send;
 import som.vmobjects.SMethod;
 import som.vmobjects.SSymbol;
 
+
 public class BytecodeGenerator {
 
   public void emitPOP(final MethodGenerationContext mgenc) {
     emit1(mgenc, pop);
   }
 
-  public void emitPUSHARGUMENT(final MethodGenerationContext mgenc, final byte idx, final byte ctx) {
+  public void emitPUSHARGUMENT(final MethodGenerationContext mgenc, final byte idx,
+      final byte ctx) {
     emit3(mgenc, push_argument, idx, ctx);
   }
 
@@ -68,7 +70,8 @@ public class BytecodeGenerator {
     emit2(mgenc, push_block, mgenc.findLiteralIndex(blockMethod));
   }
 
-  public void emitPUSHLOCAL(final MethodGenerationContext mgenc, final byte idx, final byte ctx) {
+  public void emitPUSHLOCAL(final MethodGenerationContext mgenc, final byte idx,
+      final byte ctx) {
     assert idx >= 0;
     emit3(mgenc, push_local, idx, ctx);
   }
@@ -82,11 +85,13 @@ public class BytecodeGenerator {
     emit2(mgenc, push_global, mgenc.findLiteralIndex(global));
   }
 
-  public void emitPOPARGUMENT(final MethodGenerationContext mgenc, final byte idx, final byte ctx) {
+  public void emitPOPARGUMENT(final MethodGenerationContext mgenc, final byte idx,
+      final byte ctx) {
     emit3(mgenc, pop_argument, idx, ctx);
   }
 
-  public void emitPOPLOCAL(final MethodGenerationContext mgenc, final byte idx, final byte ctx) {
+  public void emitPOPLOCAL(final MethodGenerationContext mgenc, final byte idx,
+      final byte ctx) {
     emit3(mgenc, pop_local, idx, ctx);
   }
 
