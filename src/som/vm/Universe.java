@@ -350,10 +350,10 @@ public class Universe {
     initializeSystemClass(nilClass, objectClass, "Nil");
     initializeSystemClass(arrayClass, objectClass, "Array");
     initializeSystemClass(methodClass, arrayClass, "Method");
-    initializeSystemClass(symbolClass, objectClass, "Symbol");
+    initializeSystemClass(stringClass, objectClass, "String");
+    initializeSystemClass(symbolClass, stringClass, "Symbol");
     initializeSystemClass(integerClass, objectClass, "Integer");
     initializeSystemClass(primitiveClass, objectClass, "Primitive");
-    initializeSystemClass(stringClass, objectClass, "String");
     initializeSystemClass(doubleClass, objectClass, "Double");
 
     // Load methods and fields into the system classes
