@@ -67,6 +67,8 @@ import java.util.List;
 import som.vm.Universe;
 import som.vmobjects.SAbstractObject;
 import som.vmobjects.SClass;
+import som.vmobjects.SMethod;
+import som.vmobjects.SString;
 import som.vmobjects.SSymbol;
 
 
@@ -383,11 +385,11 @@ public class Parser {
     expect(EndTerm);
   }
 
-  private som.vmobjects.SSymbol unarySelector() {
+  private SSymbol unarySelector() {
     return universe.symbolFor(identifier());
   }
 
-  private som.vmobjects.SSymbol binarySelector() {
+  private SSymbol binarySelector() {
     String s = new String(text);
 
     // Checkstyle: stop @formatter:off
@@ -517,7 +519,7 @@ public class Parser {
 
   private String assignment(final MethodGenerationContext mgenc) {
     String v = variable();
-    som.vmobjects.SSymbol var = universe.symbolFor(v);
+    SSymbol var = universe.symbolFor(v);
     mgenc.addLiteralIfAbsent(var);
 
     expect(Assign);
@@ -562,7 +564,7 @@ public class Parser {
 
         nestedBlock(bgenc);
 
-        som.vmobjects.SMethod blockMethod = bgenc.assemble(universe);
+        SMethod blockMethod = bgenc.assemble(universe);
         mgenc.addLiteral(blockMethod);
         bcGen.emitPUSHBLOCK(mgenc, blockMethod);
         break;
@@ -610,7 +612,7 @@ public class Parser {
 
   private void unaryMessage(final MethodGenerationContext mgenc,
       final Single<Boolean> superSend) {
-    som.vmobjects.SSymbol msg = unarySelector();
+    SSymbol msg = unarySelector();
     mgenc.addLiteralIfAbsent(msg);
 
     if (superSend.get()) {
@@ -622,7 +624,7 @@ public class Parser {
 
   private void binaryMessage(final MethodGenerationContext mgenc,
       final Single<Boolean> superSend) throws ProgramDefinitionError {
-    som.vmobjects.SSymbol msg = binarySelector();
+    SSymbol msg = binarySelector();
     mgenc.addLiteralIfAbsent(msg);
 
     binaryOperand(mgenc, new Single<Boolean>(false));
@@ -651,7 +653,7 @@ public class Parser {
       formula(mgenc);
     } while (sym == Keyword);
 
-    som.vmobjects.SSymbol msg = universe.symbolFor(kw.toString());
+    SSymbol msg = universe.symbolFor(kw.toString());
 
     mgenc.addLiteralIfAbsent(msg);
 
@@ -765,7 +767,7 @@ public class Parser {
   }
 
   private void literalSymbol(final MethodGenerationContext mgenc) {
-    som.vmobjects.SSymbol symb;
+    SSymbol symb;
     expect(Pound);
     if (sym == STString) {
       String s = string();
@@ -781,13 +783,13 @@ public class Parser {
   private void literalString(final MethodGenerationContext mgenc) {
     String s = string();
 
-    som.vmobjects.SString str = universe.newString(s);
+    SString str = universe.newString(s);
     mgenc.addLiteralIfAbsent(str);
 
     bcGen.emitPUSHCONSTANT(mgenc, str);
   }
 
-  private som.vmobjects.SSymbol selector() {
+  private SSymbol selector() {
     if (sym == OperatorSequence || symIn(singleOpSyms)) {
       return binarySelector();
     } else if (sym == Keyword || sym == KeywordSequence) {
@@ -797,10 +799,10 @@ public class Parser {
     }
   }
 
-  private som.vmobjects.SSymbol keywordSelector() {
+  private SSymbol keywordSelector() {
     String s = new String(text);
     expectOneOf(keywordSelectorSyms);
-    som.vmobjects.SSymbol symb = universe.symbolFor(s);
+    SSymbol symb = universe.symbolFor(s);
     return symb;
   }
 
@@ -870,13 +872,13 @@ public class Parser {
         bcGen.emitPUSHLOCAL(mgenc, tri.getX(), tri.getY());
       }
     } else {
-      som.vmobjects.SSymbol identifier = universe.symbolFor(var);
+      SSymbol identifier = universe.symbolFor(var);
       if (mgenc.hasField(identifier)) {
-        som.vmobjects.SSymbol fieldName = identifier;
+        SSymbol fieldName = identifier;
         mgenc.addLiteralIfAbsent(fieldName);
         bcGen.emitPUSHFIELD(mgenc, fieldName);
       } else {
-        som.vmobjects.SSymbol global = identifier;
+        SSymbol global = identifier;
         mgenc.addLiteralIfAbsent(global);
         bcGen.emitPUSHGLOBAL(mgenc, global);
       }

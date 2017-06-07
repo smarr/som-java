@@ -58,7 +58,7 @@ public class MethodGenerationContext {
   private ClassGenerationContext      holderGenc;
   private MethodGenerationContext     outerGenc;
   private boolean                     blockMethod;
-  private som.vmobjects.SSymbol       signature;
+  private SSymbol                     signature;
   private final List<String>          arguments = new ArrayList<String>();
   private boolean                     primitive;
   private final List<String>          locals    = new ArrayList<String>();
@@ -66,11 +66,11 @@ public class MethodGenerationContext {
   private boolean                     finished;
   private final Vector<Byte>          bytecode  = new Vector<Byte>();
 
-  public void setHolder(ClassGenerationContext cgenc) {
+  public void setHolder(final ClassGenerationContext cgenc) {
     holderGenc = cgenc;
   }
 
-  public void addArgument(String arg) {
+  public void addArgument(final String arg) {
     arguments.add(arg);
   }
 
@@ -145,8 +145,7 @@ public class MethodGenerationContext {
         case super_send: {
           // these are special: they need to look at the number of
           // arguments (extractable from the signature)
-          som.vmobjects.SSymbol sig =
-              (som.vmobjects.SSymbol) literals.get(bytecode.elementAt(i + 1));
+          SSymbol sig = (SSymbol) literals.get(bytecode.elementAt(i + 1));
 
           depth -= sig.getNumberOfSignatureArguments();
 
@@ -171,15 +170,15 @@ public class MethodGenerationContext {
     return maxDepth;
   }
 
-  public void setPrimitive(boolean prim) {
+  public void setPrimitive(final boolean prim) {
     primitive = prim;
   }
 
-  public void setSignature(SSymbol sig) {
+  public void setSignature(final SSymbol sig) {
     signature = sig;
   }
 
-  public boolean addArgumentIfAbsent(String arg) {
+  public boolean addArgumentIfAbsent(final String arg) {
     if (locals.contains(arg)) {
       return false;
     }
@@ -192,11 +191,11 @@ public class MethodGenerationContext {
     return finished;
   }
 
-  public void setFinished(boolean finished) {
+  public void setFinished(final boolean finished) {
     this.finished = finished;
   }
 
-  public boolean addLocalIfAbsent(String local) {
+  public boolean addLocalIfAbsent(final String local) {
     if (locals.contains(local)) {
       return false;
     }
@@ -205,7 +204,7 @@ public class MethodGenerationContext {
     return true;
   }
 
-  public void addLocal(String local) {
+  public void addLocal(final String local) {
     locals.add(local);
   }
 
@@ -221,7 +220,7 @@ public class MethodGenerationContext {
     finished = true;
   }
 
-  public boolean addLiteralIfAbsent(som.vmobjects.SAbstractObject lit) {
+  public boolean addLiteralIfAbsent(final SAbstractObject lit) {
     if (literals.contains(lit)) {
       return false;
     }
@@ -230,7 +229,7 @@ public class MethodGenerationContext {
     return true;
   }
 
-  public void setIsBlockMethod(boolean isBlock) {
+  public void setIsBlockMethod(final boolean isBlock) {
     blockMethod = isBlock;
   }
 
@@ -238,15 +237,15 @@ public class MethodGenerationContext {
     return holderGenc;
   }
 
-  public void setOuter(MethodGenerationContext mgenc) {
+  public void setOuter(final MethodGenerationContext mgenc) {
     outerGenc = mgenc;
   }
 
-  public void addLiteral(som.vmobjects.SAbstractObject lit) {
+  public void addLiteral(final SAbstractObject lit) {
     literals.add(lit);
   }
 
-  public boolean findVar(String var, Triplet<Byte, Byte, Boolean> tri) {
+  public boolean findVar(final String var, final Triplet<Byte, Byte, Boolean> tri) {
     // triplet: index, context, isArgument
     tri.setX((byte) locals.indexOf(var));
     if (tri.getX() == -1) {
@@ -278,11 +277,11 @@ public class MethodGenerationContext {
     return arguments.size();
   }
 
-  public void addBytecode(byte code) {
+  public void addBytecode(final byte code) {
     bytecode.add(code);
   }
 
-  public byte findLiteralIndex(som.vmobjects.SAbstractObject lit) {
+  public byte findLiteralIndex(final SAbstractObject lit) {
     return (byte) literals.indexOf(lit);
   }
 
