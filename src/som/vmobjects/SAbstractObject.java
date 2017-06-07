@@ -61,12 +61,15 @@ public abstract class SAbstractObject {
     Frame frame = interpreter.getFrame();
 
     // Allocate an array with enough room to hold all arguments
-    SArray argumentsArray = universe.newArray(numberOfArguments);
+    // except for the receiver, which is passed implicitly, as receiver of #dnu.
+    SArray argumentsArray = universe.newArray(numberOfArguments - 1);
 
     // Remove all arguments and put them in the freshly allocated array
-    for (int i = numberOfArguments - 1; i >= 0; i--) {
+    for (int i = numberOfArguments - 2; i >= 0; i--) {
       argumentsArray.setIndexableField(i, frame.pop());
     }
+
+    frame.pop(); // pop receiver
 
     SAbstractObject[] args = {selector, argumentsArray};
     send("doesNotUnderstand:arguments:", args, universe, interpreter);
