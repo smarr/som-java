@@ -177,6 +177,13 @@ public class Interpreter {
       // pop the frame of the currently executing block...
       popFrame();
 
+      // pop old arguments from stack
+      SMethod method = getFrame().getMethod();
+      int numArgs = method.getNumberOfArguments();
+      for (int i = 0; i < numArgs; i += 1) {
+        getFrame().pop();
+      }
+
       // ... and execute the escapedBlock message instead
       sender.sendEscapedBlock(block, universe, this);
       return;

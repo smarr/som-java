@@ -39,6 +39,8 @@ import static som.interpreter.Bytecodes.return_local;
 import static som.interpreter.Bytecodes.return_non_local;
 import static som.interpreter.Bytecodes.send;
 import static som.interpreter.Bytecodes.super_send;
+
+import som.vmobjects.SAbstractObject;
 import som.vmobjects.SMethod;
 import som.vmobjects.SSymbol;
 
@@ -109,8 +111,12 @@ public class BytecodeGenerator {
   }
 
   public void emitPUSHCONSTANT(final MethodGenerationContext mgenc,
-      final som.vmobjects.SAbstractObject lit) {
+      final SAbstractObject lit) {
     emit2(mgenc, push_constant, mgenc.findLiteralIndex(lit));
+  }
+
+  public void emitPUSHCONSTANT(final MethodGenerationContext mgenc, final byte literalIndex) {
+    emit2(mgenc, push_constant, literalIndex);
   }
 
   private void emit1(final MethodGenerationContext mgenc, final byte code) {

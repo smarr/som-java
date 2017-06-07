@@ -47,13 +47,17 @@ public class Lexer {
   private String               buf;
   private int                  bufp;
 
-  protected Lexer(Reader reader) {
+  protected Lexer(final Reader reader) {
     infile = new BufferedReader(reader);
     peekDone = false;
     buf = "";
     text = new StringBuffer();
     bufp = 0;
     lineNumber = 0;
+  }
+
+  protected boolean getPeekDone() {
+    return peekDone;
   }
 
   protected Symbol getSym() {
@@ -113,10 +117,7 @@ public class Lexer {
         }
         sym = Symbol.Separator;
       } else {
-        bufp++;
-        sym = Symbol.Minus;
-        symc = '-';
-        text = new StringBuffer("-");
+        lexOperator();
       }
     } else if (isOperator(currentChar())) {
       lexOperator();
@@ -173,16 +174,50 @@ public class Lexer {
     } while (Character.isDigit(currentChar()));
   }
 
+  private void lexEscapeChar() {
+    assert !endOfBuffer();
+
+    char current = currentChar();
+    switch (current) {
+      // @formatter:off
+      case 't': text.append("\t"); break;
+      case 'b': text.append("\b"); break;
+      case 'n': text.append("\n"); break;
+      case 'r': text.append("\r"); break;
+      case 'f': text.append("\f"); break;
+      case '\'': text.append('\''); break;
+      case '\\': text.append("\\"); break;
+      // @formatter:on
+    }
+    bufp++;
+  }
+
+  private void lexStringChar() {
+    if (currentChar() == '\\') {
+      bufp++;
+      lexEscapeChar();
+    } else {
+      text.append(currentChar());
+      bufp++;
+    }
+  }
+
   private void lexString() {
     sym = Symbol.STString;
     symc = 0;
     text = new StringBuffer();
+    bufp++;
 
-    do {
-      text.append(bufchar(++bufp));
-    } while (currentChar() != '\'');
+    while (currentChar() != '\'') {
+      lexStringChar();
+      while (endOfBuffer()) {
+        if (fillBuffer() == -1) {
+          return;
+        }
+        text.append('\n');
+      }
+    }
 
-    text.deleteCharAt(text.length() - 1);
     bufp++;
   }
 
@@ -220,6 +255,8 @@ public class Lexer {
       match(Symbol.At);
     } else if (currentChar() == '%') {
       match(Symbol.Per);
+    } else if (currentChar() == '-') {
+      match(Symbol.Minus);
     }
   }
 
@@ -329,20 +366,20 @@ public class Lexer {
     return bufp >= buf.length();
   }
 
-  private boolean isOperator(char c) {
+  private boolean isOperator(final char c) {
     return c == '~' || c == '&' || c == '|' || c == '*' || c == '/'
         || c == '\\' || c == '+' || c == '=' || c == '>' || c == '<'
-        || c == ',' || c == '@' || c == '%';
+        || c == ',' || c == '@' || c == '%' || c == '-';
   }
 
-  private void match(Symbol s) {
+  private void match(final Symbol s) {
     sym = s;
     symc = currentChar();
     text = new StringBuffer("" + symc);
     bufp++;
   }
 
-  private char bufchar(int p) {
+  private char bufchar(final int p) {
     return p >= buf.length() ? '\0' : buf.charAt(p);
   }
 

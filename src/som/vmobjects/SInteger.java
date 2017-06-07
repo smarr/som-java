@@ -25,11 +25,11 @@
 
 package som.vmobjects;
 
-import som.vm.Universe;
-
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
+
+import som.vm.Universe;
 
 
 public final class SInteger extends SNumber {
@@ -203,19 +203,16 @@ public final class SInteger extends SNumber {
       return universe.newDouble(result);
     } else {
       long r = ((SInteger) right).getEmbeddedInteger();
-      long result = embeddedInteger % r;
-
-      if (embeddedInteger > 0 && r < 0) {
-        try {
-          result = Math.addExact(result, r);
-        } catch (ArithmeticException e) {
-          BigInteger bigRes = BigInteger.valueOf(result).add(
-              BigInteger.valueOf(r));
-          return universe.newBigInteger(bigRes);
-        }
-      }
-
+      long result = Math.floorMod(embeddedInteger, r);
       return universe.newInteger(result);
+    }
+  }
+
+  public SInteger primRemainder(final SNumber right, final Universe universe) {
+    if (right instanceof SInteger) {
+      return universe.newInteger(embeddedInteger % ((SInteger) right).embeddedInteger);
+    } else {
+      throw new RuntimeException("TODO");
     }
   }
 
