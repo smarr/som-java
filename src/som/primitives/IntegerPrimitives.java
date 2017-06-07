@@ -190,7 +190,8 @@ public class IntegerPrimitives extends Primitives {
       @Override
       public void invoke(final Frame frame, final Interpreter interpreter) {
         SInteger rcvr = (SInteger) frame.pop();
-        frame.push(universe.newInteger(Integer.toUnsignedLong((int) rcvr.getEmbeddedInteger())));
+        frame.push(
+            universe.newInteger(Integer.toUnsignedLong((int) rcvr.getEmbeddedInteger())));
       }
     });
 
@@ -199,7 +200,8 @@ public class IntegerPrimitives extends Primitives {
       public void invoke(final Frame frame, final Interpreter interpreter) {
         SInteger right = (SInteger) frame.pop();
         SInteger rcvr = (SInteger) frame.pop();
-        frame.push(universe.newInteger(rcvr.getEmbeddedInteger() >>> right.getEmbeddedInteger()));
+        frame.push(
+            universe.newInteger(rcvr.getEmbeddedInteger() >>> right.getEmbeddedInteger()));
       }
     });
 

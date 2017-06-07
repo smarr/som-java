@@ -131,7 +131,7 @@ public class BasicInterpreterTests {
 
     if (resultType == SDouble.class) {
       double expected = (double) expectedResult;
-      double actual   = ((SDouble) actualResult).getEmbeddedDouble();
+      double actual = ((SDouble) actualResult).getEmbeddedDouble();
       assertEquals(expected, actual, 1e-15);
       return;
     }
@@ -145,7 +145,7 @@ public class BasicInterpreterTests {
 
     if (resultType == SSymbol.class) {
       String expected = (String) expectedResult;
-      String actual   = ((SSymbol) actualResult).getEmbeddedString();
+      String actual = ((SSymbol) actualResult).getEmbeddedString();
       assertEquals(expected, actual);
       return;
     }

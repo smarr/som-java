@@ -52,7 +52,8 @@ public abstract class Primitives {
     installInstancePrimitive(primitive, false);
   }
 
-  protected void installInstancePrimitive(final SPrimitive primitive, final boolean suppressWarning) {
+  protected void installInstancePrimitive(final SPrimitive primitive,
+      final boolean suppressWarning) {
     // Install the given primitive as an instance primitive in the holder
     // class
     holder.addInstancePrimitive(primitive, suppressWarning);

@@ -426,7 +426,8 @@ public class Parser {
     return variable();
   }
 
-  private void blockContents(final MethodGenerationContext mgenc) throws ProgramDefinitionError {
+  private void blockContents(final MethodGenerationContext mgenc)
+      throws ProgramDefinitionError {
     if (accept(Or)) {
       locals(mgenc);
       expect(Or);

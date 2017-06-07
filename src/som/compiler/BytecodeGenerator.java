@@ -110,7 +110,8 @@ public class BytecodeGenerator {
     emit2(mgenc, send, mgenc.findLiteralIndex(msg));
   }
 
-  public void emitPUSHCONSTANT(final MethodGenerationContext mgenc, final SAbstractObject lit) {
+  public void emitPUSHCONSTANT(final MethodGenerationContext mgenc,
+      final SAbstractObject lit) {
     emit2(mgenc, push_constant, mgenc.findLiteralIndex(lit));
   }
 
