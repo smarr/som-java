@@ -71,7 +71,7 @@ public class Shell {
     // Create a fake bootstrap frame
     currentFrame = interpreter.pushNewFrame(bootstrapMethod);
 
-    // Remember the first bytecode index, e.g. index of the halt instruction
+    // Remember the first bytecode index, e.g. index of the HALT instruction
     bytecodeIndex = currentFrame.getBytecodeIndex();
 
     while (true) {

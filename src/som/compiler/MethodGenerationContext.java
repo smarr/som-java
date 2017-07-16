@@ -24,22 +24,22 @@
 
 package som.compiler;
 
-import static som.interpreter.Bytecodes.dup;
-import static som.interpreter.Bytecodes.halt;
-import static som.interpreter.Bytecodes.pop;
-import static som.interpreter.Bytecodes.pop_argument;
-import static som.interpreter.Bytecodes.pop_field;
-import static som.interpreter.Bytecodes.pop_local;
-import static som.interpreter.Bytecodes.push_argument;
-import static som.interpreter.Bytecodes.push_block;
-import static som.interpreter.Bytecodes.push_constant;
-import static som.interpreter.Bytecodes.push_field;
-import static som.interpreter.Bytecodes.push_global;
-import static som.interpreter.Bytecodes.push_local;
-import static som.interpreter.Bytecodes.return_local;
-import static som.interpreter.Bytecodes.return_non_local;
-import static som.interpreter.Bytecodes.send;
-import static som.interpreter.Bytecodes.super_send;
+import static som.interpreter.Bytecodes.DUP;
+import static som.interpreter.Bytecodes.HALT;
+import static som.interpreter.Bytecodes.POP;
+import static som.interpreter.Bytecodes.POP_ARGUMENT;
+import static som.interpreter.Bytecodes.POP_FIELD;
+import static som.interpreter.Bytecodes.POP_LOCAL;
+import static som.interpreter.Bytecodes.PUSH_ARGUMENT;
+import static som.interpreter.Bytecodes.PUSH_BLOCK;
+import static som.interpreter.Bytecodes.PUSH_CONSTANT;
+import static som.interpreter.Bytecodes.PUSH_FIELD;
+import static som.interpreter.Bytecodes.PUSH_GLOBAL;
+import static som.interpreter.Bytecodes.PUSH_LOCAL;
+import static som.interpreter.Bytecodes.RETURN_LOCAL;
+import static som.interpreter.Bytecodes.RETURN_NON_LOCAL;
+import static som.interpreter.Bytecodes.SEND;
+import static som.interpreter.Bytecodes.SUPER_SEND;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -109,40 +109,40 @@ public class MethodGenerationContext {
 
     while (i < bytecode.size()) {
       switch (bytecode.elementAt(i)) {
-        case halt:
+        case HALT:
           i++;
           break;
-        case dup:
+        case DUP:
           depth++;
           i++;
           break;
-        case push_local:
-        case push_argument:
+        case PUSH_LOCAL:
+        case PUSH_ARGUMENT:
           depth++;
           i += 3;
           break;
-        case push_field:
-        case push_block:
-        case push_constant:
-        case push_global:
+        case PUSH_FIELD:
+        case PUSH_BLOCK:
+        case PUSH_CONSTANT:
+        case PUSH_GLOBAL:
           depth++;
           i += 2;
           break;
-        case pop:
+        case POP:
           depth--;
           i++;
           break;
-        case pop_local:
-        case pop_argument:
+        case POP_LOCAL:
+        case POP_ARGUMENT:
           depth--;
           i += 3;
           break;
-        case pop_field:
+        case POP_FIELD:
           depth--;
           i += 2;
           break;
-        case send:
-        case super_send: {
+        case SEND:
+        case SUPER_SEND: {
           // these are special: they need to look at the number of
           // arguments (extractable from the signature)
           SSymbol sig = (SSymbol) literals.get(bytecode.elementAt(i + 1));
@@ -153,8 +153,8 @@ public class MethodGenerationContext {
           i += 2;
           break;
         }
-        case return_local:
-        case return_non_local:
+        case RETURN_LOCAL:
+        case RETURN_NON_LOCAL:
           i++;
           break;
         default:

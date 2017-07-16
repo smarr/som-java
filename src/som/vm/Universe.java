@@ -297,7 +297,7 @@ public class Universe {
     // Create a fake bootstrap method to simplify later frame traversal
     SMethod bootstrapMethod =
         newMethod(symbolFor("bootstrap"), 1, 0, newInteger(0), newInteger(2), null);
-    bootstrapMethod.setBytecode(0, Bytecodes.halt);
+    bootstrapMethod.setBytecode(0, Bytecodes.HALT);
     bootstrapMethod.setHolder(systemClass);
     return bootstrapMethod;
   }

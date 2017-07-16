@@ -27,22 +27,22 @@ package som.interpreter;
 public class Bytecodes {
 
   // Bytecodes used by the simple object machine
-  public static final byte halt             = 0;
-  public static final byte dup              = 1;
-  public static final byte push_local       = 2;
-  public static final byte push_argument    = 3;
-  public static final byte push_field       = 4;
-  public static final byte push_block       = 5;
-  public static final byte push_constant    = 6;
-  public static final byte push_global      = 7;
-  public static final byte pop              = 8;
-  public static final byte pop_local        = 9;
-  public static final byte pop_argument     = 10;
-  public static final byte pop_field        = 11;
-  public static final byte send             = 12;
-  public static final byte super_send       = 13;
-  public static final byte return_local     = 14;
-  public static final byte return_non_local = 15;
+  public static final byte HALT             = 0;
+  public static final byte DUP              = 1;
+  public static final byte PUSH_LOCAL       = 2;
+  public static final byte PUSH_ARGUMENT    = 3;
+  public static final byte PUSH_FIELD       = 4;
+  public static final byte PUSH_BLOCK       = 5;
+  public static final byte PUSH_CONSTANT    = 6;
+  public static final byte PUSH_GLOBAL      = 7;
+  public static final byte POP              = 8;
+  public static final byte POP_LOCAL        = 9;
+  public static final byte POP_ARGUMENT     = 10;
+  public static final byte POP_FIELD        = 11;
+  public static final byte SEND             = 12;
+  public static final byte SUPER_SEND       = 13;
+  public static final byte RETURN_LOCAL     = 14;
+  public static final byte RETURN_NON_LOCAL = 15;
 
   public static final java.lang.String[] bytecodeNames = new java.lang.String[] {
       "HALT            ", "DUP             ", "PUSH_LOCAL      ",
@@ -64,22 +64,22 @@ public class Bytecodes {
 
   static {
     // set up the lengths of the "native" bytecodes
-    bytecodeLength[halt] = 1;
-    bytecodeLength[dup] = 1;
-    bytecodeLength[push_local] = 3;
-    bytecodeLength[push_argument] = 3;
-    bytecodeLength[push_field] = 2;
-    bytecodeLength[push_block] = 2;
-    bytecodeLength[push_constant] = 2;
-    bytecodeLength[push_global] = 2;
-    bytecodeLength[pop] = 1;
-    bytecodeLength[pop_local] = 3;
-    bytecodeLength[pop_argument] = 3;
-    bytecodeLength[pop_field] = 2;
-    bytecodeLength[send] = 2;
-    bytecodeLength[super_send] = 2;
-    bytecodeLength[return_local] = 1;
-    bytecodeLength[return_non_local] = 1;
+    bytecodeLength[HALT] = 1;
+    bytecodeLength[DUP] = 1;
+    bytecodeLength[PUSH_LOCAL] = 3;
+    bytecodeLength[PUSH_ARGUMENT] = 3;
+    bytecodeLength[PUSH_FIELD] = 2;
+    bytecodeLength[PUSH_BLOCK] = 2;
+    bytecodeLength[PUSH_CONSTANT] = 2;
+    bytecodeLength[PUSH_GLOBAL] = 2;
+    bytecodeLength[POP] = 1;
+    bytecodeLength[POP_LOCAL] = 3;
+    bytecodeLength[POP_ARGUMENT] = 3;
+    bytecodeLength[POP_FIELD] = 2;
+    bytecodeLength[SEND] = 2;
+    bytecodeLength[SUPER_SEND] = 2;
+    bytecodeLength[RETURN_LOCAL] = 1;
+    bytecodeLength[RETURN_NON_LOCAL] = 1;
   }
 
 }
