@@ -44,7 +44,7 @@ public class Bytecodes {
   public static final byte RETURN_LOCAL     = 14;
   public static final byte RETURN_NON_LOCAL = 15;
 
-  public static final java.lang.String[] BYTECODE_NAMES = new java.lang.String[] {
+  private static final java.lang.String[] BYTECODE_NAMES = new java.lang.String[] {
       "HALT            ", "DUP             ", "PUSH_LOCAL      ",
       "PUSH_ARGUMENT   ", "PUSH_FIELD      ", "PUSH_BLOCK      ",
       "PUSH_CONSTANT   ", "PUSH_GLOBAL     ", "POP             ",
@@ -54,32 +54,36 @@ public class Bytecodes {
 
   private static final byte NUM_BYTECODES = 16;
 
+  public static String getBytecodeName(byte bytecode) {
+    if (bytecode < 0 || bytecode >= NUM_BYTECODES) {
+      throw new IllegalArgumentException("illegal bytecode: " + bytecode);
+    }
+    return BYTECODE_NAMES[bytecode];
+  }
+
   public static int getBytecodeLength(byte bytecode) {
     // Return the length of the given bytecode
     return BYTECODE_LENGTH[bytecode];
   }
 
   // Static array holding lengths of each bytecode
-  private static final int[] BYTECODE_LENGTH = new int[NUM_BYTECODES];
-
-  static {
-    // set up the lengths of the "native" bytecodes
-    BYTECODE_LENGTH[HALT] = 1;
-    BYTECODE_LENGTH[DUP] = 1;
-    BYTECODE_LENGTH[PUSH_LOCAL] = 3;
-    BYTECODE_LENGTH[PUSH_ARGUMENT] = 3;
-    BYTECODE_LENGTH[PUSH_FIELD] = 2;
-    BYTECODE_LENGTH[PUSH_BLOCK] = 2;
-    BYTECODE_LENGTH[PUSH_CONSTANT] = 2;
-    BYTECODE_LENGTH[PUSH_GLOBAL] = 2;
-    BYTECODE_LENGTH[POP] = 1;
-    BYTECODE_LENGTH[POP_LOCAL] = 3;
-    BYTECODE_LENGTH[POP_ARGUMENT] = 3;
-    BYTECODE_LENGTH[POP_FIELD] = 2;
-    BYTECODE_LENGTH[SEND] = 2;
-    BYTECODE_LENGTH[SUPER_SEND] = 2;
-    BYTECODE_LENGTH[RETURN_LOCAL] = 1;
-    BYTECODE_LENGTH[RETURN_NON_LOCAL] = 1;
-  }
+  private static final int[] BYTECODE_LENGTH = new int[] {
+    1, // HALT
+    1, // DUP
+    3, // PUSH_LOCAL
+    3, // PUSH_ARGUMENT
+    2, // PUSH_FIELD
+    2, // PUSH_BLOCK
+    2, // PUSH_CONSTANT
+    2, // PUSH_GLOBAL
+    1, // POP
+    3, // POP_LOCAL
+    3, // POP_ARGUMENT
+    2, // POP_FIELD
+    2, // SEND
+    2, // SUPER_SEND
+    1, // RETURN_LOCAL
+    1  // RETURN_NON_LOCAL
+  };
 
 }

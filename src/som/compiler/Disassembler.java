@@ -78,7 +78,7 @@ public class Disassembler {
 
       // mnemonic
       byte bytecode = m.getBytecode(b);
-      Universe.errorPrint(BYTECODE_NAMES[bytecode] + "  ");
+      Universe.errorPrint(getBytecodeName(bytecode) + "  ");
 
       // parameters (if any)
       if (getBytecodeLength(bytecode) == 1) {
