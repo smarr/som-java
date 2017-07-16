@@ -24,6 +24,8 @@
 
 package som.interpreter;
 
+import java.util.stream.Stream;
+
 public class Bytecodes {
 
   // Bytecodes used by the simple object machine
@@ -44,21 +46,31 @@ public class Bytecodes {
   public static final byte RETURN_LOCAL     = 14;
   public static final byte RETURN_NON_LOCAL = 15;
 
-  private static final java.lang.String[] BYTECODE_NAMES = new java.lang.String[] {
-      "HALT            ", "DUP             ", "PUSH_LOCAL      ",
-      "PUSH_ARGUMENT   ", "PUSH_FIELD      ", "PUSH_BLOCK      ",
-      "PUSH_CONSTANT   ", "PUSH_GLOBAL     ", "POP             ",
-      "POP_LOCAL       ", "POP_ARGUMENT    ", "POP_FIELD       ",
-      "SEND            ", "SUPER_SEND      ", "RETURN_LOCAL    ",
-      "RETURN_NON_LOCAL"};
+  private static final String[] PADDED_BYTECODE_NAMES = new String[] {
+    "HALT", "DUP", "PUSH_LOCAL", "PUSH_ARGUMENT", "PUSH_FIELD", "PUSH_BLOCK",
+    "PUSH_CONSTANT", "PUSH_GLOBAL", "POP", "POP_LOCAL", "POP_ARGUMENT",
+    "POP_FIELD", "SEND", "SUPER_SEND", "RETURN_LOCAL", "RETURN_NON_LOCAL"
+  };
 
-  private static final byte NUM_BYTECODES = 16;
+  private static final String[] BYTECODE_NAMES =
+    Stream.of(PADDED_BYTECODE_NAMES).map(String::trim).toArray(String[]::new);
 
-  public static String getBytecodeName(byte bytecode) {
+  private static final byte NUM_BYTECODES = (byte) BYTECODE_NAMES.length;
+
+  private static void checkBytecodeIndex(byte bytecode) {
     if (bytecode < 0 || bytecode >= NUM_BYTECODES) {
       throw new IllegalArgumentException("illegal bytecode: " + bytecode);
     }
+  }
+
+  public static String getBytecodeName(byte bytecode) {
+    checkBytecodeIndex(bytecode);
     return BYTECODE_NAMES[bytecode];
+  }
+
+  public static String getPaddedBytecodeName(byte bytecode) {
+    checkBytecodeIndex(bytecode);
+    return PADDED_BYTECODE_NAMES[bytecode];
   }
 
   public static int getBytecodeLength(byte bytecode) {
