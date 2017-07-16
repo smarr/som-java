@@ -44,7 +44,7 @@ public class Bytecodes {
   public static final byte RETURN_LOCAL     = 14;
   public static final byte RETURN_NON_LOCAL = 15;
 
-  public static final java.lang.String[] bytecodeNames = new java.lang.String[] {
+  public static final java.lang.String[] BYTECODE_NAMES = new java.lang.String[] {
       "HALT            ", "DUP             ", "PUSH_LOCAL      ",
       "PUSH_ARGUMENT   ", "PUSH_FIELD      ", "PUSH_BLOCK      ",
       "PUSH_CONSTANT   ", "PUSH_GLOBAL     ", "POP             ",
@@ -52,34 +52,34 @@ public class Bytecodes {
       "SEND            ", "SUPER_SEND      ", "RETURN_LOCAL    ",
       "RETURN_NON_LOCAL"};
 
-  private static final byte numBytecodes = 16;
+  private static final byte NUM_BYTECODES = 16;
 
   public static int getBytecodeLength(byte bytecode) {
     // Return the length of the given bytecode
-    return bytecodeLength[bytecode];
+    return BYTECODE_LENGTH[bytecode];
   }
 
   // Static array holding lengths of each bytecode
-  private static int[] bytecodeLength = new int[numBytecodes];
+  private static final int[] BYTECODE_LENGTH = new int[NUM_BYTECODES];
 
   static {
     // set up the lengths of the "native" bytecodes
-    bytecodeLength[HALT] = 1;
-    bytecodeLength[DUP] = 1;
-    bytecodeLength[PUSH_LOCAL] = 3;
-    bytecodeLength[PUSH_ARGUMENT] = 3;
-    bytecodeLength[PUSH_FIELD] = 2;
-    bytecodeLength[PUSH_BLOCK] = 2;
-    bytecodeLength[PUSH_CONSTANT] = 2;
-    bytecodeLength[PUSH_GLOBAL] = 2;
-    bytecodeLength[POP] = 1;
-    bytecodeLength[POP_LOCAL] = 3;
-    bytecodeLength[POP_ARGUMENT] = 3;
-    bytecodeLength[POP_FIELD] = 2;
-    bytecodeLength[SEND] = 2;
-    bytecodeLength[SUPER_SEND] = 2;
-    bytecodeLength[RETURN_LOCAL] = 1;
-    bytecodeLength[RETURN_NON_LOCAL] = 1;
+    BYTECODE_LENGTH[HALT] = 1;
+    BYTECODE_LENGTH[DUP] = 1;
+    BYTECODE_LENGTH[PUSH_LOCAL] = 3;
+    BYTECODE_LENGTH[PUSH_ARGUMENT] = 3;
+    BYTECODE_LENGTH[PUSH_FIELD] = 2;
+    BYTECODE_LENGTH[PUSH_BLOCK] = 2;
+    BYTECODE_LENGTH[PUSH_CONSTANT] = 2;
+    BYTECODE_LENGTH[PUSH_GLOBAL] = 2;
+    BYTECODE_LENGTH[POP] = 1;
+    BYTECODE_LENGTH[POP_LOCAL] = 3;
+    BYTECODE_LENGTH[POP_ARGUMENT] = 3;
+    BYTECODE_LENGTH[POP_FIELD] = 2;
+    BYTECODE_LENGTH[SEND] = 2;
+    BYTECODE_LENGTH[SUPER_SEND] = 2;
+    BYTECODE_LENGTH[RETURN_LOCAL] = 1;
+    BYTECODE_LENGTH[RETURN_NON_LOCAL] = 1;
   }
 
 }

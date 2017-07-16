@@ -25,7 +25,6 @@
 
 package som.compiler;
 
-import som.interpreter.Bytecodes;
 import som.vm.Universe;
 import som.vmobjects.SAbstractObject;
 import som.vmobjects.SClass;
@@ -79,7 +78,7 @@ public class Disassembler {
 
       // mnemonic
       byte bytecode = m.getBytecode(b);
-      Universe.errorPrint(bytecodeNames[bytecode] + "  ");
+      Universe.errorPrint(BYTECODE_NAMES[bytecode] + "  ");
 
       // parameters (if any)
       if (getBytecodeLength(bytecode) == 1) {
