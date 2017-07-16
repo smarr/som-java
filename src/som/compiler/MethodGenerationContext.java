@@ -24,22 +24,7 @@
 
 package som.compiler;
 
-import static som.interpreter.Bytecodes.DUP;
-import static som.interpreter.Bytecodes.HALT;
-import static som.interpreter.Bytecodes.POP;
-import static som.interpreter.Bytecodes.POP_ARGUMENT;
-import static som.interpreter.Bytecodes.POP_FIELD;
-import static som.interpreter.Bytecodes.POP_LOCAL;
-import static som.interpreter.Bytecodes.PUSH_ARGUMENT;
-import static som.interpreter.Bytecodes.PUSH_BLOCK;
-import static som.interpreter.Bytecodes.PUSH_CONSTANT;
-import static som.interpreter.Bytecodes.PUSH_FIELD;
-import static som.interpreter.Bytecodes.PUSH_GLOBAL;
-import static som.interpreter.Bytecodes.PUSH_LOCAL;
-import static som.interpreter.Bytecodes.RETURN_LOCAL;
-import static som.interpreter.Bytecodes.RETURN_NON_LOCAL;
-import static som.interpreter.Bytecodes.SEND;
-import static som.interpreter.Bytecodes.SUPER_SEND;
+import static som.interpreter.Bytecodes.*;
 
 import java.util.ArrayList;
 import java.util.List;

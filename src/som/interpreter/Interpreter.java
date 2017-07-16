@@ -33,6 +33,7 @@ import som.vmobjects.SMethod;
 import som.vmobjects.SObject;
 import som.vmobjects.SSymbol;
 
+import static som.interpreter.Bytecodes.*;
 
 public class Interpreter {
 
@@ -223,7 +224,7 @@ public class Interpreter {
       byte bytecode = getMethod().getBytecode(bytecodeIndex);
 
       // Get the length of the current bytecode
-      int bytecodeLength = Bytecodes.getBytecodeLength(bytecode);
+      int bytecodeLength = getBytecodeLength(bytecode);
 
       // Compute the next bytecode index
       int nextBytecodeIndex = bytecodeIndex + bytecodeLength;
@@ -234,82 +235,82 @@ public class Interpreter {
       // Handle the current bytecode
       switch (bytecode) {
 
-        case Bytecodes.HALT: {
+        case HALT: {
           // Handle the HALT bytecode
           return getFrame().getStackElement(0);
         }
 
-        case Bytecodes.DUP: {
+        case DUP: {
           doDup();
           break;
         }
 
-        case Bytecodes.PUSH_LOCAL: {
+        case PUSH_LOCAL: {
           doPushLocal(bytecodeIndex);
           break;
         }
 
-        case Bytecodes.PUSH_ARGUMENT: {
+        case PUSH_ARGUMENT: {
           doPushArgument(bytecodeIndex);
           break;
         }
 
-        case Bytecodes.PUSH_FIELD: {
+        case PUSH_FIELD: {
           doPushField(bytecodeIndex);
           break;
         }
 
-        case Bytecodes.PUSH_BLOCK: {
+        case PUSH_BLOCK: {
           doPushBlock(bytecodeIndex);
           break;
         }
 
-        case Bytecodes.PUSH_CONSTANT: {
+        case PUSH_CONSTANT: {
           doPushConstant(bytecodeIndex);
           break;
         }
 
-        case Bytecodes.PUSH_GLOBAL: {
+        case PUSH_GLOBAL: {
           doPushGlobal(bytecodeIndex);
           break;
         }
 
-        case Bytecodes.POP: {
+        case POP: {
           doPop();
           break;
         }
 
-        case Bytecodes.POP_LOCAL: {
+        case POP_LOCAL: {
           doPopLocal(bytecodeIndex);
           break;
         }
 
-        case Bytecodes.POP_ARGUMENT: {
+        case POP_ARGUMENT: {
           doPopArgument(bytecodeIndex);
           break;
         }
 
-        case Bytecodes.POP_FIELD: {
+        case POP_FIELD: {
           doPopField(bytecodeIndex);
           break;
         }
 
-        case Bytecodes.SEND: {
+        case SEND: {
           doSend(bytecodeIndex);
           break;
         }
 
-        case Bytecodes.SUPER_SEND: {
+        case SUPER_SEND: {
           doSuperSend(bytecodeIndex);
           break;
         }
 
-        case Bytecodes.RETURN_LOCAL: {
+        case RETURN_LOCAL: {
           doReturnLocal();
           break;
         }
 
-        case Bytecodes.RETURN_NON_LOCAL: {
+        case RETURN_NON_LOCAL: {
           doReturnNonLocal();
           break;
         }
