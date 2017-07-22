@@ -27,6 +27,7 @@ package som.interpreter;
 
 import java.util.stream.Stream;
 
+
 public class Bytecodes {
 
   // Bytecodes used by the simple object machine
@@ -48,16 +49,16 @@ public class Bytecodes {
   public static final byte RETURN_NON_LOCAL = 15;
 
   private static final String[] PADDED_BYTECODE_NAMES = new String[] {
-    "HALT            ", "DUP             ", "PUSH_LOCAL      ",
-    "PUSH_ARGUMENT   ", "PUSH_FIELD      ", "PUSH_BLOCK      ",
-    "PUSH_CONSTANT   ", "PUSH_GLOBAL     ", "POP             ",
-    "POP_LOCAL       ", "POP_ARGUMENT    ", "POP_FIELD       ",
-    "SEND            ", "SUPER_SEND      ", "RETURN_LOCAL    ",
-    "RETURN_NON_LOCAL"
+      "HALT            ", "DUP             ", "PUSH_LOCAL      ",
+      "PUSH_ARGUMENT   ", "PUSH_FIELD      ", "PUSH_BLOCK      ",
+      "PUSH_CONSTANT   ", "PUSH_GLOBAL     ", "POP             ",
+      "POP_LOCAL       ", "POP_ARGUMENT    ", "POP_FIELD       ",
+      "SEND            ", "SUPER_SEND      ", "RETURN_LOCAL    ",
+      "RETURN_NON_LOCAL"
   };
 
   private static final String[] BYTECODE_NAMES =
-    Stream.of(PADDED_BYTECODE_NAMES).map(String::trim).toArray(String[]::new);
+      Stream.of(PADDED_BYTECODE_NAMES).map(String::trim).toArray(String[]::new);
 
   private static final byte NUM_BYTECODES = (byte) BYTECODE_NAMES.length;
 
@@ -84,22 +85,22 @@ public class Bytecodes {
 
   // Static array holding lengths of each bytecode
   private static final int[] BYTECODE_LENGTH = new int[] {
-    1, // HALT
-    1, // DUP
-    3, // PUSH_LOCAL
-    3, // PUSH_ARGUMENT
-    2, // PUSH_FIELD
-    2, // PUSH_BLOCK
-    2, // PUSH_CONSTANT
-    2, // PUSH_GLOBAL
-    1, // POP
-    3, // POP_LOCAL
-    3, // POP_ARGUMENT
-    2, // POP_FIELD
-    2, // SEND
-    2, // SUPER_SEND
-    1, // RETURN_LOCAL
-    1  // RETURN_NON_LOCAL
+      1, // HALT
+      1, // DUP
+      3, // PUSH_LOCAL
+      3, // PUSH_ARGUMENT
+      2, // PUSH_FIELD
+      2, // PUSH_BLOCK
+      2, // PUSH_CONSTANT
+      2, // PUSH_GLOBAL
+      1, // POP
+      3, // POP_LOCAL
+      3, // POP_ARGUMENT
+      2, // POP_FIELD
+      2, // SEND
+      2, // SUPER_SEND
+      1, // RETURN_LOCAL
+      1 // RETURN_NON_LOCAL
   };
 
 }

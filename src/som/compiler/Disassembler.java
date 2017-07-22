@@ -35,6 +35,7 @@ import som.vmobjects.SSymbol;
 
 import static som.interpreter.Bytecodes.*;
 
+
 public class Disassembler {
 
   public static void dump(final SClass cl) {

@@ -36,6 +36,7 @@ import som.vmobjects.SSymbol;
 
 import static som.interpreter.Bytecodes.*;
 
+
 public class Interpreter {
 
   private final Universe universe;
