@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2017 Michael Haupt, github@haupz.de
  * Copyright (c) 2009 Michael Haupt, michael.haupt@hpi.uni-potsdam.de
  * Software Architecture Group, Hasso Plattner Institute, Potsdam, Germany
  * http://www.hpi.uni-potsdam.de/swa/
@@ -71,7 +72,7 @@ public class Shell {
     // Create a fake bootstrap frame
     currentFrame = interpreter.pushNewFrame(bootstrapMethod);
 
-    // Remember the first bytecode index, e.g. index of the halt instruction
+    // Remember the first bytecode index, e.g. index of the HALT instruction
     bytecodeIndex = currentFrame.getBytecodeIndex();
 
     while (true) {

@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2017 Michael Haupt, github@haupz.de
  * Copyright (c) 2009 Michael Haupt, michael.haupt@hpi.uni-potsdam.de
  * Software Architecture Group, Hasso Plattner Institute, Potsdam, Germany
  * http://www.hpi.uni-potsdam.de/swa/
@@ -24,62 +25,82 @@
 
 package som.interpreter;
 
+import java.util.stream.Stream;
+
+
 public class Bytecodes {
 
   // Bytecodes used by the simple object machine
-  public static final byte halt             = 0;
-  public static final byte dup              = 1;
-  public static final byte push_local       = 2;
-  public static final byte push_argument    = 3;
-  public static final byte push_field       = 4;
-  public static final byte push_block       = 5;
-  public static final byte push_constant    = 6;
-  public static final byte push_global      = 7;
-  public static final byte pop              = 8;
-  public static final byte pop_local        = 9;
-  public static final byte pop_argument     = 10;
-  public static final byte pop_field        = 11;
-  public static final byte send             = 12;
-  public static final byte super_send       = 13;
-  public static final byte return_local     = 14;
-  public static final byte return_non_local = 15;
+  public static final byte HALT             = 0;
+  public static final byte DUP              = 1;
+  public static final byte PUSH_LOCAL       = 2;
+  public static final byte PUSH_ARGUMENT    = 3;
+  public static final byte PUSH_FIELD       = 4;
+  public static final byte PUSH_BLOCK       = 5;
+  public static final byte PUSH_CONSTANT    = 6;
+  public static final byte PUSH_GLOBAL      = 7;
+  public static final byte POP              = 8;
+  public static final byte POP_LOCAL        = 9;
+  public static final byte POP_ARGUMENT     = 10;
+  public static final byte POP_FIELD        = 11;
+  public static final byte SEND             = 12;
+  public static final byte SUPER_SEND       = 13;
+  public static final byte RETURN_LOCAL     = 14;
+  public static final byte RETURN_NON_LOCAL = 15;
 
-  public static final java.lang.String[] bytecodeNames = new java.lang.String[] {
+  private static final String[] PADDED_BYTECODE_NAMES = new String[] {
       "HALT            ", "DUP             ", "PUSH_LOCAL      ",
       "PUSH_ARGUMENT   ", "PUSH_FIELD      ", "PUSH_BLOCK      ",
       "PUSH_CONSTANT   ", "PUSH_GLOBAL     ", "POP             ",
       "POP_LOCAL       ", "POP_ARGUMENT    ", "POP_FIELD       ",
       "SEND            ", "SUPER_SEND      ", "RETURN_LOCAL    ",
-      "RETURN_NON_LOCAL"};
+      "RETURN_NON_LOCAL"
+  };
 
-  private static final byte numBytecodes = 16;
+  private static final String[] BYTECODE_NAMES =
+      Stream.of(PADDED_BYTECODE_NAMES).map(String::trim).toArray(String[]::new);
+
+  private static final byte NUM_BYTECODES = (byte) BYTECODE_NAMES.length;
+
+  private static void checkBytecodeIndex(byte bytecode) {
+    if (bytecode < 0 || bytecode >= NUM_BYTECODES) {
+      throw new IllegalArgumentException("illegal bytecode: " + bytecode);
+    }
+  }
+
+  public static String getBytecodeName(byte bytecode) {
+    checkBytecodeIndex(bytecode);
+    return BYTECODE_NAMES[bytecode];
+  }
+
+  public static String getPaddedBytecodeName(byte bytecode) {
+    checkBytecodeIndex(bytecode);
+    return PADDED_BYTECODE_NAMES[bytecode];
+  }
 
   public static int getBytecodeLength(byte bytecode) {
     // Return the length of the given bytecode
-    return bytecodeLength[bytecode];
+    return BYTECODE_LENGTH[bytecode];
   }
 
   // Static array holding lengths of each bytecode
-  private static int[] bytecodeLength = new int[numBytecodes];
-
-  static {
-    // set up the lengths of the "native" bytecodes
-    bytecodeLength[halt] = 1;
-    bytecodeLength[dup] = 1;
-    bytecodeLength[push_local] = 3;
-    bytecodeLength[push_argument] = 3;
-    bytecodeLength[push_field] = 2;
-    bytecodeLength[push_block] = 2;
-    bytecodeLength[push_constant] = 2;
-    bytecodeLength[push_global] = 2;
-    bytecodeLength[pop] = 1;
-    bytecodeLength[pop_local] = 3;
-    bytecodeLength[pop_argument] = 3;
-    bytecodeLength[pop_field] = 2;
-    bytecodeLength[send] = 2;
-    bytecodeLength[super_send] = 2;
-    bytecodeLength[return_local] = 1;
-    bytecodeLength[return_non_local] = 1;
-  }
+  private static final int[] BYTECODE_LENGTH = new int[] {
+      1, // HALT
+      1, // DUP
+      3, // PUSH_LOCAL
+      3, // PUSH_ARGUMENT
+      2, // PUSH_FIELD
+      2, // PUSH_BLOCK
+      2, // PUSH_CONSTANT
+      2, // PUSH_GLOBAL
+      1, // POP
+      3, // POP_LOCAL
+      3, // POP_ARGUMENT
+      2, // POP_FIELD
+      2, // SEND
+      2, // SUPER_SEND
+      1, // RETURN_LOCAL
+      1 // RETURN_NON_LOCAL
+  };
 
 }

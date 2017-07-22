@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2017 Michael Haupt, github@haupz.de
  * Copyright (c) 2013 Stefan Marr,   stefan.marr@vub.ac.be
  * Copyright (c) 2009 Michael Haupt, michael.haupt@hpi.uni-potsdam.de
  * Software Architecture Group, Hasso Plattner Institute, Potsdam, Germany
@@ -25,13 +26,14 @@
 
 package som.compiler;
 
-import som.interpreter.Bytecodes;
 import som.vm.Universe;
 import som.vmobjects.SAbstractObject;
 import som.vmobjects.SClass;
 import som.vmobjects.SInvokable;
 import som.vmobjects.SMethod;
 import som.vmobjects.SSymbol;
+
+import static som.interpreter.Bytecodes.*;
 
 
 public class Disassembler {
@@ -63,7 +65,7 @@ public class Disassembler {
 
     // output bytecodes
     for (int b = 0; b < m.getNumberOfBytecodes(); b +=
-        Bytecodes.getBytecodeLength(m.getBytecode(b))) {
+        getBytecodeLength(m.getBytecode(b))) {
 
       Universe.errorPrint(indent);
 
@@ -78,63 +80,63 @@ public class Disassembler {
 
       // mnemonic
       byte bytecode = m.getBytecode(b);
-      Universe.errorPrint(Bytecodes.bytecodeNames[bytecode] + "  ");
+      Universe.errorPrint(getPaddedBytecodeName(bytecode) + "  ");
 
       // parameters (if any)
-      if (Bytecodes.getBytecodeLength(bytecode) == 1) {
+      if (getBytecodeLength(bytecode) == 1) {
         Universe.errorPrintln();
         continue;
       }
       switch (bytecode) {
-        case Bytecodes.push_local:
+        case PUSH_LOCAL:
           Universe.errorPrintln("local: " + m.getBytecode(b + 1) + ", context: "
               + m.getBytecode(b + 2));
           break;
-        case Bytecodes.push_argument:
+        case PUSH_ARGUMENT:
           Universe.errorPrintln("argument: " + m.getBytecode(b + 1) + ", context "
               + m.getBytecode(b + 2));
           break;
-        case Bytecodes.push_field: {
+        case PUSH_FIELD: {
           int idx = m.getBytecode(b + 1);
           String fieldName = ((SSymbol) m.getHolder().getInstanceFields()
                                          .getIndexableField(idx)).getEmbeddedString();
           Universe.errorPrintln("(index: " + idx + ") field: " + fieldName);
           break;
         }
-        case Bytecodes.push_block:
+        case PUSH_BLOCK:
           Universe.errorPrint("block: (index: " + m.getBytecode(b + 1) + ") ");
           dumpMethod((SMethod) m.getConstant(b), indent + "\t");
           break;
-        case Bytecodes.push_constant:
+        case PUSH_CONSTANT:
           SAbstractObject constant = m.getConstant(b);
           Universe.errorPrintln("(index: " + m.getBytecode(b + 1) + ") value: "
               + "(" + constant.getSOMClass(Universe.current()).getName().toString() + ") "
               + constant.toString());
           break;
-        case Bytecodes.push_global:
+        case PUSH_GLOBAL:
           Universe.errorPrintln("(index: " + m.getBytecode(b + 1) + ") value: "
               + ((SSymbol) m.getConstant(b)).toString());
           break;
-        case Bytecodes.pop_local:
+        case POP_LOCAL:
           Universe.errorPrintln("local: " + m.getBytecode(b + 1) + ", context: "
               + m.getBytecode(b + 2));
           break;
-        case Bytecodes.pop_argument:
+        case POP_ARGUMENT:
           Universe.errorPrintln("argument: " + m.getBytecode(b + 1)
               + ", context: " + m.getBytecode(b + 2));
           break;
-        case Bytecodes.pop_field: {
+        case POP_FIELD: {
           int idx = m.getBytecode(b + 1);
           String fieldName = ((SSymbol) m.getHolder().getInstanceFields()
                                          .getIndexableField(idx)).getEmbeddedString();
           Universe.errorPrintln("(index: " + idx + ") field: " + fieldName);
           break;
         }
-        case Bytecodes.send:
+        case SEND:
           Universe.errorPrintln("(index: " + m.getBytecode(b + 1)
               + ") signature: " + ((SSymbol) m.getConstant(b)).toString());
           break;
-        case Bytecodes.super_send:
+        case SUPER_SEND:
           Universe.errorPrintln("(index: " + m.getBytecode(b + 1)
               + ") signature: " + ((SSymbol) m.getConstant(b)).toString());
           break;

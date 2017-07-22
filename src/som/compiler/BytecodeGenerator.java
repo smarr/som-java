@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2017 Michael Haupt, github@haupz.de
  * Copyright (c) 2009 Michael Haupt, michael.haupt@hpi.uni-potsdam.de
  * Software Architecture Group, Hasso Plattner Institute, Potsdam, Germany
  * http://www.hpi.uni-potsdam.de/swa/
@@ -24,21 +25,7 @@
 
 package som.compiler;
 
-import static som.interpreter.Bytecodes.dup;
-import static som.interpreter.Bytecodes.pop;
-import static som.interpreter.Bytecodes.pop_argument;
-import static som.interpreter.Bytecodes.pop_field;
-import static som.interpreter.Bytecodes.pop_local;
-import static som.interpreter.Bytecodes.push_argument;
-import static som.interpreter.Bytecodes.push_block;
-import static som.interpreter.Bytecodes.push_constant;
-import static som.interpreter.Bytecodes.push_field;
-import static som.interpreter.Bytecodes.push_global;
-import static som.interpreter.Bytecodes.push_local;
-import static som.interpreter.Bytecodes.return_local;
-import static som.interpreter.Bytecodes.return_non_local;
-import static som.interpreter.Bytecodes.send;
-import static som.interpreter.Bytecodes.super_send;
+import static som.interpreter.Bytecodes.*;
 
 import som.vmobjects.SAbstractObject;
 import som.vmobjects.SMethod;
@@ -48,75 +35,75 @@ import som.vmobjects.SSymbol;
 public class BytecodeGenerator {
 
   public void emitPOP(final MethodGenerationContext mgenc) {
-    emit1(mgenc, pop);
+    emit1(mgenc, POP);
   }
 
   public void emitPUSHARGUMENT(final MethodGenerationContext mgenc, final byte idx,
       final byte ctx) {
-    emit3(mgenc, push_argument, idx, ctx);
+    emit3(mgenc, PUSH_ARGUMENT, idx, ctx);
   }
 
   public void emitRETURNLOCAL(final MethodGenerationContext mgenc) {
-    emit1(mgenc, return_local);
+    emit1(mgenc, RETURN_LOCAL);
   }
 
   public void emitRETURNNONLOCAL(final MethodGenerationContext mgenc) {
-    emit1(mgenc, return_non_local);
+    emit1(mgenc, RETURN_NON_LOCAL);
   }
 
   public void emitDUP(final MethodGenerationContext mgenc) {
-    emit1(mgenc, dup);
+    emit1(mgenc, DUP);
   }
 
   public void emitPUSHBLOCK(final MethodGenerationContext mgenc, final SMethod blockMethod) {
-    emit2(mgenc, push_block, mgenc.findLiteralIndex(blockMethod));
+    emit2(mgenc, PUSH_BLOCK, mgenc.findLiteralIndex(blockMethod));
   }
 
   public void emitPUSHLOCAL(final MethodGenerationContext mgenc, final byte idx,
       final byte ctx) {
     assert idx >= 0;
-    emit3(mgenc, push_local, idx, ctx);
+    emit3(mgenc, PUSH_LOCAL, idx, ctx);
   }
 
   public void emitPUSHFIELD(final MethodGenerationContext mgenc, final SSymbol fieldName) {
     assert mgenc.hasField(fieldName);
-    emit2(mgenc, push_field, mgenc.getFieldIndex(fieldName));
+    emit2(mgenc, PUSH_FIELD, mgenc.getFieldIndex(fieldName));
   }
 
   public void emitPUSHGLOBAL(final MethodGenerationContext mgenc, final SSymbol global) {
-    emit2(mgenc, push_global, mgenc.findLiteralIndex(global));
+    emit2(mgenc, PUSH_GLOBAL, mgenc.findLiteralIndex(global));
   }
 
   public void emitPOPARGUMENT(final MethodGenerationContext mgenc, final byte idx,
       final byte ctx) {
-    emit3(mgenc, pop_argument, idx, ctx);
+    emit3(mgenc, POP_ARGUMENT, idx, ctx);
   }
 
   public void emitPOPLOCAL(final MethodGenerationContext mgenc, final byte idx,
       final byte ctx) {
-    emit3(mgenc, pop_local, idx, ctx);
+    emit3(mgenc, POP_LOCAL, idx, ctx);
   }
 
   public void emitPOPFIELD(final MethodGenerationContext mgenc, final SSymbol fieldName) {
     assert mgenc.hasField(fieldName);
-    emit2(mgenc, pop_field, mgenc.getFieldIndex(fieldName));
+    emit2(mgenc, POP_FIELD, mgenc.getFieldIndex(fieldName));
   }
 
   public void emitSUPERSEND(final MethodGenerationContext mgenc, final SSymbol msg) {
-    emit2(mgenc, super_send, mgenc.findLiteralIndex(msg));
+    emit2(mgenc, SUPER_SEND, mgenc.findLiteralIndex(msg));
   }
 
   public void emitSEND(final MethodGenerationContext mgenc, final SSymbol msg) {
-    emit2(mgenc, send, mgenc.findLiteralIndex(msg));
+    emit2(mgenc, SEND, mgenc.findLiteralIndex(msg));
   }
 
   public void emitPUSHCONSTANT(final MethodGenerationContext mgenc,
       final SAbstractObject lit) {
-    emit2(mgenc, push_constant, mgenc.findLiteralIndex(lit));
+    emit2(mgenc, PUSH_CONSTANT, mgenc.findLiteralIndex(lit));
   }
 
   public void emitPUSHCONSTANT(final MethodGenerationContext mgenc, final byte literalIndex) {
-    emit2(mgenc, push_constant, literalIndex);
+    emit2(mgenc, PUSH_CONSTANT, literalIndex);
   }
 
   private void emit1(final MethodGenerationContext mgenc, final byte code) {

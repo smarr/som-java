@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2017 Michael Haupt, github@haupz.de
  * Copyright (c) 2016 Michael Haupt, github@haupz.de
  * Copyright (c) 2009 Michael Haupt, michael.haupt@hpi.uni-potsdam.de
  * Software Architecture Group, Hasso Plattner Institute, Potsdam, Germany
@@ -34,7 +35,6 @@ import java.util.StringTokenizer;
 import som.compiler.Disassembler;
 import som.compiler.ProgramDefinitionError;
 import som.compiler.SourcecodeCompiler;
-import som.interpreter.Bytecodes;
 import som.interpreter.Frame;
 import som.interpreter.Interpreter;
 import som.vmobjects.SAbstractObject;
@@ -49,6 +49,8 @@ import som.vmobjects.SMethod;
 import som.vmobjects.SObject;
 import som.vmobjects.SString;
 import som.vmobjects.SSymbol;
+
+import static som.interpreter.Bytecodes.HALT;
 
 
 public class Universe {
@@ -297,7 +299,7 @@ public class Universe {
     // Create a fake bootstrap method to simplify later frame traversal
     SMethod bootstrapMethod =
         newMethod(symbolFor("bootstrap"), 1, 0, newInteger(0), newInteger(2), null);
-    bootstrapMethod.setBytecode(0, Bytecodes.halt);
+    bootstrapMethod.setBytecode(0, HALT);
     bootstrapMethod.setHolder(systemClass);
     return bootstrapMethod;
   }

@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2017 Michael Haupt, github@haupz.de
  * Copyright (c) 2009 Michael Haupt, michael.haupt@hpi.uni-potsdam.de
  * Software Architecture Group, Hasso Plattner Institute, Potsdam, Germany
  * http://www.hpi.uni-potsdam.de/swa/
@@ -33,6 +34,8 @@ import som.vmobjects.SMethod;
 import som.vmobjects.SObject;
 import som.vmobjects.SSymbol;
 
+import static som.interpreter.Bytecodes.*;
+
 
 public class Interpreter {
 
@@ -43,26 +46,26 @@ public class Interpreter {
   }
 
   private void doDup() {
-    // Handle the dup bytecode
+    // Handle the DUP bytecode
     getFrame().push(getFrame().getStackElement(0));
   }
 
   private void doPushLocal(final int bytecodeIndex) {
-    // Handle the push local bytecode
+    // Handle the PUSH LOCAL bytecode
     getFrame().push(
         getFrame().getLocal(getMethod().getBytecode(bytecodeIndex + 1),
             getMethod().getBytecode(bytecodeIndex + 2)));
   }
 
   private void doPushArgument(final int bytecodeIndex) {
-    // Handle the push argument bytecode
+    // Handle the PUSH ARGUMENT bytecode
     getFrame().push(
         getFrame().getArgument(getMethod().getBytecode(bytecodeIndex + 1),
             getMethod().getBytecode(bytecodeIndex + 2)));
   }
 
   private void doPushField(final int bytecodeIndex) {
-    // Handle the push field bytecode
+    // Handle the PUSH FIELD bytecode
     int fieldIndex = getMethod().getBytecode(bytecodeIndex + 1);
 
     // Push the field with the computed index onto the stack
@@ -70,7 +73,7 @@ public class Interpreter {
   }
 
   private void doPushBlock(final int bytecodeIndex) {
-    // Handle the push block bytecode
+    // Handle the PUSH BLOCK bytecode
     SMethod blockMethod = (SMethod) getMethod().getConstant(bytecodeIndex);
 
     // Push a new block with the current getFrame() as context onto the
@@ -81,12 +84,12 @@ public class Interpreter {
   }
 
   private void doPushConstant(final int bytecodeIndex) {
-    // Handle the push constant bytecode
+    // Handle the PUSH CONSTANT bytecode
     getFrame().push(getMethod().getConstant(bytecodeIndex));
   }
 
   private void doPushGlobal(final int bytecodeIndex) {
-    // Handle the push global bytecode
+    // Handle the PUSH GLOBAL bytecode
     SSymbol globalName = (SSymbol) getMethod().getConstant(bytecodeIndex);
 
     // Get the global from the universe
@@ -102,24 +105,24 @@ public class Interpreter {
   }
 
   private void doPop() {
-    // Handle the pop bytecode
+    // Handle the POP bytecode
     getFrame().pop();
   }
 
   private void doPopLocal(final int bytecodeIndex) {
-    // Handle the pop local bytecode
+    // Handle the POP LOCAL bytecode
     getFrame().setLocal(getMethod().getBytecode(bytecodeIndex + 1),
         getMethod().getBytecode(bytecodeIndex + 2), getFrame().pop());
   }
 
   private void doPopArgument(final int bytecodeIndex) {
-    // Handle the pop argument bytecode
+    // Handle the POP ARGUMENT bytecode
     getFrame().setArgument(getMethod().getBytecode(bytecodeIndex + 1),
         getMethod().getBytecode(bytecodeIndex + 2), getFrame().pop());
   }
 
   private void doPopField(final int bytecodeIndex) {
-    // Handle the pop field bytecode
+    // Handle the POP FIELD bytecode
     int fieldIndex = getMethod().getBytecode(bytecodeIndex + 1);
 
     // Set the field with the computed index to the value popped from the stack
@@ -127,7 +130,7 @@ public class Interpreter {
   }
 
   private void doSuperSend(final int bytecodeIndex) {
-    // Handle the super send bytecode
+    // Handle the SUPER SEND bytecode
     SSymbol signature = (SSymbol) getMethod().getConstant(bytecodeIndex);
 
     // Send the message
@@ -150,7 +153,7 @@ public class Interpreter {
   }
 
   private void doReturnLocal() {
-    // Handle the return local bytecode
+    // Handle the RETURN LOCAL bytecode
     SAbstractObject result = getFrame().pop();
 
     // Pop the top frame and push the result
@@ -158,7 +161,7 @@ public class Interpreter {
   }
 
   private void doReturnNonLocal() {
-    // Handle the return non local bytecode
+    // Handle the RETURN NON LOCAL bytecode
     SAbstractObject result = getFrame().pop();
 
     // Compute the context for the non-local return
@@ -199,7 +202,7 @@ public class Interpreter {
   }
 
   private void doSend(final int bytecodeIndex) {
-    // Handle the send bytecode
+    // Handle the SEND bytecode
     SSymbol signature = (SSymbol) getMethod().getConstant(bytecodeIndex);
 
     // Get the number of arguments from the signature
@@ -223,7 +226,7 @@ public class Interpreter {
       byte bytecode = getMethod().getBytecode(bytecodeIndex);
 
       // Get the length of the current bytecode
-      int bytecodeLength = Bytecodes.getBytecodeLength(bytecode);
+      int bytecodeLength = getBytecodeLength(bytecode);
 
       // Compute the next bytecode index
       int nextBytecodeIndex = bytecodeIndex + bytecodeLength;
@@ -234,82 +237,82 @@ public class Interpreter {
       // Handle the current bytecode
       switch (bytecode) {
 
-        case Bytecodes.halt: {
-          // Handle the halt bytecode
+        case HALT: {
+          // Handle the HALT bytecode
           return getFrame().getStackElement(0);
         }
 
-        case Bytecodes.dup: {
+        case DUP: {
           doDup();
           break;
         }
 
-        case Bytecodes.push_local: {
+        case PUSH_LOCAL: {
           doPushLocal(bytecodeIndex);
           break;
         }
 
-        case Bytecodes.push_argument: {
+        case PUSH_ARGUMENT: {
           doPushArgument(bytecodeIndex);
           break;
         }
 
-        case Bytecodes.push_field: {
+        case PUSH_FIELD: {
           doPushField(bytecodeIndex);
           break;
         }
 
-        case Bytecodes.push_block: {
+        case PUSH_BLOCK: {
           doPushBlock(bytecodeIndex);
           break;
         }
 
-        case Bytecodes.push_constant: {
+        case PUSH_CONSTANT: {
           doPushConstant(bytecodeIndex);
           break;
         }
 
-        case Bytecodes.push_global: {
+        case PUSH_GLOBAL: {
           doPushGlobal(bytecodeIndex);
           break;
         }
 
-        case Bytecodes.pop: {
+        case POP: {
           doPop();
           break;
         }
 
-        case Bytecodes.pop_local: {
+        case POP_LOCAL: {
           doPopLocal(bytecodeIndex);
           break;
         }
 
-        case Bytecodes.pop_argument: {
+        case POP_ARGUMENT: {
           doPopArgument(bytecodeIndex);
           break;
         }
 
-        case Bytecodes.pop_field: {
+        case POP_FIELD: {
           doPopField(bytecodeIndex);
           break;
         }
 
-        case Bytecodes.send: {
+        case SEND: {
           doSend(bytecodeIndex);
           break;
         }
 
-        case Bytecodes.super_send: {
+        case SUPER_SEND: {
           doSuperSend(bytecodeIndex);
           break;
         }
 
-        case Bytecodes.return_local: {
+        case RETURN_LOCAL: {
           doReturnLocal();
           break;
         }
 
-        case Bytecodes.return_non_local: {
+        case RETURN_NON_LOCAL: {
           doReturnNonLocal();
           break;
         }
