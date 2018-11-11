@@ -41,7 +41,7 @@ import som.vmobjects.SSymbol;
 @RunWith(Parameterized.class)
 public class BasicInterpreterTests {
 
-  @Parameters
+  @Parameters(name = "{0}.{1} [{index}]")
   public static Iterable<Object[]> data() {
     return Arrays.asList(new Object[][] {
         {"MethodCall", "test", 42, SInteger.class},
