@@ -24,12 +24,13 @@
 
 package som.primitives;
 
-import som.interpreter.Interpreter;
+import som.compiler.ProgramDefinitionError;
 import som.interpreter.Frame;
+import som.interpreter.Interpreter;
 import som.vm.Universe;
+import som.vmobjects.SAbstractObject;
 import som.vmobjects.SClass;
 import som.vmobjects.SInteger;
-import som.vmobjects.SAbstractObject;
 import som.vmobjects.SPrimitive;
 import som.vmobjects.SString;
 import som.vmobjects.SSymbol;
@@ -47,7 +48,12 @@ public class SystemPrimitives extends Primitives {
       public void invoke(final Frame frame, final Interpreter interpreter) {
         SSymbol argument = (SSymbol) frame.pop();
         frame.pop(); // not required
-        SClass result = universe.loadClass(argument);
+        SClass result = null;
+        try {
+          result = universe.loadClass(argument);
+        } catch (ProgramDefinitionError e) {
+          universe.errorExit(e.toString());
+        }
         frame.push(result != null ? result : universe.nilObject);
       }
     });

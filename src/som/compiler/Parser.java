@@ -231,7 +231,7 @@ public class Parser {
     expect(EndTerm);
   }
 
-  private void superclass(final ClassGenerationContext cgenc) {
+  private void superclass(final ClassGenerationContext cgenc) throws ProgramDefinitionError {
     SSymbol superName;
     if (sym == Identifier) {
       superName = universe.symbolFor(text);
@@ -929,7 +929,7 @@ public class Parser {
   }
 
   private void genPopVariable(final MethodGenerationContext mgenc,
-      final String var) {
+      final String var) throws ParseError {
     // The purpose of this function is to find out whether the variable to be
     // popped off the stack is a local variable, argument, or object field.
     // This is done by examining all available lexical contexts, starting with
@@ -946,7 +946,11 @@ public class Parser {
         bcGen.emitPOPLOCAL(mgenc, tri.getX(), tri.getY());
       }
     } else {
-      bcGen.emitPOPFIELD(mgenc, universe.symbolFor(var));
+      SSymbol varName = universe.symbolFor(var);
+      if (!mgenc.hasField(varName)) {
+        throw new ParseError("Trying to write to field with the name '" + var + "', but field does not seem exist in class.", Symbol.NONE, this);
+      }
+      bcGen.emitPOPFIELD(mgenc, varName);
     }
   }
 

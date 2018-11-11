@@ -60,13 +60,17 @@ public class Universe {
     Universe u = new Universe();
 
     // Start interpretation
-    u.interpret(arguments);
+    try {
+      u.interpret(arguments);
+    } catch (ProgramDefinitionError e) {
+      u.errorExit(e.toString());
+    }
 
     // Exit with error code 0
     u.exit(0);
   }
 
-  public SAbstractObject interpret(String[] arguments) {
+  public SAbstractObject interpret(String[] arguments) throws ProgramDefinitionError {
     // Check for command line switches
     arguments = handleArguments(arguments);
 
@@ -260,9 +264,10 @@ public class Universe {
    * @param className
    * @param selector
    * @return
+   * @throws ProgramDefinitionError
    */
   public SAbstractObject interpret(final String className,
-      final String selector) {
+      final String selector) throws ProgramDefinitionError {
     initializeObjectSystem();
 
     SClass clazz = loadClass(symbolFor(className));
@@ -274,7 +279,7 @@ public class Universe {
     return interpretMethod(clazz, initialize, null);
   }
 
-  private SAbstractObject initialize(final String[] arguments) {
+  private SAbstractObject initialize(final String[] arguments) throws ProgramDefinitionError {
     SAbstractObject systemObject = initializeObjectSystem();
 
     // Start the shell if no filename is given
@@ -305,7 +310,7 @@ public class Universe {
   }
 
   private SAbstractObject interpretMethod(final SAbstractObject receiver,
-      final SInvokable invokable, final SArray arguments) {
+      final SInvokable invokable, final SArray arguments) throws ProgramDefinitionError {
     SMethod bootstrapMethod = createBootstrapMethod();
 
     // Create a fake bootstrap frame with the system object on the stack
@@ -323,7 +328,7 @@ public class Universe {
     return interpreter.start();
   }
 
-  private SAbstractObject initializeObjectSystem() {
+  private SAbstractObject initializeObjectSystem() throws ProgramDefinitionError {
     // Allocate the nil object
     nilObject = new SObject(null);
 
@@ -445,7 +450,7 @@ public class Universe {
     return result;
   }
 
-  public SBlock newBlock(final SMethod method, final Frame context, final int arguments) {
+  public SBlock newBlock(final SMethod method, final Frame context, final int arguments) throws ProgramDefinitionError {
     // Allocate a new block and set its class to be the block class
     SBlock result = new SBlock(method, context, getBlockClass(arguments));
     return result;
@@ -609,7 +614,7 @@ public class Universe {
     return blockClass;
   }
 
-  public SClass getBlockClass(final int numberOfArguments) {
+  public SClass getBlockClass(final int numberOfArguments) throws ProgramDefinitionError {
     // Compute the name of the block class with the given number of
     // arguments
     SSymbol name = symbolFor("Block"
@@ -635,7 +640,7 @@ public class Universe {
     return result;
   }
 
-  public SClass loadClass(final SSymbol name) {
+  public SClass loadClass(final SSymbol name) throws ProgramDefinitionError {
     // Check if the requested class is already in the dictionary of globals
     if (hasGlobal(name)) {
       return (SClass) getGlobal(name);
@@ -654,7 +659,7 @@ public class Universe {
     return result;
   }
 
-  public void loadSystemClass(final SClass systemClass) {
+  public void loadSystemClass(final SClass systemClass) throws ProgramDefinitionError {
     // Load the system class
     SClass result = loadClass(systemClass.getName(), systemClass);
 
@@ -664,7 +669,7 @@ public class Universe {
     }
   }
 
-  private SClass loadClass(final SSymbol name, final SClass systemClass) {
+  private SClass loadClass(final SSymbol name, final SClass systemClass) throws ProgramDefinitionError {
     // Try loading the class from all different paths
     for (String cpEntry : classPath) {
       try {
@@ -679,8 +684,6 @@ public class Universe {
 
       } catch (IOException e) {
         // Continue trying different paths
-      } catch (ProgramDefinitionError e) {
-        errorExit(e.toString());
       }
     }
 

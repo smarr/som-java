@@ -30,6 +30,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
+import som.compiler.ProgramDefinitionError;
 import som.vm.Universe;
 
 
@@ -76,7 +77,7 @@ public class SomTests {
   }
 
   @Test
-  public void testSomeTest() {
+  public void testSomeTest() throws ProgramDefinitionError {
     String[] args = {"-cp", "Smalltalk", "TestSuite/TestHarness.som", testName};
 
     // Create Universe
