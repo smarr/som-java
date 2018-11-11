@@ -25,6 +25,7 @@
 
 package som.interpreter;
 
+import som.compiler.ProgramDefinitionError;
 import som.vm.Universe;
 import som.vmobjects.SAbstractObject;
 import som.vmobjects.SBlock;
@@ -72,7 +73,7 @@ public class Interpreter {
     getFrame().push(((SObject) getSelf()).getField(fieldIndex));
   }
 
-  private void doPushBlock(final int bytecodeIndex) {
+  private void doPushBlock(final int bytecodeIndex) throws ProgramDefinitionError {
     // Handle the PUSH BLOCK bytecode
     SMethod blockMethod = (SMethod) getMethod().getConstant(bytecodeIndex);
 
@@ -215,7 +216,7 @@ public class Interpreter {
     send(signature, receiver.getSOMClass(universe), bytecodeIndex);
   }
 
-  public SAbstractObject start() {
+  public SAbstractObject start() throws ProgramDefinitionError {
     // Iterate through the bytecodes
     while (true) {
 

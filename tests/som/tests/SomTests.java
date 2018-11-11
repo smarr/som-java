@@ -30,13 +30,14 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
+import som.compiler.ProgramDefinitionError;
 import som.vm.Universe;
 
 
 @RunWith(Parameterized.class)
 public class SomTests {
 
-  @Parameters
+  @Parameters(name = "{0} [{index}]")
   public static Iterable<Object[]> data() {
     return Arrays.asList(new Object[][] {
         {"Array"},
@@ -76,7 +77,7 @@ public class SomTests {
   }
 
   @Test
-  public void testSomeTest() {
+  public void testSomeTest() throws ProgramDefinitionError {
     String[] args = {"-cp", "Smalltalk", "TestSuite/TestHarness.som", testName};
 
     // Create Universe

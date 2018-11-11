@@ -107,7 +107,7 @@ public class ClassGenerationContext {
     return classSide;
   }
 
-  public som.vmobjects.SClass assemble() {
+  public som.vmobjects.SClass assemble() throws ProgramDefinitionError {
     // build class class name
     String ccname = name.getEmbeddedString() + " class";
 
