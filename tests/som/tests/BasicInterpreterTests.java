@@ -31,6 +31,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
+import som.compiler.ProgramDefinitionError;
 import som.vm.Universe;
 import som.vmobjects.SClass;
 import som.vmobjects.SDouble;
@@ -44,6 +45,8 @@ public class BasicInterpreterTests {
   @Parameters(name = "{0}.{1} [{index}]")
   public static Iterable<Object[]> data() {
     return Arrays.asList(new Object[][] {
+        {"Self", "assignSuper", 42, ProgramDefinitionError.class},
+
         {"MethodCall", "test", 42, SInteger.class},
         {"MethodCall", "test2", 42, SInteger.class},
 
@@ -153,12 +156,17 @@ public class BasicInterpreterTests {
   }
 
   @Test
-  public void testBasicInterpreterBehavior() {
+  public void testBasicInterpreterBehavior() throws ProgramDefinitionError {
     Universe u = new Universe(true);
     u.setupClassPath("Smalltalk:TestSuite/BasicInterpreterTests");
 
-    Object actualResult = u.interpret(testClass, testSelector);
-
-    assertEqualsSOMValue(expectedResult, actualResult);
+    try {
+      Object actualResult = u.interpret(testClass, testSelector);
+      assertEqualsSOMValue(expectedResult, actualResult);
+    } catch (ProgramDefinitionError e) {
+      if (resultType != ProgramDefinitionError.class) {
+        throw e;
+      }
+    }
   }
 }
