@@ -37,7 +37,7 @@ public abstract class SPrimitive extends SAbstractObject implements SInvokable {
     return true;
   }
 
-  public SPrimitive(String signatureString, final Universe universe) {
+  public SPrimitive(final String signatureString, final Universe universe) {
     signature = universe.symbolFor(signatureString);
   }
 
@@ -52,7 +52,7 @@ public abstract class SPrimitive extends SAbstractObject implements SInvokable {
   }
 
   @Override
-  public void setHolder(SClass value) {
+  public void setHolder(final SClass value) {
     holder = value;
   }
 
@@ -66,16 +66,24 @@ public abstract class SPrimitive extends SAbstractObject implements SInvokable {
     return universe.primitiveClass;
   }
 
-  public static SPrimitive getEmptyPrimitive(java.lang.String signatureString,
+  public static SPrimitive getEmptyPrimitive(final java.lang.String signatureString,
       final Universe universe) {
     // Return an empty primitive with the given signature
     return (new SPrimitive(signatureString, universe) {
 
       @Override
       public void invoke(final Frame frame, final Interpreter interpreter) {
-        // Write a warning to the screen
-        Universe.println("Warning: undefined primitive "
-            + this.getSignature().getEmbeddedString() + " called");
+        SAbstractObject receiver = null;
+        for (int i = 0; i < getSignature().getNumberOfSignatureArguments(); i++) {
+          receiver = frame.pop();
+        }
+
+        String msg = "Undefined primitive "
+            + receiver.getSOMClass(universe).getName().getEmbeddedString() + ">>#"
+            + this.getSignature().getEmbeddedString() + " called";
+        send("error:",
+            new SAbstractObject[] {receiver, universe.newString(msg)},
+            universe, interpreter);
       }
 
       @Override
