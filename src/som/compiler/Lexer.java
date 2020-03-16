@@ -187,6 +187,7 @@ public class Lexer {
       case 'f': text.append("\f"); break;
       case '\'': text.append('\''); break;
       case '\\': text.append("\\"); break;
+      case '0': text.append("\0"); break;
       // @formatter:on
     }
     bufp++;
