@@ -196,31 +196,31 @@ public class Parser {
     superclass();
 
     expect(NewTerm);
-    instanceFields();
-    while (sym == Identifier || sym == Keyword || sym == OperatorSequence
-        || symIn(binaryOpSyms)) {
-      MethodGenerationContext mgenc = new MethodGenerationContext(cgenc);
-      mgenc.addArgument("self");
-
-      method(mgenc);
-      cgenc.addInstanceMethod(mgenc.assemble(universe));
-    }
+    classBody();
 
     if (accept(Separator)) {
       cgenc.startClassSide();
-      classFields();
-      while (sym == Identifier || sym == Keyword || sym == OperatorSequence
-          || symIn(binaryOpSyms)) {
-        MethodGenerationContext mgenc = new MethodGenerationContext(cgenc);
-        mgenc.addArgument("self");
-
-        method(mgenc);
-        cgenc.addClassMethod(mgenc.assemble(universe));
-      }
+      classBody();
     }
     expect(EndTerm);
 
     return cgenc;
+  }
+
+  private void classBody() throws ProgramDefinitionError {
+    fields();
+    while (symIsMethod()) {
+      MethodGenerationContext mgenc = new MethodGenerationContext(cgenc);
+      mgenc.addArgument("self");
+
+      method(mgenc);
+      cgenc.addMethod(mgenc.assemble(universe));
+    }
+  }
+
+  private boolean symIsMethod() {
+    return sym == Identifier || sym == Keyword || sym == OperatorSequence
+        || symIn(binaryOpSyms);
   }
 
   private void superclass() throws ProgramDefinitionError {
@@ -298,21 +298,11 @@ public class Parser {
     throw new IllegalStateException(err.toString());
   }
 
-  private void instanceFields() {
+  private void fields() {
     if (accept(Or)) {
       while (sym == Identifier) {
         String var = variable();
-        cgenc.addInstanceField(universe.symbolFor(var));
-      }
-      expect(Or);
-    }
-  }
-
-  private void classFields() {
-    if (accept(Or)) {
-      while (sym == Identifier) {
-        String var = variable();
-        cgenc.addClassField(universe.symbolFor(var));
+        cgenc.addField(universe.symbolFor(var));
       }
       expect(Or);
     }
@@ -528,8 +518,7 @@ public class Parser {
 
   private void evaluation(final MethodGenerationContext mgenc) throws ProgramDefinitionError {
     boolean superSend = primary(mgenc);
-    if (sym == Identifier || sym == Keyword || sym == OperatorSequence
-        || symIn(binaryOpSyms)) {
+    if (symIsMethod()) {
       messages(mgenc, superSend);
     }
   }
