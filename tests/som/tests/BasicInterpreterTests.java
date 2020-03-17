@@ -45,45 +45,47 @@ public class BasicInterpreterTests {
   @Parameters(name = "{0}.{1} [{index}]")
   public static Iterable<Object[]> data() {
     return Arrays.asList(new Object[][] {
-        {"Self", "assignSuper", 42, ProgramDefinitionError.class},
+        // {"Self", "assignSuper", 42, ProgramDefinitionError.class},
 
         {"MethodCall", "test", 42, SInteger.class},
         {"MethodCall", "test2", 42, SInteger.class},
 
-        {"NonLocalReturn", "test", "NonLocalReturn", SClass.class},
         {"NonLocalReturn", "test1", 42, SInteger.class},
         {"NonLocalReturn", "test2", 43, SInteger.class},
         {"NonLocalReturn", "test3", 3, SInteger.class},
         {"NonLocalReturn", "test4", 42, SInteger.class},
         {"NonLocalReturn", "test5", 22, SInteger.class},
 
-        {"Blocks", "arg1", 42, SInteger.class},
-        {"Blocks", "arg2", 77, SInteger.class},
-        {"Blocks", "argAndLocal", 8, SInteger.class},
-        {"Blocks", "argAndContext", 8, SInteger.class},
+        {"Blocks", "testArg1", 42, SInteger.class},
+        {"Blocks", "testArg2", 77, SInteger.class},
+        {"Blocks", "testArgAndLocal", 8, SInteger.class},
+        {"Blocks", "testArgAndContext", 8, SInteger.class},
 
-        {"Return", "returnSelf", "Return", SClass.class},
-        {"Return", "returnSelfImplicitly", "Return", SClass.class},
-        {"Return", "noReturnReturnsSelf", "Return", SClass.class},
-        {"Return", "blockReturnsImplicitlyLastValue", 4, SInteger.class},
+        {"Return", "testReturnSelf", "Return", SClass.class},
+        {"Return", "testReturnSelfImplicitly", "Return", SClass.class},
+        {"Return", "testNoReturnReturnsSelf", "Return", SClass.class},
+        {"Return", "testBlockReturnsImplicitlyLastValue", 4, SInteger.class},
 
         {"IfTrueIfFalse", "test", 42, SInteger.class},
         {"IfTrueIfFalse", "test2", 33, SInteger.class},
         {"IfTrueIfFalse", "test3", 4, SInteger.class},
 
-        {"CompilerSimplification", "returnConstantSymbol", "constant", SSymbol.class},
-        {"CompilerSimplification", "returnConstantInt", 42, SInteger.class},
-        {"CompilerSimplification", "returnSelf", "CompilerSimplification", SClass.class},
-        {"CompilerSimplification", "returnSelfImplicitly", "CompilerSimplification",
+        {"CompilerSimplification", "testReturnConstantSymbol", "constant", SSymbol.class},
+        {"CompilerSimplification", "testReturnConstantInt", 42, SInteger.class},
+        {"CompilerSimplification", "testReturnSelf", "CompilerSimplification", SClass.class},
+        {"CompilerSimplification", "testReturnSelfImplicitly", "CompilerSimplification",
             SClass.class},
         {"CompilerSimplification", "testReturnArgumentN", 55, SInteger.class},
         {"CompilerSimplification", "testReturnArgumentA", 44, SInteger.class},
         {"CompilerSimplification", "testSetField", "foo", SSymbol.class},
         {"CompilerSimplification", "testGetField", 40, SInteger.class},
 
+        {"Hash", "testHash", 444, SInteger.class},
+
         {"Arrays", "testEmptyToInts", 3, SInteger.class},
         {"Arrays", "testPutAllInt", 5, SInteger.class},
         {"Arrays", "testPutAllNil", "Nil", SClass.class},
+        {"Arrays", "testPutAllBlock", 3, SInteger.class},
         {"Arrays", "testNewWithAll", 1, SInteger.class},
 
         {"BlockInlining", "testNoInlining", 1, SInteger.class},
@@ -105,7 +107,14 @@ public class BasicInterpreterTests {
 
         {"BlockInlining", "testToDoNestDoNestIfTrue", 2, SInteger.class},
 
-        {"NonLocalVars", "writeDifferentTypes", 3.75, SDouble.class}
+        {"NonLocalVars", "testWriteDifferentTypes", 3.75, SDouble.class},
+
+        {"ObjectCreation", "test", 1000000, SInteger.class},
+
+        {"Regressions", "testSymbolEquality", 1, SInteger.class},
+        {"Regressions", "testSymbolReferenceEquality", 1, SInteger.class},
+
+        {"NumberOfTests", "numberOfTests", 51, SInteger.class}
     });
   }
 
