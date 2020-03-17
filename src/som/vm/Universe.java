@@ -26,6 +26,8 @@
 
 package som.vm;
 
+import static som.interpreter.Bytecodes.HALT;
+
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.HashMap;
@@ -49,8 +51,6 @@ import som.vmobjects.SMethod;
 import som.vmobjects.SObject;
 import som.vmobjects.SString;
 import som.vmobjects.SSymbol;
-
-import static som.interpreter.Bytecodes.HALT;
 
 
 public class Universe {
@@ -275,6 +275,10 @@ public class Universe {
     // Lookup the initialize invokable on the system class
     SMethod initialize =
         (SMethod) clazz.getSOMClass(this).lookupInvokable(symbolFor(selector));
+
+    if (initialize == null) {
+      throw new RuntimeException("Lookup of " + className + ">>#" + selector + " failed");
+    }
 
     return interpretMethod(clazz, initialize, null);
   }
