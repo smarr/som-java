@@ -75,8 +75,9 @@ import som.vmobjects.SSymbol;
 
 public class Parser {
 
-  private final Universe universe;
-  private final String   filename;
+  private final Universe               universe;
+  private final String                 filename;
+  private final ClassGenerationContext cgenc;
 
   private final Lexer             lexer;
   private final BytecodeGenerator bcGen;
@@ -178,6 +179,7 @@ public class Parser {
   public Parser(final Reader reader, final Universe universe, final String filename) {
     this.universe = universe;
     this.filename = filename;
+    this.cgenc = new ClassGenerationContext(universe);
 
     sym = NONE;
     lexer = new Lexer(reader);
@@ -186,52 +188,42 @@ public class Parser {
     getSymbolFromLexer();
   }
 
-  public void classdef(final ClassGenerationContext cgenc) throws ProgramDefinitionError {
+  public ClassGenerationContext classdef() throws ProgramDefinitionError {
     cgenc.setName(universe.symbolFor(text));
     expect(Identifier);
     expect(Equal);
 
-    superclass(cgenc);
+    superclass();
 
     expect(NewTerm);
-    instanceFields(cgenc);
+    instanceFields();
     while (sym == Identifier || sym == Keyword || sym == OperatorSequence
         || symIn(binaryOpSyms)) {
-      MethodGenerationContext mgenc = new MethodGenerationContext();
-      mgenc.setHolder(cgenc);
+      MethodGenerationContext mgenc = new MethodGenerationContext(cgenc);
       mgenc.addArgument("self");
 
       method(mgenc);
-
-      if (mgenc.isPrimitive()) {
-        cgenc.addInstanceMethod(mgenc.assemblePrimitive(universe));
-      } else {
-        cgenc.addInstanceMethod(mgenc.assemble(universe));
-      }
+      cgenc.addInstanceMethod(mgenc.assemble(universe));
     }
 
     if (accept(Separator)) {
-      cgenc.setClassSide(true);
-      classFields(cgenc);
+      cgenc.startClassSide();
+      classFields();
       while (sym == Identifier || sym == Keyword || sym == OperatorSequence
           || symIn(binaryOpSyms)) {
-        MethodGenerationContext mgenc = new MethodGenerationContext();
-        mgenc.setHolder(cgenc);
+        MethodGenerationContext mgenc = new MethodGenerationContext(cgenc);
         mgenc.addArgument("self");
 
         method(mgenc);
-
-        if (mgenc.isPrimitive()) {
-          cgenc.addClassMethod(mgenc.assemblePrimitive(universe));
-        } else {
-          cgenc.addClassMethod(mgenc.assemble(universe));
-        }
+        cgenc.addClassMethod(mgenc.assemble(universe));
       }
     }
     expect(EndTerm);
+
+    return cgenc;
   }
 
-  private void superclass(final ClassGenerationContext cgenc) throws ProgramDefinitionError {
+  private void superclass() throws ProgramDefinitionError {
     SSymbol superName;
     if (sym == Identifier) {
       superName = universe.symbolFor(text);
@@ -306,7 +298,7 @@ public class Parser {
     throw new IllegalStateException(err.toString());
   }
 
-  private void instanceFields(final ClassGenerationContext cgenc) {
+  private void instanceFields() {
     if (accept(Or)) {
       while (sym == Identifier) {
         String var = variable();
@@ -316,7 +308,7 @@ public class Parser {
     }
   }
 
-  private void classFields(final ClassGenerationContext cgenc) {
+  private void classFields() {
     if (accept(Or)) {
       while (sym == Identifier) {
         String var = variable();
@@ -561,14 +553,12 @@ public class Parser {
         nestedTerm(mgenc);
         break;
       case NewBlock: {
-        MethodGenerationContext bgenc = new MethodGenerationContext();
+        MethodGenerationContext bgenc = new MethodGenerationContext(mgenc.getHolder(), mgenc);
         bgenc.setIsBlockMethod(true);
-        bgenc.setHolder(mgenc.getHolder());
-        bgenc.setOuter(mgenc);
 
         nestedBlock(bgenc);
 
-        SMethod blockMethod = bgenc.assemble(universe);
+        SMethod blockMethod = bgenc.assembleMethod(universe);
         mgenc.addLiteral(blockMethod);
         bcGen.emitPUSHBLOCK(mgenc, blockMethod);
         break;

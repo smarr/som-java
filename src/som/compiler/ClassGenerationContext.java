@@ -75,8 +75,8 @@ public class ClassGenerationContext {
     instanceMethods.add(meth);
   }
 
-  public void setClassSide(boolean b) {
-    classSide = b;
+  public void startClassSide() {
+    classSide = true;
   }
 
   public void addClassMethod(final som.vmobjects.SInvokable meth) {

@@ -25,7 +25,22 @@
 
 package som.compiler;
 
-import static som.interpreter.Bytecodes.*;
+import static som.interpreter.Bytecodes.DUP;
+import static som.interpreter.Bytecodes.HALT;
+import static som.interpreter.Bytecodes.POP;
+import static som.interpreter.Bytecodes.POP_ARGUMENT;
+import static som.interpreter.Bytecodes.POP_FIELD;
+import static som.interpreter.Bytecodes.POP_LOCAL;
+import static som.interpreter.Bytecodes.PUSH_ARGUMENT;
+import static som.interpreter.Bytecodes.PUSH_BLOCK;
+import static som.interpreter.Bytecodes.PUSH_CONSTANT;
+import static som.interpreter.Bytecodes.PUSH_FIELD;
+import static som.interpreter.Bytecodes.PUSH_GLOBAL;
+import static som.interpreter.Bytecodes.PUSH_LOCAL;
+import static som.interpreter.Bytecodes.RETURN_LOCAL;
+import static som.interpreter.Bytecodes.RETURN_NON_LOCAL;
+import static som.interpreter.Bytecodes.SEND;
+import static som.interpreter.Bytecodes.SUPER_SEND;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,8 +56,9 @@ import som.vmobjects.SSymbol;
 
 public class MethodGenerationContext {
 
-  private ClassGenerationContext      holderGenc;
-  private MethodGenerationContext     outerGenc;
+  private final ClassGenerationContext  holderGenc;
+  private final MethodGenerationContext outerGenc;
+
   private boolean                     blockMethod;
   private SSymbol                     signature;
   private final List<String>          arguments = new ArrayList<String>();
@@ -52,8 +68,14 @@ public class MethodGenerationContext {
   private boolean                     finished;
   private final Vector<Byte>          bytecode  = new Vector<Byte>();
 
-  public void setHolder(final ClassGenerationContext cgenc) {
-    holderGenc = cgenc;
+  public MethodGenerationContext(final ClassGenerationContext holderGenc,
+      final MethodGenerationContext outerGenc) {
+    this.holderGenc = holderGenc;
+    this.outerGenc = outerGenc;
+  }
+
+  public MethodGenerationContext(final ClassGenerationContext holderGenc) {
+    this(holderGenc, null);
   }
 
   public void addArgument(final String arg) {
@@ -64,11 +86,15 @@ public class MethodGenerationContext {
     return primitive;
   }
 
-  public SInvokable assemblePrimitive(final Universe universe) {
-    return SPrimitive.getEmptyPrimitive(signature.getEmbeddedString(), universe);
+  public SInvokable assemble(final Universe universe) {
+    if (primitive) {
+      return SPrimitive.getEmptyPrimitive(signature.getEmbeddedString(), universe);
+    } else {
+      return assembleMethod(universe);
+    }
   }
 
-  public SMethod assemble(final Universe universe) {
+  public SMethod assembleMethod(final Universe universe) {
     // create a method instance with the given number of bytecodes and
     // literals
     int numLiterals = literals.size();
@@ -221,10 +247,6 @@ public class MethodGenerationContext {
 
   public ClassGenerationContext getHolder() {
     return holderGenc;
-  }
-
-  public void setOuter(final MethodGenerationContext mgenc) {
-    outerGenc = mgenc;
   }
 
   public byte addLiteral(final SAbstractObject lit) {
