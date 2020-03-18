@@ -219,12 +219,13 @@ public class Frame {
 
   public void printStackTrace(final SAbstractObject nilObject) {
     // Print a stack trace starting in this frame
-    Universe.print(getMethod().getHolder().getName().getEmbeddedString());
-    Universe.print(getBytecodeIndex() + "@"
-        + getMethod().getSignature().getEmbeddedString());
-    if (hasPreviousFrame(nilObject)) {
-      getPreviousFrame().printStackTrace(nilObject);
+    if (hasPreviousFrame()) {
+      getPreviousFrame().printStackTrace();
     }
+
+    String className = getMethod().getHolder().getName().getEmbeddedString();
+    String methodName = getMethod().getSignature().getEmbeddedString();
+    Universe.println(className + ">>#" + methodName + " @bi: " + bytecodeIndex);
   }
 
   // Private variables holding the stack pointer and the bytecode index
