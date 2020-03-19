@@ -240,15 +240,20 @@ public class Parser {
 
     // Load the super class, if it is not nil (break the dependency cycle)
     if (!superName.getEmbeddedString().equals("nil")) {
-      SClass superClass = universe.loadClass(superName);
-      if (superClass == null) {
-        throw new ParseError(
-            "Was not able to load super class: " + superName.getEmbeddedString(),
-            Symbol.NONE, this);
-      }
-      cgenc.setInstanceFieldsOfSuper(superClass.getInstanceFields());
-      cgenc.setClassFieldsOfSuper(superClass.getSOMClass().getInstanceFields());
+      initalizeFromSuperClass(superName);
     }
+  }
+
+  private void initalizeFromSuperClass(final SSymbol superName)
+      throws ProgramDefinitionError, ParseError {
+    SClass superClass = universe.loadClass(superName);
+    if (superClass == null) {
+      throw new ParseError(
+          "Was not able to load super class: " + superName.getEmbeddedString(),
+          Symbol.NONE, this);
+    }
+    cgenc.setInstanceFieldsOfSuper(superClass.getInstanceFields());
+    cgenc.setClassFieldsOfSuper(superClass.getSOMClass().getInstanceFields());
   }
 
   private boolean symIn(final List<Symbol> ss) {
