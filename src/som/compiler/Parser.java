@@ -382,7 +382,7 @@ public class Parser {
   }
 
   private SSymbol binarySelector() {
-    String s = new String(text);
+    String s = text;
 
     // Checkstyle: stop @formatter:off
     if (accept(Or)) {
@@ -398,7 +398,7 @@ public class Parser {
   }
 
   private String identifier() {
-    String s = new String(text);
+    String s = text;
     boolean isPrimitive = accept(Primitive);
     if (!isPrimitive) {
       expect(Identifier);
@@ -407,7 +407,7 @@ public class Parser {
   }
 
   private String keyword() {
-    String s = new String(text);
+    String s = text;
     expect(Keyword);
 
     return s;
