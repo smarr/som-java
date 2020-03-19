@@ -369,7 +369,7 @@ public class Lexer {
     return bufp >= buf.length();
   }
 
-  private boolean isOperator(final char c) {
+  public static boolean isOperator(final char c) {
     return c == '~' || c == '&' || c == '|' || c == '*' || c == '/'
         || c == '\\' || c == '+' || c == '=' || c == '>' || c == '<'
         || c == ',' || c == '@' || c == '%' || c == '-';

@@ -24,6 +24,7 @@
 
 package som.vmobjects;
 
+import som.compiler.Lexer;
 import som.vm.Universe;
 
 
@@ -66,9 +67,7 @@ public class SSymbol extends SString {
   public boolean isBinarySignature() {
     // Check the individual characters of the string
     for (char c : getEmbeddedString().toCharArray()) {
-      if (c != '~' && c != '&' && c != '|' && c != '*' && c != '/' && c != '@'
-          && c != '+' && c != '-' && c != '=' && c != '>' && c != '<'
-          && c != ',' && c != '%' && c != '\\') {
+      if (!Lexer.isOperator(c)) {
         return false;
       }
     }
