@@ -371,8 +371,7 @@ public class Parser {
     blockContents(mgenc);
     // if no return has been generated so far, we can be sure there was no .
     // terminating the last expression, so the last expression's value must
-    // be
-    // popped off the stack and a ^self be generated
+    // be popped off the stack and a ^self be generated
     if (!mgenc.isFinished()) {
       bcGen.emitPOP(mgenc);
       bcGen.emitPUSHARGUMENT(mgenc, (byte) 0, (byte) 0);
@@ -460,8 +459,7 @@ public class Parser {
       mgenc.setFinished();
     } else if (sym == EndTerm) {
       // it does not matter whether a period has been seen, as the end of
-      // the
-      // method has been found (EndTerm) - so it is safe to emit a "return
+      // the method has been found (EndTerm) - so it is safe to emit a "return
       // self"
       bcGen.emitPUSHARGUMENT(mgenc, (byte) 0, (byte) 0);
       bcGen.emitRETURNLOCAL(mgenc);
