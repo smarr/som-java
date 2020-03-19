@@ -317,7 +317,7 @@ public class Parser {
     pattern(mgenc);
     expect(Equal);
     if (sym == Primitive) {
-      mgenc.setPrimitive(true);
+      mgenc.markAsPrimitive();
       primitiveBlock();
     } else {
       methodBlock(mgenc);
@@ -479,7 +479,7 @@ public class Parser {
       bcGen.emitRETURNLOCAL(mgenc);
     }
 
-    mgenc.setFinished(true);
+    mgenc.markAsFinished();
     accept(Period);
   }
 
@@ -880,7 +880,7 @@ public class Parser {
         bcGen.emitPUSHGLOBAL(mgenc, nilSym);
       }
       bcGen.emitRETURNLOCAL(mgenc);
-      mgenc.setFinished(true);
+      mgenc.markAsFinished();
     }
 
     expect(EndBlock);

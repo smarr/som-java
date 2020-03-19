@@ -189,8 +189,8 @@ public class MethodGenerationContext {
     return maxDepth;
   }
 
-  public void setPrimitive(final boolean prim) {
-    primitive = prim;
+  public void markAsPrimitive() {
+    primitive = true;
   }
 
   public void setSignature(final SSymbol sig) {
@@ -210,8 +210,8 @@ public class MethodGenerationContext {
     return finished;
   }
 
-  public void setFinished(final boolean finished) {
-    this.finished = finished;
+  public void markAsFinished() {
+    this.finished = false;
   }
 
   public boolean addLocalIfAbsent(final String local) {
