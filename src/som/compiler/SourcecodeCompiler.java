@@ -61,8 +61,8 @@ public class SourcecodeCompiler {
     String cnameC = cname.getEmbeddedString();
 
     if (file != cnameC) {
-      throw new IllegalStateException("File name " + file
-          + " does not match class name " + cnameC);
+      throw new ProgramDefinitionError("File name " + fname
+          + " does not match class name (" + cnameC + ") in it.");
     }
 
     return result;
