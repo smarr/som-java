@@ -312,7 +312,7 @@ public class Parser {
     pattern(mgenc);
     expect(Equal);
     if (sym == Primitive) {
-      mgenc.setPrimitive(true);
+      mgenc.markAsPrimitive();
       primitiveBlock();
     } else {
       methodBlock(mgenc);
@@ -468,7 +468,7 @@ public class Parser {
       bcGen.emitRETURNLOCAL(mgenc);
     }
 
-    mgenc.setFinished(true);
+    mgenc.markAsFinished();
     accept(Period);
   }
 
@@ -543,7 +543,7 @@ public class Parser {
         break;
       case NewBlock: {
         MethodGenerationContext bgenc = new MethodGenerationContext(mgenc.getHolder(), mgenc);
-        bgenc.setIsBlockMethod(true);
+        bgenc.markAsBlockMethod();
 
         nestedBlock(bgenc);
 
@@ -864,7 +864,7 @@ public class Parser {
     // in the block was not terminated by ., and can generate a return
     if (!mgenc.isFinished()) {
       bcGen.emitRETURNLOCAL(mgenc);
-      mgenc.setFinished(true);
+      mgenc.markAsFinished();
     }
 
     expect(EndBlock);
