@@ -530,24 +530,21 @@ public class Parser {
   }
 
   private void evaluation(final MethodGenerationContext mgenc) throws ProgramDefinitionError {
-    // single: superSend
-    Single<Boolean> si = new Single<Boolean>(false);
-
-    primary(mgenc, si);
+    boolean superSend = primary(mgenc);
     if (sym == Identifier || sym == Keyword || sym == OperatorSequence
         || symIn(binaryOpSyms)) {
-      messages(mgenc, si);
+      messages(mgenc, superSend);
     }
   }
 
-  private void primary(final MethodGenerationContext mgenc, final Single<Boolean> superSend)
+  private boolean primary(final MethodGenerationContext mgenc)
       throws ProgramDefinitionError {
-    superSend.set(false);
+    boolean superSend = false;
     switch (sym) {
       case Identifier: {
         String v = variable();
         if (v.equals("super")) {
-          superSend.set(true);
+          superSend = true;
           // sends to super push self as the receiver
           v = "self";
         }
@@ -575,37 +572,38 @@ public class Parser {
         literal(mgenc);
         break;
     }
+    return superSend;
   }
 
   private String variable() {
     return identifier();
   }
 
-  private void messages(final MethodGenerationContext mgenc, final Single<Boolean> superSend)
+  private void messages(final MethodGenerationContext mgenc, boolean superSend)
       throws ProgramDefinitionError {
     if (sym == Identifier) {
       do {
         // only the first message in a sequence can be a super send
         unaryMessage(mgenc, superSend);
-        superSend.set(false);
+        superSend = false;
       } while (sym == Identifier);
 
       while (sym == OperatorSequence || symIn(binaryOpSyms)) {
-        binaryMessage(mgenc, new Single<Boolean>(false));
+        binaryMessage(mgenc, false);
       }
 
       if (sym == Keyword) {
-        keywordMessage(mgenc, new Single<Boolean>(false));
+        keywordMessage(mgenc, false);
       }
     } else if (sym == OperatorSequence || symIn(binaryOpSyms)) {
       do {
         // only the first message in a sequence can be a super send
         binaryMessage(mgenc, superSend);
-        superSend.set(false);
+        superSend = false;
       } while (sym == OperatorSequence || symIn(binaryOpSyms));
 
       if (sym == Keyword) {
-        keywordMessage(mgenc, new Single<Boolean>(false));
+        keywordMessage(mgenc, false);
       }
     } else {
       keywordMessage(mgenc, superSend);
@@ -613,11 +611,11 @@ public class Parser {
   }
 
   private void unaryMessage(final MethodGenerationContext mgenc,
-      final Single<Boolean> superSend) {
+      final boolean superSend) {
     SSymbol msg = unarySelector();
     mgenc.addLiteralIfAbsent(msg);
 
-    if (superSend.get()) {
+    if (superSend) {
       bcGen.emitSUPERSEND(mgenc, msg);
     } else {
       bcGen.emitSEND(mgenc, msg);
@@ -625,30 +623,33 @@ public class Parser {
   }
 
   private void binaryMessage(final MethodGenerationContext mgenc,
-      final Single<Boolean> superSend) throws ProgramDefinitionError {
+      final boolean superSend) throws ProgramDefinitionError {
     SSymbol msg = binarySelector();
     mgenc.addLiteralIfAbsent(msg);
 
-    binaryOperand(mgenc, new Single<Boolean>(false));
+    binaryOperand(mgenc);
 
-    if (superSend.get()) {
+    if (superSend) {
       bcGen.emitSUPERSEND(mgenc, msg);
     } else {
       bcGen.emitSEND(mgenc, msg);
     }
   }
 
-  private void binaryOperand(final MethodGenerationContext mgenc,
-      final Single<Boolean> superSend) throws ProgramDefinitionError {
-    primary(mgenc, superSend);
+  private boolean binaryOperand(final MethodGenerationContext mgenc)
+      throws ProgramDefinitionError {
+    boolean superSend = primary(mgenc);
 
     while (sym == Identifier) {
       unaryMessage(mgenc, superSend);
+      superSend = false;
     }
+
+    return superSend;
   }
 
   private void keywordMessage(final MethodGenerationContext mgenc,
-      final Single<Boolean> superSend) throws ProgramDefinitionError {
+      final boolean superSend) throws ProgramDefinitionError {
     StringBuffer kw = new StringBuffer();
     do {
       kw.append(keyword());
@@ -659,7 +660,7 @@ public class Parser {
 
     mgenc.addLiteralIfAbsent(msg);
 
-    if (superSend.get()) {
+    if (superSend) {
       bcGen.emitSUPERSEND(mgenc, msg);
     } else {
       bcGen.emitSEND(mgenc, msg);
@@ -667,15 +668,15 @@ public class Parser {
   }
 
   private void formula(final MethodGenerationContext mgenc) throws ProgramDefinitionError {
-    Single<Boolean> superSend = new Single<Boolean>(false);
-    binaryOperand(mgenc, superSend);
+    boolean superSend = binaryOperand(mgenc);
 
     // only the first message in a sequence can be a super send
     if (sym == OperatorSequence || symIn(binaryOpSyms)) {
       binaryMessage(mgenc, superSend);
     }
+
     while (sym == OperatorSequence || symIn(binaryOpSyms)) {
-      binaryMessage(mgenc, new Single<Boolean>(false));
+      binaryMessage(mgenc, false);
     }
   }
 
