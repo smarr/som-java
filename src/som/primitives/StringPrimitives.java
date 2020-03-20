@@ -118,5 +118,70 @@ public class StringPrimitives extends Primitives {
       }
     });
 
+    installInstancePrimitive(new SPrimitive("isWhiteSpace", universe) {
+
+      @Override
+      public void invoke(final Frame frame, final Interpreter interpreter) {
+        SString self = (SString) frame.pop();
+        String embedded = self.getEmbeddedString();
+
+        for (int i = 0; i < embedded.length(); i++) {
+          if (!Character.isWhitespace(embedded.charAt(i))) {
+            frame.push(universe.falseObject);
+            return;
+          }
+        }
+
+        if (embedded.length() > 0) {
+          frame.push(universe.trueObject);
+        } else {
+          frame.push(universe.falseObject);
+        }
+      }
+    });
+
+    installInstancePrimitive(new SPrimitive("isLetters", universe) {
+
+      @Override
+      public void invoke(final Frame frame, final Interpreter interpreter) {
+        SString self = (SString) frame.pop();
+        String embedded = self.getEmbeddedString();
+
+        for (int i = 0; i < embedded.length(); i++) {
+          if (!Character.isLetter(embedded.charAt(i))) {
+            frame.push(universe.falseObject);
+            return;
+          }
+        }
+
+        if (embedded.length() > 0) {
+          frame.push(universe.trueObject);
+        } else {
+          frame.push(universe.falseObject);
+        }
+      }
+    });
+
+    installInstancePrimitive(new SPrimitive("isDigits", universe) {
+
+      @Override
+      public void invoke(final Frame frame, final Interpreter interpreter) {
+        SString self = (SString) frame.pop();
+        String embedded = self.getEmbeddedString();
+
+        for (int i = 0; i < embedded.length(); i++) {
+          if (!Character.isDigit(embedded.charAt(i))) {
+            frame.push(universe.falseObject);
+            return;
+          }
+        }
+
+        if (embedded.length() > 0) {
+          frame.push(universe.trueObject);
+        } else {
+          frame.push(universe.falseObject);
+        }
+      }
+    });
   }
 }
