@@ -7,7 +7,7 @@
     <property name="classes.dir" value="${build.dir}/classes"/>
     <property name="junit.version" value="4.12" />
 
-    <property name="checkstyle.version" value="8.14" />
+    <property name="checkstyle.version" value="8.36" />
 
     <property environment="env"/>
 
