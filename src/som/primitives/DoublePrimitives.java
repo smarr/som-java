@@ -31,6 +31,7 @@ import som.vmobjects.SAbstractObject;
 import som.vmobjects.SDouble;
 import som.vmobjects.SNumber;
 import som.vmobjects.SPrimitive;
+import som.vmobjects.SString;
 
 
 public class DoublePrimitives extends Primitives {
@@ -160,6 +161,24 @@ public class DoublePrimitives extends Primitives {
       public void invoke(final Frame frame, final Interpreter interpreter) {
         frame.pop();
         frame.push(universe.newDouble(Double.POSITIVE_INFINITY));
+      }
+    });
+
+    installClassPrimitive(new SPrimitive("fromString:", universe) {
+      @Override
+      public void invoke(final Frame frame, final Interpreter interpreter) {
+        SString arg = (SString) frame.pop();
+        frame.pop();
+
+        double d;
+
+        try {
+          d = Double.parseDouble(arg.getEmbeddedString());
+        } catch (NumberFormatException e) {
+          d = Double.NaN;
+        }
+
+        frame.push(universe.newDouble(d));
       }
     });
   }
