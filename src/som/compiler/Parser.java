@@ -79,8 +79,9 @@ public class Parser {
   private final String                 filename;
   private final ClassGenerationContext cgenc;
 
-  private final Lexer             lexer;
-  private final BytecodeGenerator bcGen;
+  private final Lexer lexer;
+
+  private static final BytecodeGenerator bcGen = new BytecodeGenerator();;
 
   private Symbol sym;
   private String text;
@@ -183,7 +184,6 @@ public class Parser {
 
     sym = NONE;
     lexer = new Lexer(reader);
-    bcGen = new BytecodeGenerator();
     nextSym = NONE;
     getSymbolFromLexer();
   }
