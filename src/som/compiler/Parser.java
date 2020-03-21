@@ -511,8 +511,6 @@ public class Parser {
 
   private String assignment(final MethodGenerationContext mgenc) {
     String v = variable();
-    SSymbol var = universe.symbolFor(v);
-    mgenc.addLiteralIfAbsent(var);
 
     expect(Assign);
 
@@ -551,7 +549,6 @@ public class Parser {
         nestedBlock(bgenc);
 
         SMethod blockMethod = bgenc.assembleMethod(universe);
-        mgenc.addLiteral(blockMethod);
         bcGen.emitPUSHBLOCK(mgenc, blockMethod);
         break;
       }
@@ -598,9 +595,8 @@ public class Parser {
   }
 
   private void unaryMessage(final MethodGenerationContext mgenc,
-      final boolean superSend) {
+      final boolean superSend) throws ProgramDefinitionError {
     SSymbol msg = unarySelector();
-    mgenc.addLiteralIfAbsent(msg);
 
     if (superSend) {
       bcGen.emitSUPERSEND(mgenc, msg);
@@ -612,8 +608,6 @@ public class Parser {
   private void binaryMessage(final MethodGenerationContext mgenc,
       final boolean superSend) throws ProgramDefinitionError {
     SSymbol msg = binarySelector();
-    mgenc.addLiteralIfAbsent(msg);
-
     binaryOperand(mgenc);
 
     if (superSend) {
@@ -645,8 +639,6 @@ public class Parser {
 
     SSymbol msg = universe.symbolFor(kw.toString());
 
-    mgenc.addLiteralIfAbsent(msg);
-
     if (superSend) {
       bcGen.emitSUPERSEND(mgenc, msg);
     } else {
@@ -673,7 +665,7 @@ public class Parser {
     expect(EndTerm);
   }
 
-  private void literal(final MethodGenerationContext mgenc) throws ParseError {
+  private void literal(final MethodGenerationContext mgenc) throws ProgramDefinitionError {
     switch (sym) {
       case Pound: {
         peekForNextSymbolFromLexerIfNecessary();
@@ -695,7 +687,8 @@ public class Parser {
     }
   }
 
-  private void literalNumber(final MethodGenerationContext mgenc) throws ParseError {
+  private void literalNumber(final MethodGenerationContext mgenc)
+      throws ProgramDefinitionError {
     SAbstractObject lit;
 
     if (sym == Minus) {
@@ -703,7 +696,6 @@ public class Parser {
     } else {
       lit = literalDecimal(false);
     }
-    mgenc.addLiteralIfAbsent(lit);
     bcGen.emitPUSHCONSTANT(mgenc, lit);
   }
 
@@ -761,7 +753,7 @@ public class Parser {
     }
   }
 
-  private void literalSymbol(final MethodGenerationContext mgenc) {
+  private void literalSymbol(final MethodGenerationContext mgenc) throws ProgramDefinitionError {
     SSymbol symb;
     expect(Pound);
     if (sym == STString) {
@@ -771,20 +763,18 @@ public class Parser {
       symb = selector();
     }
 
-    mgenc.addLiteralIfAbsent(symb);
     bcGen.emitPUSHCONSTANT(mgenc, symb);
   }
 
-  private void literalString(final MethodGenerationContext mgenc) {
+  private void literalString(final MethodGenerationContext mgenc) throws ProgramDefinitionError {
     String s = string();
 
     SString str = universe.newString(s);
-    mgenc.addLiteralIfAbsent(str);
 
     bcGen.emitPUSHCONSTANT(mgenc, str);
   }
 
-  private void literalArray(final MethodGenerationContext mgenc) throws ParseError {
+  private void literalArray(final MethodGenerationContext mgenc) throws ProgramDefinitionError {
     expect(Pound);
     expect(NewTerm);
 
@@ -793,9 +783,8 @@ public class Parser {
     SSymbol newMessage = universe.symbolFor("new:");
     SSymbol atPutMessage = universe.symbolFor("at:put:");
 
-    mgenc.addLiteralIfAbsent(arrayClassName);
-    mgenc.addLiteralIfAbsent(newMessage);
-    mgenc.addLiteralIfAbsent(atPutMessage);
+    // need the array size at a know idx so that we don't need a second pass
+    // over the array elements
     final byte arraySizeLiteralIndex = mgenc.addLiteral(arraySizePlaceholder);
 
     // create empty array
@@ -807,7 +796,6 @@ public class Parser {
 
     while (sym != EndTerm) {
       SInteger pushIndex = universe.newInteger(i);
-      mgenc.addLiteralIfAbsent(pushIndex);
       bcGen.emitPUSHCONSTANT(mgenc, pushIndex);
       literal(mgenc);
       bcGen.emitSEND(mgenc, atPutMessage);
@@ -886,7 +874,7 @@ public class Parser {
   }
 
   private void genPushVariable(final MethodGenerationContext mgenc,
-      final String var) {
+      final String var) throws ProgramDefinitionError {
     // The purpose of this function is to find out whether the variable to be
     // pushed on the stack is a local variable, argument, or object field.
     // This is done by examining all available lexical contexts, starting with
@@ -906,11 +894,9 @@ public class Parser {
       SSymbol identifier = universe.symbolFor(var);
       if (mgenc.hasField(identifier)) {
         SSymbol fieldName = identifier;
-        mgenc.addLiteralIfAbsent(fieldName);
         bcGen.emitPUSHFIELD(mgenc, fieldName);
       } else {
         SSymbol global = identifier;
-        mgenc.addLiteralIfAbsent(global);
         bcGen.emitPUSHGLOBAL(mgenc, global);
       }
     }

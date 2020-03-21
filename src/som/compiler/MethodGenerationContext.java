@@ -232,13 +232,24 @@ public class MethodGenerationContext {
     finished = true;
   }
 
-  public boolean addLiteralIfAbsent(final SAbstractObject lit) {
-    if (literals.contains(lit)) {
-      return false;
+  public byte addLiteralIfAbsent(final SAbstractObject lit) throws ProgramDefinitionError {
+    int idx = literals.indexOf(lit);
+    if (idx != -1) {
+      assert idx <= Byte.MAX_VALUE;
+      return (byte) idx;
+    }
+
+    idx = literals.size();
+    if (literals.size() > Byte.MAX_VALUE) {
+      String method =
+          holderGenc.getName().getEmbeddedString() +
+          ">>#" + signature.getEmbeddedString();
+      throw new ProgramDefinitionError(method + " has too many literals. SOM currently supports only 128.");
     }
 
     literals.add(lit);
-    return true;
+    assert idx <= Byte.MAX_VALUE;
+    return (byte) idx;
   }
 
   public void markAsBlockMethod() {
@@ -296,10 +307,6 @@ public class MethodGenerationContext {
 
   public void addBytecode(final byte code) {
     bytecode.add(code);
-  }
-
-  public byte findLiteralIndex(final SAbstractObject lit) {
-    return (byte) literals.indexOf(lit);
   }
 
   public MethodGenerationContext getOuter() {

@@ -25,7 +25,21 @@
 
 package som.compiler;
 
-import static som.interpreter.Bytecodes.*;
+import static som.interpreter.Bytecodes.DUP;
+import static som.interpreter.Bytecodes.POP;
+import static som.interpreter.Bytecodes.POP_ARGUMENT;
+import static som.interpreter.Bytecodes.POP_FIELD;
+import static som.interpreter.Bytecodes.POP_LOCAL;
+import static som.interpreter.Bytecodes.PUSH_ARGUMENT;
+import static som.interpreter.Bytecodes.PUSH_BLOCK;
+import static som.interpreter.Bytecodes.PUSH_CONSTANT;
+import static som.interpreter.Bytecodes.PUSH_FIELD;
+import static som.interpreter.Bytecodes.PUSH_GLOBAL;
+import static som.interpreter.Bytecodes.PUSH_LOCAL;
+import static som.interpreter.Bytecodes.RETURN_LOCAL;
+import static som.interpreter.Bytecodes.RETURN_NON_LOCAL;
+import static som.interpreter.Bytecodes.SEND;
+import static som.interpreter.Bytecodes.SUPER_SEND;
 
 import som.vmobjects.SAbstractObject;
 import som.vmobjects.SMethod;
@@ -55,8 +69,8 @@ public class BytecodeGenerator {
     emit1(mgenc, DUP);
   }
 
-  public void emitPUSHBLOCK(final MethodGenerationContext mgenc, final SMethod blockMethod) {
-    emit2(mgenc, PUSH_BLOCK, mgenc.findLiteralIndex(blockMethod));
+  public void emitPUSHBLOCK(final MethodGenerationContext mgenc, final SMethod blockMethod) throws ProgramDefinitionError {
+    emit2(mgenc, PUSH_BLOCK, mgenc.addLiteralIfAbsent(blockMethod));
   }
 
   public void emitPUSHLOCAL(final MethodGenerationContext mgenc, final byte idx,
@@ -70,8 +84,8 @@ public class BytecodeGenerator {
     emit2(mgenc, PUSH_FIELD, mgenc.getFieldIndex(fieldName));
   }
 
-  public void emitPUSHGLOBAL(final MethodGenerationContext mgenc, final SSymbol global) {
-    emit2(mgenc, PUSH_GLOBAL, mgenc.findLiteralIndex(global));
+  public void emitPUSHGLOBAL(final MethodGenerationContext mgenc, final SSymbol global) throws ProgramDefinitionError {
+    emit2(mgenc, PUSH_GLOBAL, mgenc.addLiteralIfAbsent(global));
   }
 
   public void emitPOPARGUMENT(final MethodGenerationContext mgenc, final byte idx,
@@ -89,17 +103,17 @@ public class BytecodeGenerator {
     emit2(mgenc, POP_FIELD, mgenc.getFieldIndex(fieldName));
   }
 
-  public void emitSUPERSEND(final MethodGenerationContext mgenc, final SSymbol msg) {
-    emit2(mgenc, SUPER_SEND, mgenc.findLiteralIndex(msg));
+  public void emitSUPERSEND(final MethodGenerationContext mgenc, final SSymbol msg) throws ProgramDefinitionError {
+    emit2(mgenc, SUPER_SEND, mgenc.addLiteralIfAbsent(msg));
   }
 
-  public void emitSEND(final MethodGenerationContext mgenc, final SSymbol msg) {
-    emit2(mgenc, SEND, mgenc.findLiteralIndex(msg));
+  public void emitSEND(final MethodGenerationContext mgenc, final SSymbol msg) throws ProgramDefinitionError {
+    emit2(mgenc, SEND, mgenc.addLiteralIfAbsent(msg));
   }
 
   public void emitPUSHCONSTANT(final MethodGenerationContext mgenc,
-      final SAbstractObject lit) {
-    emit2(mgenc, PUSH_CONSTANT, mgenc.findLiteralIndex(lit));
+      final SAbstractObject lit) throws ProgramDefinitionError {
+    emit2(mgenc, PUSH_CONSTANT, mgenc.addLiteralIfAbsent(lit));
   }
 
   public void emitPUSHCONSTANT(final MethodGenerationContext mgenc, final byte literalIndex) {
