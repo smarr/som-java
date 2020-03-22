@@ -239,6 +239,11 @@ public class MethodGenerationContext {
       return (byte) idx;
     }
 
+    return addLiteral(lit);
+  }
+
+  public byte addLiteral(final SAbstractObject lit) throws ProgramDefinitionError {
+    int idx;
     idx = literals.size();
     if (literals.size() > Byte.MAX_VALUE) {
       String method =
@@ -258,13 +263,6 @@ public class MethodGenerationContext {
 
   public ClassGenerationContext getHolder() {
     return holderGenc;
-  }
-
-  public byte addLiteral(final SAbstractObject lit) {
-    int i = literals.size();
-    assert i < 128;
-    literals.add(lit);
-    return (byte) i;
   }
 
   public void updateLiteral(final SAbstractObject oldVal, final byte index,
