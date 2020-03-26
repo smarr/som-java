@@ -24,6 +24,11 @@
 
 package som.primitives;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import som.compiler.ProgramDefinitionError;
 import som.interpreter.Frame;
 import som.interpreter.Interpreter;
@@ -108,6 +113,25 @@ public class SystemPrimitives extends Primitives {
       }
     });
 
+    installInstancePrimitive(new SPrimitive("errorPrint:", universe) {
+
+      @Override
+      public void invoke(final Frame frame, final Interpreter interpreter) {
+        SString argument = (SString) frame.pop();
+        Universe.errorPrint(argument.getEmbeddedString());
+      }
+    });
+
+    installInstancePrimitive(new SPrimitive("errorPrintln:", universe) {
+
+      @Override
+      public void invoke(final Frame frame, final Interpreter interpreter) {
+        SString argument = (SString) frame.pop();
+        Universe.errorPrintln(argument.getEmbeddedString());
+      }
+    });
+
+
     startMicroTime = System.nanoTime() / 1000L;
     startTime = startMicroTime / 1000L;
     installInstancePrimitive(new SPrimitive("time", universe) {
@@ -140,6 +164,32 @@ public class SystemPrimitives extends Primitives {
       }
     });
 
+    installInstancePrimitive(new SPrimitive("loadFile:", universe) {
+
+      @Override
+      public void invoke(final Frame frame, final Interpreter interpreter) {
+        SString fileName = (SString) frame.pop();
+        frame.pop();
+
+        Path p = Paths.get(fileName.getEmbeddedString());
+        try {
+          String content = new String(Files.readAllBytes(p));
+          frame.push(universe.newString(content));
+        } catch (IOException e) {
+          frame.push(universe.nilObject);
+        }
+      }
+    });
+
+    installInstancePrimitive(new SPrimitive("printStackTrace", universe) {
+
+      @Override
+      public void invoke(final Frame frame, final Interpreter interpreter) {
+        frame.pop();
+        frame.printStackTrace();
+        frame.push(universe.trueObject);
+      }
+    });
   }
 
   private long startTime;
