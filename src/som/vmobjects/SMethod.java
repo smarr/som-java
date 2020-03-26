@@ -50,14 +50,11 @@ public class SMethod extends SAbstractObject implements SInvokable {
     return false;
   }
 
-  public SInteger getNumberOfLocals() {
-    // Get the number of locals (converted to a Java integer)
+  public int getNumberOfLocals() {
     return numberOfLocals;
   }
 
-  public SInteger getMaximumNumberOfStackElements() {
-    // Get the maximum number of stack elements (converted to a Java
-    // integer)
+  public int getMaximumNumberOfStackElements() {
     return maximumNumberOfStackElements;
   }
 
@@ -68,7 +65,6 @@ public class SMethod extends SAbstractObject implements SInvokable {
 
   @Override
   public SClass getHolder() {
-    // Get the holder of this method by reading the field with holder index
     return holder;
   }
 
@@ -90,7 +86,7 @@ public class SMethod extends SAbstractObject implements SInvokable {
 
   public SAbstractObject getConstant(final int bytecodeIndex) {
     // Get the constant associated to a given bytecode index
-    return literals[getBytecode(bytecodeIndex + 1)];
+    return literals[bytecodes[bytecodeIndex + 1]];
   }
 
   public int getNumberOfArguments() {
@@ -155,6 +151,6 @@ public class SMethod extends SAbstractObject implements SInvokable {
   private SClass        holder;
 
   // Meta information
-  private final SInteger numberOfLocals;
-  private final SInteger maximumNumberOfStackElements;
+  private final int numberOfLocals;
+  private final int maximumNumberOfStackElements;
 }
