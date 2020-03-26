@@ -24,6 +24,11 @@
 
 package som.primitives;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import som.compiler.ProgramDefinitionError;
 import som.interpreter.Frame;
 import som.interpreter.Interpreter;
@@ -42,9 +47,11 @@ public class SystemPrimitives extends Primitives {
     super(universe);
   }
 
+  @Override
   public void installPrimitives() {
     installInstancePrimitive(new SPrimitive("load:", universe) {
 
+      @Override
       public void invoke(final Frame frame, final Interpreter interpreter) {
         SSymbol argument = (SSymbol) frame.pop();
         frame.pop(); // not required
@@ -60,6 +67,7 @@ public class SystemPrimitives extends Primitives {
 
     installInstancePrimitive(new SPrimitive("exit:", universe) {
 
+      @Override
       public void invoke(final Frame frame, final Interpreter interpreter) {
         SInteger error = (SInteger) frame.pop();
         universe.exit(error.getEmbeddedInteger());
@@ -68,6 +76,7 @@ public class SystemPrimitives extends Primitives {
 
     installInstancePrimitive(new SPrimitive("global:", universe) {
 
+      @Override
       public void invoke(final Frame frame, final Interpreter interpreter) {
         SSymbol argument = (SSymbol) frame.pop();
         frame.pop(); // not required
@@ -78,6 +87,7 @@ public class SystemPrimitives extends Primitives {
 
     installInstancePrimitive(new SPrimitive("global:put:", universe) {
 
+      @Override
       public void invoke(final Frame frame, final Interpreter interpreter) {
         SAbstractObject value = frame.pop();
         SSymbol argument = (SSymbol) frame.pop();
@@ -87,6 +97,7 @@ public class SystemPrimitives extends Primitives {
 
     installInstancePrimitive(new SPrimitive("printString:", universe) {
 
+      @Override
       public void invoke(final Frame frame, final Interpreter interpreter) {
         SString argument = (SString) frame.pop();
         Universe.print(argument.getEmbeddedString());
@@ -95,8 +106,27 @@ public class SystemPrimitives extends Primitives {
 
     installInstancePrimitive(new SPrimitive("printNewline", universe) {
 
+      @Override
       public void invoke(final Frame frame, final Interpreter interpreter) {
         Universe.println("");
+      }
+    });
+
+    installInstancePrimitive(new SPrimitive("errorPrint:", universe) {
+
+      @Override
+      public void invoke(final Frame frame, final Interpreter interpreter) {
+        SString argument = (SString) frame.pop();
+        Universe.errorPrint(argument.getEmbeddedString());
+      }
+    });
+
+    installInstancePrimitive(new SPrimitive("errorPrintln:", universe) {
+
+      @Override
+      public void invoke(final Frame frame, final Interpreter interpreter) {
+        SString argument = (SString) frame.pop();
+        Universe.errorPrintln(argument.getEmbeddedString());
       }
     });
 
@@ -104,6 +134,7 @@ public class SystemPrimitives extends Primitives {
     startTime = startMicroTime / 1000L;
     installInstancePrimitive(new SPrimitive("time", universe) {
 
+      @Override
       public void invoke(final Frame frame, final Interpreter interpreter) {
         frame.pop(); // ignore
         int time = (int) (System.currentTimeMillis() - startTime);
@@ -113,6 +144,7 @@ public class SystemPrimitives extends Primitives {
 
     installInstancePrimitive(new SPrimitive("ticks", universe) {
 
+      @Override
       public void invoke(final Frame frame, final Interpreter interpreter) {
         frame.pop(); // ignore
         int time = (int) (System.nanoTime() / 1000L - startMicroTime);
@@ -122,6 +154,7 @@ public class SystemPrimitives extends Primitives {
 
     installInstancePrimitive(new SPrimitive("fullGC", universe) {
 
+      @Override
       public void invoke(final Frame frame, final Interpreter interpreter) {
         frame.pop();
         System.gc();
@@ -129,6 +162,32 @@ public class SystemPrimitives extends Primitives {
       }
     });
 
+    installInstancePrimitive(new SPrimitive("loadFile:", universe) {
+
+      @Override
+      public void invoke(final Frame frame, final Interpreter interpreter) {
+        SString fileName = (SString) frame.pop();
+        frame.pop();
+
+        Path p = Paths.get(fileName.getEmbeddedString());
+        try {
+          String content = new String(Files.readAllBytes(p));
+          frame.push(universe.newString(content));
+        } catch (IOException e) {
+          frame.push(universe.nilObject);
+        }
+      }
+    });
+
+    installInstancePrimitive(new SPrimitive("printStackTrace", universe) {
+
+      @Override
+      public void invoke(final Frame frame, final Interpreter interpreter) {
+        frame.pop();
+        frame.printStackTrace();
+        frame.push(universe.trueObject);
+      }
+    });
   }
 
   private long startTime;
