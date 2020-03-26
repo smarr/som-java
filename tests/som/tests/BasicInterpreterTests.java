@@ -133,7 +133,7 @@ public class BasicInterpreterTests {
     this.resultType = resultType;
   }
 
-  protected void assertEqualsSOMValue(final Object expectedResult, final Object actualResult) {
+  protected void assertExpectedEqualsSOMValue(final Object actualResult) {
     if (resultType == SInteger.class) {
       long expected = (int) expectedResult;
       long actual = ((SInteger) actualResult).getEmbeddedInteger();
@@ -171,7 +171,7 @@ public class BasicInterpreterTests {
 
     try {
       Object actualResult = u.interpret(testClass, testSelector);
-      assertEqualsSOMValue(expectedResult, actualResult);
+      assertExpectedEqualsSOMValue(actualResult);
     } catch (ProgramDefinitionError e) {
       if (resultType != ProgramDefinitionError.class) {
         throw e;
