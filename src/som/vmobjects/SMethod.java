@@ -81,7 +81,7 @@ public class SMethod extends SAbstractObject implements SInvokable {
   }
 
   @Override
-  public void setHolder(SClass value) {
+  public void setHolder(final SClass value) {
     holder = value;
 
     // Make sure all nested invokables have the same holder
@@ -92,7 +92,7 @@ public class SMethod extends SAbstractObject implements SInvokable {
     }
   }
 
-  public SAbstractObject getConstant(int bytecodeIndex) {
+  public SAbstractObject getConstant(final int bytecodeIndex) {
     // Get the constant associated to a given bytecode index
     return literals[getBytecode(bytecodeIndex + 1)];
   }
@@ -107,12 +107,12 @@ public class SMethod extends SAbstractObject implements SInvokable {
     return bytecodes.length;
   }
 
-  public byte getBytecode(int index) {
+  public byte getBytecode(final int index) {
     // Get the bytecode at the given index
     return bytecodes[index];
   }
 
-  public void setBytecode(int index, byte value) {
+  public void setBytecode(final int index, final byte value) {
     // Set the bytecode at the given index to the given value
     bytecodes[index] = value;
   }
@@ -130,21 +130,21 @@ public class SMethod extends SAbstractObject implements SInvokable {
         + getSignature().toString() + ")";
   }
 
-  public SClass getInlineCacheClass(int bytecodeIndex) {
+  public SClass getInlineCacheClass(final int bytecodeIndex) {
     return inlineCacheClass[bytecodeIndex];
   }
 
-  public SInvokable getInlineCacheInvokable(int bytecodeIndex) {
+  public SInvokable getInlineCacheInvokable(final int bytecodeIndex) {
     return inlineCacheInvokable[bytecodeIndex];
   }
 
-  public void setInlineCache(int bytecodeIndex, SClass receiverClass, SInvokable invokable) {
+  public void setInlineCache(final int bytecodeIndex, final SClass receiverClass, final SInvokable invokable) {
     inlineCacheClass[bytecodeIndex] = receiverClass;
     inlineCacheInvokable[bytecodeIndex] = invokable;
   }
 
   @Override
-  public SClass getSOMClass(Universe universe) {
+  public SClass getSOMClass(final Universe universe) {
     return universe.methodClass;
   }
 
