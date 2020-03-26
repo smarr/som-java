@@ -149,8 +149,7 @@ public class Frame {
     localOffset = getMethod().getNumberOfArguments();
 
     // Set the stack pointer to its initial value thereby clearing the stack
-    stackPointer =
-        (int) (localOffset + getMethod().getNumberOfLocals().getEmbeddedInteger() - 1);
+    stackPointer = localOffset + getMethod().getNumberOfLocals() - 1;
   }
 
   public int getBytecodeIndex() {
