@@ -482,10 +482,6 @@ public class Universe {
 
     Frame result = new Frame(nilObject, previousFrame, context, method, length);
 
-    // Reset the stack pointer and the bytecode index
-    result.resetStackPointer();
-    result.setBytecodeIndex(0);
-
     // Return the freshly allocated frame
     return result;
   }
