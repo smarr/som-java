@@ -29,6 +29,7 @@ import java.util.List;
 
 import som.vm.Universe;
 import som.vmobjects.SArray;
+import som.vmobjects.SClass;
 import som.vmobjects.SInvokable;
 import som.vmobjects.SSymbol;
 
@@ -111,26 +112,26 @@ public class ClassGenerationContext {
     return classSide;
   }
 
-  public som.vmobjects.SClass assemble() throws ProgramDefinitionError {
+  public SClass assemble() throws ProgramDefinitionError {
     // build class class name
     String ccname = name.getEmbeddedString() + " class";
 
     // Load the super class
-    som.vmobjects.SClass superClass = universe.loadClass(superName);
+    SClass superClass = universe.loadClass(superName);
 
     // Allocate the class of the resulting class
-    som.vmobjects.SClass resultClass = universe.newClass(universe.metaclassClass);
+    SClass resultClass = universe.newClass(universe.metaclassClass);
 
     // Initialize the class of the resulting class
     resultClass.setInstanceFields(universe.newArray(classFields));
     resultClass.setInstanceInvokables(universe.newArray(classMethods));
     resultClass.setName(universe.symbolFor(ccname));
 
-    som.vmobjects.SClass superMClass = superClass.getSOMClass();
+    SClass superMClass = superClass.getSOMClass();
     resultClass.setSuperClass(superMClass);
 
     // Allocate the resulting class
-    som.vmobjects.SClass result = universe.newClass(resultClass);
+    SClass result = universe.newClass(resultClass);
 
     // Initialize the resulting class
     result.setName(name);
@@ -141,13 +142,14 @@ public class ClassGenerationContext {
     return result;
   }
 
-  public void assembleSystemClass(final som.vmobjects.SClass systemClass) {
+  public SClass assembleSystemClass(final SClass systemClass) {
     systemClass.setInstanceInvokables(universe.newArray(instanceMethods));
     systemClass.setInstanceFields(universe.newArray(instanceFields));
     // class-bound == class-instance-bound
-    som.vmobjects.SClass superMClass = systemClass.getSOMClass();
+    SClass superMClass = systemClass.getSOMClass();
     superMClass.setInstanceInvokables(universe.newArray(classMethods));
     superMClass.setInstanceFields(universe.newArray(classFields));
+    return systemClass;
   }
 
 }
