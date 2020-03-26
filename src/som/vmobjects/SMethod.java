@@ -33,9 +33,9 @@ import som.vm.Universe;
 
 public class SMethod extends SAbstractObject implements SInvokable {
 
-  public SMethod(SObject nilObject, SSymbol signature, int numberOfBytecodes,
-      SInteger numberOfLocals, SInteger maxNumStackElements,
-      int numberOfLiterals, List<SAbstractObject> literals) {
+  public SMethod(final SSymbol signature, final int numberOfBytecodes,
+      final int numberOfLocals, final int maxNumStackElements,
+      final List<SAbstractObject> literals) {
     this.signature = signature;
     this.numberOfLocals = numberOfLocals;
     this.bytecodes = new byte[numberOfBytecodes];
