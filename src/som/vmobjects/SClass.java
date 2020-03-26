@@ -50,10 +50,6 @@ public class SClass extends SObject {
     this.universe = universe;
   }
 
-  public Universe getUniverse() {
-    return universe;
-  }
-
   public SObject getSuperClass() {
     // Get the super class by reading the field with super class index
     return superclass;
@@ -237,21 +233,6 @@ public class SClass extends SObject {
     } else {
       return 0;
     }
-  }
-
-  public void setInstanceFields(final String[] fields) {
-    // Allocate an array of the right size
-    SArray instanceFields = universe.newArray(fields.length);
-
-    // Iterate through all the given fields
-    for (int i = 0; i < fields.length; i++) {
-      // Insert the symbol corresponding to the given field string in the
-      // array
-      instanceFields.setIndexableField(i, universe.symbolFor(fields[i]));
-    }
-
-    // Set the instance fields of this class to the new array
-    setInstanceFields(instanceFields);
   }
 
   public boolean hasPrimitives() {
