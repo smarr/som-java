@@ -30,6 +30,7 @@ import java.io.StringReader;
 
 import som.vm.Universe;
 import som.vmobjects.SClass;
+import som.vmobjects.SSymbol;
 
 
 public class SourcecodeCompiler {
@@ -48,16 +49,16 @@ public class SourcecodeCompiler {
         universe);
   }
 
-  private som.vmobjects.SClass compile(final String path, final String file,
-      final som.vmobjects.SClass systemClass, final Universe universe)
+  private SClass compile(final String path, final String file,
+      final SClass systemClass, final Universe universe)
       throws IOException, ProgramDefinitionError {
     String fname = path + Universe.fileSeparator + file + ".som";
 
     parser = new Parser(new FileReader(fname), universe, fname);
 
-    som.vmobjects.SClass result = compile(systemClass, universe);
+    SClass result = compile(systemClass);
 
-    som.vmobjects.SSymbol cname = result.getName();
+    SSymbol cname = result.getName();
     String cnameC = cname.getEmbeddedString();
 
     if (file != cnameC) {
@@ -68,28 +69,22 @@ public class SourcecodeCompiler {
     return result;
   }
 
-  private som.vmobjects.SClass compileClassString(final String stream,
-      final som.vmobjects.SClass systemClass, final Universe universe)
+  private SClass compileClassString(final String stream,
+      final SClass systemClass, final Universe universe)
       throws ProgramDefinitionError {
     parser = new Parser(new StringReader(stream), universe, "$string$");
 
-    som.vmobjects.SClass result = compile(systemClass, universe);
+    SClass result = compile(systemClass);
     return result;
   }
 
-  private som.vmobjects.SClass compile(final som.vmobjects.SClass systemClass,
-      final Universe universe) throws ProgramDefinitionError {
-
-    som.vmobjects.SClass result = systemClass;
+  private SClass compile(final SClass systemClass) throws ProgramDefinitionError {
     ClassGenerationContext cgc = parser.classdef();
 
     if (systemClass == null) {
-      result = cgc.assemble();
+      return cgc.assemble();
     } else {
-      cgc.assembleSystemClass(result);
+      return cgc.assembleSystemClass(systemClass);
     }
-
-    return result;
   }
-
 }
