@@ -56,6 +56,10 @@ public class Frame {
     for (int i = 0; i < stackElements; i++) {
       stack[i] = nilObject;
     }
+
+    // Reset the stack pointer and the bytecode index
+    resetStackPointer();
+    bytecodeIndex = 0;
   }
 
   public Frame getPreviousFrame() {
