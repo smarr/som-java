@@ -64,7 +64,7 @@ public class SystemPrimitives extends Primitives {
 
       @Override
       public void invoke(final Frame frame, final Interpreter interpreter) {
-        frame.printStackTrace(universe.nilObject);
+        frame.printStackTrace();
         SInteger error = (SInteger) frame.pop();
         universe.exit(error.getEmbeddedInteger());
       }

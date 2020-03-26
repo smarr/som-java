@@ -70,12 +70,12 @@ public class Frame {
     previousFrame = null;
   }
 
-  public boolean hasPreviousFrame(final SAbstractObject nilObject) {
+  public boolean hasPreviousFrame() {
     return previousFrame != null;
   }
 
-  public boolean isBootstrapFrame(final SAbstractObject nilObject) {
-    return !hasPreviousFrame(nilObject);
+  public boolean isBootstrapFrame() {
+    return !hasPreviousFrame();
   }
 
   public Frame getContext() {
@@ -103,7 +103,7 @@ public class Frame {
     return frame;
   }
 
-  public Frame getOuterContext(final SAbstractObject nilObject) {
+  public Frame getOuterContext() {
     // Compute the outer context of this frame
     Frame frame = this;
 
@@ -149,8 +149,7 @@ public class Frame {
     localOffset = getMethod().getNumberOfArguments();
 
     // Set the stack pointer to its initial value thereby clearing the stack
-    setStackPointer(localOffset
-        + (int) getMethod().getNumberOfLocals().getEmbeddedInteger() - 1);
+    stackPointer = localOffset + getMethod().getNumberOfLocals() - 1;
   }
 
   public int getBytecodeIndex() {
@@ -221,7 +220,7 @@ public class Frame {
     }
   }
 
-  public void printStackTrace(final SAbstractObject nilObject) {
+  public void printStackTrace() {
     // Print a stack trace starting in this frame
     if (hasPreviousFrame()) {
       getPreviousFrame().printStackTrace();

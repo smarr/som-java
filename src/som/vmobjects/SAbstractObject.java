@@ -59,7 +59,7 @@ public abstract class SAbstractObject {
     int numberOfArguments = selector.getNumberOfSignatureArguments();
 
     Frame frame = interpreter.getFrame();
-    frame.printStackTrace(universe.nilObject);
+    frame.printStackTrace();
 
     // Allocate an array with enough room to hold all arguments
     // except for the receiver, which is passed implicitly, as receiver of #dnu.
