@@ -122,26 +122,16 @@ public class Frame {
 
   public SAbstractObject pop() {
     // Pop an object from the expression stack and return it
-    int stackPointer = getStackPointer();
-    setStackPointer(stackPointer - 1);
-    return stack[stackPointer];
+    int sp = stackPointer;
+    stackPointer -= 1;
+    return stack[sp];
   }
 
   public void push(final SAbstractObject value) {
     // Push an object onto the expression stack
-    int stackPointer = getStackPointer() + 1;
-    stack[stackPointer] = value;
-    setStackPointer(stackPointer);
-  }
-
-  public int getStackPointer() {
-    // Get the current stack pointer for this frame
-    return stackPointer;
-  }
-
-  public void setStackPointer(final int value) {
-    // Set the current stack pointer for this frame
-    stackPointer = value;
+    int sp = stackPointer + 1;
+    stack[sp] = value;
+    stackPointer = sp;
   }
 
   public void resetStackPointer() {
@@ -165,13 +155,13 @@ public class Frame {
   public SAbstractObject getStackElement(final int index) {
     // Get the stack element with the given index
     // (an index of zero yields the top element)
-    return stack[getStackPointer() - index];
+    return stack[stackPointer - index];
   }
 
   public void setStackElement(final int index, final SAbstractObject value) {
     // Set the stack element with the given index to the given value
     // (an index of zero yields the top element)
-    stack[getStackPointer() - index] = value;
+    stack[stackPointer - index] = value;
   }
 
   private SAbstractObject getLocal(final int index) {

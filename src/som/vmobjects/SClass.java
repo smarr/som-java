@@ -226,7 +226,7 @@ public class SClass extends SObject {
 
   public int getNumberOfInstanceFields() {
     // Get the total number of instance fields in this class
-    return getInstanceFields().getNumberOfIndexableFields()
+    return instanceFields.getNumberOfIndexableFields()
         + getNumberOfSuperInstanceFields();
   }
 
