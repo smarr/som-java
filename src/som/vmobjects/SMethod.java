@@ -42,15 +42,7 @@ public class SMethod extends SAbstractObject implements SInvokable {
     inlineCacheClass = new SClass[numberOfBytecodes];
     inlineCacheInvokable = new SInvokable[numberOfBytecodes];
     maximumNumberOfStackElements = maxNumStackElements;
-    this.literals = new SAbstractObject[numberOfLiterals];
-
-    // copy literals into the method
-    if (numberOfLiterals > 0) {
-      int i = 0;
-      for (SAbstractObject l : literals) {
-        this.literals[i++] = l;
-      }
-    }
+    this.literals = literals == null ? null : literals.toArray(new SAbstractObject[literals.size()]);
   }
 
   @Override
@@ -83,6 +75,10 @@ public class SMethod extends SAbstractObject implements SInvokable {
   @Override
   public void setHolder(final SClass value) {
     holder = value;
+
+    if (literals == null) {
+      return;
+    }
 
     // Make sure all nested invokables have the same holder
     for (int i = 0; i < literals.length; i++) {
