@@ -155,18 +155,7 @@ public class Interpreter {
     SClass holderSuper = (SClass) getMethod().getHolder().getSuperClass();
     SInvokable invokable = holderSuper.lookupInvokable(signature);
 
-    if (invokable != null) {
-      // Invoke the invokable in the current frame
-      invokable.invoke(getFrame(), this);
-    } else {
-      // Compute the number of arguments
-      int numberOfArguments = signature.getNumberOfSignatureArguments();
-
-      // Compute the receiver
-      SAbstractObject receiver = getFrame().getStackElement(numberOfArguments - 1);
-
-      receiver.sendDoesNotUnderstand(signature, universe, this);
-    }
+    activateOrDnu(signature, invokable);
   }
 
   private void doReturnLocal() {
@@ -397,6 +386,10 @@ public class Interpreter {
       }
     }
 
+    activateOrDnu(selector, invokable);
+  }
+
+  public void activateOrDnu(final SSymbol selector, final SInvokable invokable) {
     if (invokable != null) {
       // Invoke the invokable in the current frame
       invokable.invoke(getFrame(), this);
