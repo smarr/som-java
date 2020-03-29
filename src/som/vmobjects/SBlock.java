@@ -50,14 +50,14 @@ public class SBlock extends SAbstractObject {
     return blockClass;
   }
 
-  public static SPrimitive getEvaluationPrimitive(int numberOfArguments,
+  public static SPrimitive getEvaluationPrimitive(final int numberOfArguments,
       final Universe universe) {
     return new Evaluation(numberOfArguments, universe);
   }
 
   public static class Evaluation extends SPrimitive {
 
-    public Evaluation(int numberOfArguments, final Universe universe) {
+    public Evaluation(final int numberOfArguments, final Universe universe) {
       super(computeSignatureString(numberOfArguments), universe);
       this.numberOfArguments = numberOfArguments;
     }
@@ -76,9 +76,9 @@ public class SBlock extends SAbstractObject {
       newFrame.copyArgumentsFrom(frame);
     }
 
-    private static java.lang.String computeSignatureString(int numberOfArguments) {
+    private static String computeSignatureString(final int numberOfArguments) {
       // Compute the signature string
-      java.lang.String signatureString = "value";
+      String signatureString = "value";
       if (numberOfArguments > 1) {
         signatureString += ":";
       }
