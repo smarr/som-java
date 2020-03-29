@@ -53,7 +53,12 @@ public final class SBigInteger extends SNumber {
     return universe.newString(embeddedBiginteger.toString());
   }
 
-  private SNumber asSNumber(BigInteger result, final Universe universe) {
+  @Override
+  public SNumber primAsDouble(final Universe universe) {
+    return universe.newDouble(embeddedBiginteger.doubleValue());
+  }
+
+  private SNumber asSNumber(final BigInteger result, final Universe universe) {
     if (result.bitLength() >= Long.SIZE) {
       return universe.newBigInteger(result);
     } else {
