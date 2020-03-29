@@ -67,6 +67,19 @@ public class SObject extends SAbstractObject {
     return clazz;
   }
 
+  @Override
+  public String toString() {
+    if (clazz.getName().getEmbeddedString().equals("SObject")) {
+      if (fields[1] instanceof SObject) {
+        SObject somClazz = (SObject) fields[1];
+        SObject nameSymbolObj = (SObject) somClazz.fields[4];
+        SString nameString = (SString) nameSymbolObj.fields[0];
+        return "SomSom: a " + nameString.getEmbeddedString();
+      }
+    }
+    return "a " + getSOMClass(Universe.current()).getName().getEmbeddedString();
+  }
+
   // Private array of fields
   private final SAbstractObject[] fields;
   private SClass                  clazz;
