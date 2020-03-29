@@ -679,8 +679,8 @@ public class Universe {
         SClass result = SourcecodeCompiler.compileClass(cpEntry,
             name.getEmbeddedString(), systemClass, this);
         if (dumpBytecodes) {
-          Disassembler.dump(result.getSOMClass());
-          Disassembler.dump(result);
+          Disassembler.dump(result.getSOMClass(), this);
+          Disassembler.dump(result, this);
         }
         return result;
 
@@ -701,7 +701,7 @@ public class Universe {
     try {
       SClass result = SourcecodeCompiler.compileClass(stmt, null, this);
       if (dumpBytecodes) {
-        Disassembler.dump(result);
+        Disassembler.dump(result, this);
       }
       return result;
     } catch (ProgramDefinitionError e) {
