@@ -53,6 +53,14 @@ public class IntegerPrimitives extends Primitives {
       }
     });
 
+    installInstancePrimitive(new SPrimitive("asDouble", universe) {
+      @Override
+      public void invoke(final Frame frame, final Interpreter interpreter) {
+        SNumber self = (SNumber) frame.pop();
+        frame.push(self.primAsDouble(universe));
+      }
+    });
+
     installInstancePrimitive(new SPrimitive("sqrt", universe) {
       @Override
       public void invoke(final Frame frame, final Interpreter interpreter) {

@@ -68,6 +68,11 @@ public final class SDouble extends SNumber {
     return universe.newString(Double.toString(embeddedDouble));
   }
 
+  @Override
+  public SDouble primAsDouble(final Universe universe) {
+    return this;
+  }
+
   public SInteger primAsInteger(final Universe universe) {
     return universe.newInteger((long) embeddedDouble);
   }

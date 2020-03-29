@@ -79,6 +79,11 @@ public final class SInteger extends SNumber {
   }
 
   @Override
+  public SNumber primAsDouble(final Universe universe) {
+    return universe.newDouble(embeddedInteger);
+  }
+
+  @Override
   public SNumber primSqrt(final Universe universe) {
     double result = Math.sqrt(embeddedInteger);
 
