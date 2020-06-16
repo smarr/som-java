@@ -40,7 +40,7 @@ or with:
    
 A simple Hello World program is executed with:
 
-    $ ./som.sh -cp Smalltalk Examples/Hello/Hello.som
+    $ ./som.sh -cp Smalltalk Examples/Hello.som
 
 
 Information on previous authors are included in the AUTHORS file. This code is
