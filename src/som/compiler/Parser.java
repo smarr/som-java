@@ -202,8 +202,7 @@ public class Parser {
     instanceFields(cgenc);
     while (sym == Identifier || sym == Keyword || sym == OperatorSequence
         || symIn(binaryOpSyms)) {
-      MethodGenerationContext mgenc = new MethodGenerationContext();
-      mgenc.setHolder(cgenc);
+      MethodGenerationContext mgenc = new MethodGenerationContext(cgenc);
       mgenc.addArgument("self");
 
       method(mgenc);
@@ -220,8 +219,7 @@ public class Parser {
       classFields(cgenc);
       while (sym == Identifier || sym == Keyword || sym == OperatorSequence
           || symIn(binaryOpSyms)) {
-        MethodGenerationContext mgenc = new MethodGenerationContext();
-        mgenc.setHolder(cgenc);
+        MethodGenerationContext mgenc = new MethodGenerationContext(cgenc);
         mgenc.addArgument("self");
 
         method(mgenc);
@@ -561,11 +559,7 @@ public class Parser {
         nestedTerm(mgenc);
         break;
       case NewBlock: {
-        MethodGenerationContext bgenc = new MethodGenerationContext();
-        bgenc.setIsBlockMethod(true);
-        bgenc.setHolder(mgenc.getHolder());
-        bgenc.setOuter(mgenc);
-
+        MethodGenerationContext bgenc = new MethodGenerationContext(mgenc.getHolder(), mgenc);
         nestedBlock(bgenc);
 
         SMethod blockMethod = bgenc.assemble(universe);

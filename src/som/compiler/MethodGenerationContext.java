@@ -55,9 +55,10 @@ import som.vmobjects.SSymbol;
 
 public class MethodGenerationContext {
 
-  private ClassGenerationContext      holderGenc;
-  private MethodGenerationContext     outerGenc;
-  private boolean                     blockMethod;
+  private final ClassGenerationContext  holderGenc;
+  private final MethodGenerationContext outerGenc;
+  private final boolean                 blockMethod;
+
   private SSymbol                     signature;
   private final List<String>          arguments = new ArrayList<String>();
   private boolean                     primitive;
@@ -66,8 +67,21 @@ public class MethodGenerationContext {
   private boolean                     finished;
   private final ArrayList<Byte>       bytecode  = new ArrayList<>();
 
-  public void setHolder(final ClassGenerationContext cgenc) {
-    holderGenc = cgenc;
+  /**
+   * Constructor used for block methods.
+   */
+  public MethodGenerationContext(final ClassGenerationContext holderGenc,
+      final MethodGenerationContext outerGenc) {
+    this.holderGenc = holderGenc;
+    this.outerGenc = outerGenc;
+    blockMethod = outerGenc != null;
+  }
+
+  /**
+   * Constructor used for normal methods.
+   */
+  public MethodGenerationContext(final ClassGenerationContext holderGenc) {
+    this(holderGenc, null);
   }
 
   public void addArgument(final String arg) {
@@ -229,16 +243,8 @@ public class MethodGenerationContext {
     return true;
   }
 
-  public void setIsBlockMethod(final boolean isBlock) {
-    blockMethod = isBlock;
-  }
-
   public ClassGenerationContext getHolder() {
     return holderGenc;
-  }
-
-  public void setOuter(final MethodGenerationContext mgenc) {
-    outerGenc = mgenc;
   }
 
   public byte addLiteral(final SAbstractObject lit) {
