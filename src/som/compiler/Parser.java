@@ -186,6 +186,11 @@ public class Parser {
     getSymbolFromLexer();
   }
 
+  @Override
+  public String toString() {
+    return filename + ":" + lexer.getCurrentLineNumber() + ":" + lexer.getCurrentColumn();
+  }
+
   public void classdef(final ClassGenerationContext cgenc) throws ProgramDefinitionError {
     cgenc.setName(universe.symbolFor(text));
     expect(Identifier);
