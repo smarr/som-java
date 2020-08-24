@@ -113,10 +113,12 @@ public class BasicInterpreterTests {
 
         {"Regressions", "testSymbolEquality", 1, SInteger.class},
         {"Regressions", "testSymbolReferenceEquality", 1, SInteger.class},
+        {"Regressions", "testUninitializedLocal", 1, SInteger.class},
+        {"Regressions", "testUninitializedLocalInBlock", 1, SInteger.class},
 
         {"BinaryOperation", "test", 3 + 8, SInteger.class},
 
-        {"NumberOfTests", "numberOfTests", 52, SInteger.class}
+        {"NumberOfTests", "numberOfTests", 54, SInteger.class}
     });
   }
 
