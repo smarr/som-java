@@ -456,6 +456,12 @@ public class Parser {
         // was terminated with a . or not)
         mgenc.removeLastBytecode();
       }
+      if (mgenc.isBlockMethod() && !mgenc.hasBytecodes()) {
+        // if the block is empty, we need to return nil
+        SSymbol nilSym = universe.symbolFor("nil");
+        mgenc.addLiteralIfAbsent(nilSym);
+        bcGen.emitPUSHGLOBAL(mgenc, nilSym);
+      }
       bcGen.emitRETURNLOCAL(mgenc);
       mgenc.setFinished();
     } else if (sym == EndTerm) {
@@ -878,6 +884,12 @@ public class Parser {
     // expression
     // in the block was not terminated by ., and can generate a return
     if (!mgenc.isFinished()) {
+      if (!mgenc.hasBytecodes()) {
+        // if the block is empty, we need to return nil
+        SSymbol nilSym = universe.symbolFor("nil");
+        mgenc.addLiteralIfAbsent(nilSym);
+        bcGen.emitPUSHGLOBAL(mgenc, nilSym);
+      }
       bcGen.emitRETURNLOCAL(mgenc);
       mgenc.setFinished(true);
     }
