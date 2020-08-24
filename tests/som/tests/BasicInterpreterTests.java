@@ -60,9 +60,9 @@ public class BasicInterpreterTests {
         {"Blocks", "testArg2", 77, SInteger.class},
         {"Blocks", "testArgAndLocal", 8, SInteger.class},
         {"Blocks", "testArgAndContext", 8, SInteger.class},
-        {"Blocks", "testEmptyZeroArg",  1, SInteger.class},
-        {"Blocks", "testEmptyOneArg",   1, SInteger.class},
-        {"Blocks", "testEmptyTwoArg",   1, SInteger.class},
+        {"Blocks", "testEmptyZeroArg", 1, SInteger.class},
+        {"Blocks", "testEmptyOneArg", 1, SInteger.class},
+        {"Blocks", "testEmptyTwoArg", 1, SInteger.class},
 
         {"Return", "testReturnSelf", "Return", SClass.class},
         {"Return", "testReturnSelfImplicitly", "Return", SClass.class},
