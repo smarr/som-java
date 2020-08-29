@@ -186,6 +186,11 @@ public class Parser {
     getSymbolFromLexer();
   }
 
+  @Override
+  public String toString() {
+    return filename + ":" + lexer.getCurrentLineNumber() + ":" + lexer.getCurrentColumn();
+  }
+
   public void classdef(final ClassGenerationContext cgenc) throws ProgramDefinitionError {
     cgenc.setName(universe.symbolFor(text));
     expect(Identifier);
@@ -197,8 +202,7 @@ public class Parser {
     instanceFields(cgenc);
     while (sym == Identifier || sym == Keyword || sym == OperatorSequence
         || symIn(binaryOpSyms)) {
-      MethodGenerationContext mgenc = new MethodGenerationContext();
-      mgenc.setHolder(cgenc);
+      MethodGenerationContext mgenc = new MethodGenerationContext(cgenc);
       mgenc.addArgument("self");
 
       method(mgenc);
@@ -215,8 +219,7 @@ public class Parser {
       classFields(cgenc);
       while (sym == Identifier || sym == Keyword || sym == OperatorSequence
           || symIn(binaryOpSyms)) {
-        MethodGenerationContext mgenc = new MethodGenerationContext();
-        mgenc.setHolder(cgenc);
+        MethodGenerationContext mgenc = new MethodGenerationContext(cgenc);
         mgenc.addArgument("self");
 
         method(mgenc);
@@ -453,6 +456,12 @@ public class Parser {
         // was terminated with a . or not)
         mgenc.removeLastBytecode();
       }
+      if (mgenc.isBlockMethod() && !mgenc.hasBytecodes()) {
+        // if the block is empty, we need to return nil
+        SSymbol nilSym = universe.symbolFor("nil");
+        mgenc.addLiteralIfAbsent(nilSym);
+        bcGen.emitPUSHGLOBAL(mgenc, nilSym);
+      }
       bcGen.emitRETURNLOCAL(mgenc);
       mgenc.setFinished();
     } else if (sym == EndTerm) {
@@ -556,11 +565,7 @@ public class Parser {
         nestedTerm(mgenc);
         break;
       case NewBlock: {
-        MethodGenerationContext bgenc = new MethodGenerationContext();
-        bgenc.setIsBlockMethod(true);
-        bgenc.setHolder(mgenc.getHolder());
-        bgenc.setOuter(mgenc);
-
+        MethodGenerationContext bgenc = new MethodGenerationContext(mgenc.getHolder(), mgenc);
         nestedBlock(bgenc);
 
         SMethod blockMethod = bgenc.assemble(universe);
@@ -879,6 +884,12 @@ public class Parser {
     // expression
     // in the block was not terminated by ., and can generate a return
     if (!mgenc.isFinished()) {
+      if (!mgenc.hasBytecodes()) {
+        // if the block is empty, we need to return nil
+        SSymbol nilSym = universe.symbolFor("nil");
+        mgenc.addLiteralIfAbsent(nilSym);
+        bcGen.emitPUSHGLOBAL(mgenc, nilSym);
+      }
       bcGen.emitRETURNLOCAL(mgenc);
       mgenc.setFinished(true);
     }

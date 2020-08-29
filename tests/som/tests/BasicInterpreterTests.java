@@ -60,6 +60,9 @@ public class BasicInterpreterTests {
         {"Blocks", "testArg2", 77, SInteger.class},
         {"Blocks", "testArgAndLocal", 8, SInteger.class},
         {"Blocks", "testArgAndContext", 8, SInteger.class},
+        {"Blocks", "testEmptyZeroArg", 1, SInteger.class},
+        {"Blocks", "testEmptyOneArg", 1, SInteger.class},
+        {"Blocks", "testEmptyTwoArg", 1, SInteger.class},
 
         {"Return", "testReturnSelf", "Return", SClass.class},
         {"Return", "testReturnSelfImplicitly", "Return", SClass.class},
@@ -113,10 +116,12 @@ public class BasicInterpreterTests {
 
         {"Regressions", "testSymbolEquality", 1, SInteger.class},
         {"Regressions", "testSymbolReferenceEquality", 1, SInteger.class},
+        {"Regressions", "testUninitializedLocal", 1, SInteger.class},
+        {"Regressions", "testUninitializedLocalInBlock", 1, SInteger.class},
 
         {"BinaryOperation", "test", 3 + 8, SInteger.class},
 
-        {"NumberOfTests", "numberOfTests", 52, SInteger.class}
+        {"NumberOfTests", "numberOfTests", 57, SInteger.class}
     });
   }
 
