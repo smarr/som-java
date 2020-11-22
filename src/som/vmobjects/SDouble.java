@@ -57,6 +57,9 @@ public final class SDouble extends SNumber {
     if (o instanceof SInteger) {
       return ((SInteger) o).getEmbeddedInteger();
     }
+    if (o instanceof SBigInteger) {
+      return ((SBigInteger) o).getEmbeddedBiginteger().doubleValue();
+    }
     throw new ClassCastException("Cannot coerce to Double!");
   }
 
