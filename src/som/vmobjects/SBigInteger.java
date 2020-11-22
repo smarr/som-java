@@ -44,6 +44,11 @@ public final class SBigInteger extends SNumber {
   }
 
   @Override
+  public String toString() {
+    return super.toString() + "(" + embeddedBiginteger + ")";
+  }
+
+  @Override
   public SClass getSOMClass(final Universe universe) {
     return universe.integerClass;
   }
