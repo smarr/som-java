@@ -49,6 +49,10 @@ public class ClassGenerationContext {
   private final List<SSymbol>    classFields     = new ArrayList<SSymbol>();
   private final List<SInvokable> classMethods    = new ArrayList<SInvokable>();
 
+  public SSymbol getName() {
+    return name;
+  }
+
   public void setName(final SSymbol name) {
     this.name = name;
   }
@@ -75,7 +79,7 @@ public class ClassGenerationContext {
     instanceMethods.add(meth);
   }
 
-  public void setClassSide(boolean b) {
+  public void setClassSide(final boolean b) {
     classSide = b;
   }
 

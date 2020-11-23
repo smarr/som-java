@@ -45,6 +45,7 @@ import static som.interpreter.Bytecodes.SUPER_SEND;
 import java.util.ArrayList;
 import java.util.List;
 
+import som.compiler.Parser.ParseError;
 import som.vm.Universe;
 import som.vmobjects.SAbstractObject;
 import som.vmobjects.SInvokable;
@@ -238,12 +239,13 @@ public class MethodGenerationContext {
     finished = true;
   }
 
-  public boolean addLiteralIfAbsent(final SAbstractObject lit) {
+  public boolean addLiteralIfAbsent(final SAbstractObject lit, final Parser parser)
+      throws ParseError {
     if (literals.contains(lit)) {
       return false;
     }
 
-    literals.add(lit);
+    addLiteral(lit, parser);
     return true;
   }
 
@@ -251,9 +253,16 @@ public class MethodGenerationContext {
     return holderGenc;
   }
 
-  public byte addLiteral(final SAbstractObject lit) {
+  public byte addLiteral(final SAbstractObject lit, final Parser parser) throws ParseError {
     int i = literals.size();
-    assert i < 128;
+    if (i > Byte.MAX_VALUE) {
+      String methodSignature = holderGenc.getName().getEmbeddedString() + ">>" + signature;
+      throw new ParseError(
+          "The method " + methodSignature + " has more than the supported " +
+              Byte.MAX_VALUE
+              + " literal values. Please split the method. The literal to be added is: " + lit,
+          Symbol.NONE, parser);
+    }
     literals.add(lit);
     return (byte) i;
   }
@@ -307,9 +316,4 @@ public class MethodGenerationContext {
   public MethodGenerationContext getOuter() {
     return outerGenc;
   }
-
-  public som.vmobjects.SSymbol getSignature() {
-    return signature;
-  }
-
 }

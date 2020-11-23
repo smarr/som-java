@@ -41,6 +41,11 @@ public final class SDouble extends SNumber {
   }
 
   @Override
+  public String toString() {
+    return super.toString() + "(" + embeddedDouble + ")";
+  }
+
+  @Override
   public SClass getSOMClass(final Universe universe) {
     return universe.doubleClass;
   }
@@ -51,6 +56,9 @@ public final class SDouble extends SNumber {
     }
     if (o instanceof SInteger) {
       return ((SInteger) o).getEmbeddedInteger();
+    }
+    if (o instanceof SBigInteger) {
+      return ((SBigInteger) o).getEmbeddedBiginteger().doubleValue();
     }
     throw new ClassCastException("Cannot coerce to Double!");
   }

@@ -459,7 +459,7 @@ public class Parser {
       if (mgenc.isBlockMethod() && !mgenc.hasBytecodes()) {
         // if the block is empty, we need to return nil
         SSymbol nilSym = universe.symbolFor("nil");
-        mgenc.addLiteralIfAbsent(nilSym);
+        mgenc.addLiteralIfAbsent(nilSym, this);
         bcGen.emitPUSHGLOBAL(mgenc, nilSym);
       }
       bcGen.emitRETURNLOCAL(mgenc);
@@ -518,7 +518,8 @@ public class Parser {
     }
   }
 
-  private void assignments(final MethodGenerationContext mgenc, final List<String> l) {
+  private void assignments(final MethodGenerationContext mgenc, final List<String> l)
+      throws ParseError {
     if (sym == Identifier) {
       l.add(assignment(mgenc));
       peekForNextSymbolFromLexer();
@@ -528,10 +529,10 @@ public class Parser {
     }
   }
 
-  private String assignment(final MethodGenerationContext mgenc) {
+  private String assignment(final MethodGenerationContext mgenc) throws ParseError {
     String v = variable();
     SSymbol var = universe.symbolFor(v);
-    mgenc.addLiteralIfAbsent(var);
+    mgenc.addLiteralIfAbsent(var, this);
 
     expect(Assign);
 
@@ -569,7 +570,7 @@ public class Parser {
         nestedBlock(bgenc);
 
         SMethod blockMethod = bgenc.assemble(universe);
-        mgenc.addLiteral(blockMethod);
+        mgenc.addLiteral(blockMethod, this);
         bcGen.emitPUSHBLOCK(mgenc, blockMethod);
         break;
       }
@@ -616,9 +617,9 @@ public class Parser {
   }
 
   private void unaryMessage(final MethodGenerationContext mgenc,
-      final boolean superSend) {
+      final boolean superSend) throws ParseError {
     SSymbol msg = unarySelector();
-    mgenc.addLiteralIfAbsent(msg);
+    mgenc.addLiteralIfAbsent(msg, this);
 
     if (superSend) {
       bcGen.emitSUPERSEND(mgenc, msg);
@@ -630,7 +631,7 @@ public class Parser {
   private void binaryMessage(final MethodGenerationContext mgenc,
       final boolean superSend) throws ProgramDefinitionError {
     SSymbol msg = binarySelector();
-    mgenc.addLiteralIfAbsent(msg);
+    mgenc.addLiteralIfAbsent(msg, this);
 
     binaryOperand(mgenc);
 
@@ -663,7 +664,7 @@ public class Parser {
 
     SSymbol msg = universe.symbolFor(kw.toString());
 
-    mgenc.addLiteralIfAbsent(msg);
+    mgenc.addLiteralIfAbsent(msg, this);
 
     if (superSend) {
       bcGen.emitSUPERSEND(mgenc, msg);
@@ -721,7 +722,7 @@ public class Parser {
     } else {
       lit = literalDecimal(false);
     }
-    mgenc.addLiteralIfAbsent(lit);
+    mgenc.addLiteralIfAbsent(lit, this);
     bcGen.emitPUSHCONSTANT(mgenc, lit);
   }
 
@@ -779,7 +780,7 @@ public class Parser {
     }
   }
 
-  private void literalSymbol(final MethodGenerationContext mgenc) {
+  private void literalSymbol(final MethodGenerationContext mgenc) throws ParseError {
     SSymbol symb;
     expect(Pound);
     if (sym == STString) {
@@ -789,15 +790,15 @@ public class Parser {
       symb = selector();
     }
 
-    mgenc.addLiteralIfAbsent(symb);
+    mgenc.addLiteralIfAbsent(symb, this);
     bcGen.emitPUSHCONSTANT(mgenc, symb);
   }
 
-  private void literalString(final MethodGenerationContext mgenc) {
+  private void literalString(final MethodGenerationContext mgenc) throws ParseError {
     String s = string();
 
     SString str = universe.newString(s);
-    mgenc.addLiteralIfAbsent(str);
+    mgenc.addLiteralIfAbsent(str, this);
 
     bcGen.emitPUSHCONSTANT(mgenc, str);
   }
@@ -811,10 +812,10 @@ public class Parser {
     SSymbol newMessage = universe.symbolFor("new:");
     SSymbol atPutMessage = universe.symbolFor("at:put:");
 
-    mgenc.addLiteralIfAbsent(arrayClassName);
-    mgenc.addLiteralIfAbsent(newMessage);
-    mgenc.addLiteralIfAbsent(atPutMessage);
-    final byte arraySizeLiteralIndex = mgenc.addLiteral(arraySizePlaceholder);
+    mgenc.addLiteralIfAbsent(arrayClassName, this);
+    mgenc.addLiteralIfAbsent(newMessage, this);
+    mgenc.addLiteralIfAbsent(atPutMessage, this);
+    final byte arraySizeLiteralIndex = mgenc.addLiteral(arraySizePlaceholder, this);
 
     // create empty array
     bcGen.emitPUSHGLOBAL(mgenc, arrayClassName);
@@ -825,7 +826,7 @@ public class Parser {
 
     while (sym != EndTerm) {
       SInteger pushIndex = universe.newInteger(i);
-      mgenc.addLiteralIfAbsent(pushIndex);
+      mgenc.addLiteralIfAbsent(pushIndex, this);
       bcGen.emitPUSHCONSTANT(mgenc, pushIndex);
       literal(mgenc);
       bcGen.emitSEND(mgenc, atPutMessage);
@@ -887,7 +888,7 @@ public class Parser {
       if (!mgenc.hasBytecodes()) {
         // if the block is empty, we need to return nil
         SSymbol nilSym = universe.symbolFor("nil");
-        mgenc.addLiteralIfAbsent(nilSym);
+        mgenc.addLiteralIfAbsent(nilSym, this);
         bcGen.emitPUSHGLOBAL(mgenc, nilSym);
       }
       bcGen.emitRETURNLOCAL(mgenc);
@@ -910,7 +911,7 @@ public class Parser {
   }
 
   private void genPushVariable(final MethodGenerationContext mgenc,
-      final String var) {
+      final String var) throws ParseError {
     // The purpose of this function is to find out whether the variable to be
     // pushed on the stack is a local variable, argument, or object field.
     // This is done by examining all available lexical contexts, starting with
@@ -930,11 +931,11 @@ public class Parser {
       SSymbol identifier = universe.symbolFor(var);
       if (mgenc.hasField(identifier)) {
         SSymbol fieldName = identifier;
-        mgenc.addLiteralIfAbsent(fieldName);
+        mgenc.addLiteralIfAbsent(fieldName, this);
         bcGen.emitPUSHFIELD(mgenc, fieldName);
       } else {
         SSymbol global = identifier;
-        mgenc.addLiteralIfAbsent(global);
+        mgenc.addLiteralIfAbsent(global, this);
         bcGen.emitPUSHGLOBAL(mgenc, global);
       }
     }

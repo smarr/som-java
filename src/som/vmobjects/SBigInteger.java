@@ -44,6 +44,11 @@ public final class SBigInteger extends SNumber {
   }
 
   @Override
+  public String toString() {
+    return super.toString() + "(" + embeddedBiginteger + ")";
+  }
+
+  @Override
   public SClass getSOMClass(final Universe universe) {
     return universe.integerClass;
   }
@@ -53,7 +58,7 @@ public final class SBigInteger extends SNumber {
     return universe.newString(embeddedBiginteger.toString());
   }
 
-  private SNumber asSNumber(BigInteger result, final Universe universe) {
+  private SNumber asSNumber(final BigInteger result, final Universe universe) {
     if (result.bitLength() >= Long.SIZE) {
       return universe.newBigInteger(result);
     } else {
@@ -73,6 +78,10 @@ public final class SBigInteger extends SNumber {
 
   @Override
   public SNumber primAdd(final SNumber right, final Universe universe) {
+    if (right instanceof SDouble) {
+      return universe.newDouble(
+          embeddedBiginteger.doubleValue() + ((SDouble) right).getEmbeddedDouble());
+    }
     BigInteger r = asBigInteger(right);
     BigInteger result = embeddedBiginteger.add(r);
     return asSNumber(result, universe);
@@ -80,6 +89,10 @@ public final class SBigInteger extends SNumber {
 
   @Override
   public SNumber primSubtract(final SNumber right, final Universe universe) {
+    if (right instanceof SDouble) {
+      return universe.newDouble(
+          embeddedBiginteger.doubleValue() - ((SDouble) right).getEmbeddedDouble());
+    }
     BigInteger r = asBigInteger(right);
     BigInteger result = embeddedBiginteger.subtract(r);
     return asSNumber(result, universe);
@@ -87,6 +100,10 @@ public final class SBigInteger extends SNumber {
 
   @Override
   public SNumber primMultiply(final SNumber right, final Universe universe) {
+    if (right instanceof SDouble) {
+      return universe.newDouble(
+          embeddedBiginteger.doubleValue() * ((SDouble) right).getEmbeddedDouble());
+    }
     BigInteger r = asBigInteger(right);
     BigInteger result = embeddedBiginteger.multiply(r);
     return asSNumber(result, universe);

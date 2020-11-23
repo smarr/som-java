@@ -65,7 +65,7 @@ public final class SInteger extends SNumber {
 
   @Override
   public String toString() {
-    return "" + embeddedInteger;
+    return super.toString() + "(" + embeddedInteger + ")";
   }
 
   @Override
