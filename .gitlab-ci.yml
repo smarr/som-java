@@ -1,0 +1,19 @@
+stages:
+  - test-benchmark
+
+variables:
+  PYTHONUNBUFFERED: "true"
+
+before_script:
+  - git submodule update --init
+  
+som:
+  stage: test-benchmark
+  tags: [benchmarks, infinity]
+  script:
+    - ant test
+    - ./som.sh -cp ./Smalltalk ./TestSuite/TestHarness.som
+    - ant checkstyle
+    
+    - rebench --experiment="CI ID $CI_PIPELINE_ID" --branch="$CI_COMMIT_REF_NAME" -c rebench.conf all
+    - rebench --experiment="CI ID $CI_PIPELINE_ID" --report-completion rebench.conf
