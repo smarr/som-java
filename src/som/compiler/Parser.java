@@ -280,7 +280,7 @@ public class Parser {
     if (accept(s)) {
       return true;
     }
-    StringBuffer err = new StringBuffer("Error: " + filename + ":" +
+    StringBuilder err = new StringBuilder("Error: " + filename + ":" +
         lexer.getCurrentLineNumber() +
         ": unexpected symbol, expected: " + s.toString()
         + ", but found: " + sym.toString());
@@ -295,7 +295,7 @@ public class Parser {
     if (acceptOneOf(ss)) {
       return true;
     }
-    StringBuffer err = new StringBuffer("Error: " + filename + ":" +
+    StringBuilder err = new StringBuilder("Error: " + filename + ":" +
         lexer.getCurrentLineNumber() + ": unexpected symbol, expected one of: ");
     for (Symbol s : ss) {
       err.append(s.toString() + ", ");
@@ -357,7 +357,7 @@ public class Parser {
   }
 
   private void keywordPattern(final MethodGenerationContext mgenc) {
-    StringBuffer kw = new StringBuffer();
+    StringBuilder kw = new StringBuilder();
     do {
       kw.append(keyword());
       mgenc.addArgumentIfAbsent(argument());
@@ -523,11 +523,7 @@ public class Parser {
 
   private String assignment(final MethodGenerationContext mgenc) throws ParseError {
     String v = variable();
-    SSymbol var = universe.symbolFor(v);
-    mgenc.addLiteralIfAbsent(var, this);
-
     expect(Assign);
-
     return v;
   }
 
@@ -647,7 +643,7 @@ public class Parser {
 
   private void keywordMessage(final MethodGenerationContext mgenc,
       final boolean superSend) throws ProgramDefinitionError {
-    StringBuffer kw = new StringBuffer();
+    StringBuilder kw = new StringBuilder();
     do {
       kw.append(keyword());
       formula(mgenc);
@@ -747,11 +743,11 @@ public class Parser {
         expect(Integer);
         return universe.newBigInteger(big);
       } catch (NumberFormatException e) {
-        StringBuffer err = new StringBuffer("Error: " + filename + ":" +
+        String err = "Error: " + filename + ":" +
             lexer.getCurrentLineNumber() +
             ": parsing number literal failed: '" + text.toString()
-            + "'");
-        throw new IllegalStateException(err.toString());
+            + "'";
+        throw new IllegalStateException(err);
       }
     }
   }
