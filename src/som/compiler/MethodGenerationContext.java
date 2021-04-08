@@ -93,11 +93,15 @@ public class MethodGenerationContext {
     return primitive;
   }
 
-  public SInvokable assemblePrimitive(final Universe universe) {
-    return SPrimitive.getEmptyPrimitive(signature.getEmbeddedString(), universe);
+  public SInvokable assemble(final Universe universe) {
+    if (primitive) {
+      return SPrimitive.getEmptyPrimitive(signature.getEmbeddedString(), universe);
+    } else {
+      return assembleMethod(universe);
+    }
   }
 
-  public SMethod assemble(final Universe universe) {
+  public SMethod assembleMethod(final Universe universe) {
     // create a method instance with the given number of bytecodes and
     // literals
     int numLiterals = literals.size();
@@ -185,8 +189,8 @@ public class MethodGenerationContext {
     return maxDepth;
   }
 
-  public void setPrimitive(final boolean prim) {
-    primitive = prim;
+  public void markAsPrimitive() {
+    primitive = true;
   }
 
   public void setSignature(final SSymbol sig) {
@@ -194,7 +198,7 @@ public class MethodGenerationContext {
   }
 
   public boolean addArgumentIfAbsent(final String arg) {
-    if (locals.contains(arg)) {
+    if (arguments.contains(arg)) {
       return false;
     }
 
@@ -206,8 +210,8 @@ public class MethodGenerationContext {
     return finished;
   }
 
-  public void setFinished(final boolean finished) {
-    this.finished = finished;
+  public void markAsFinished() {
+    this.finished = false;
   }
 
   public boolean addLocalIfAbsent(final String local) {

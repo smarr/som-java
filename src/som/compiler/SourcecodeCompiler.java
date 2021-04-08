@@ -61,8 +61,8 @@ public class SourcecodeCompiler {
     String cnameC = cname.getEmbeddedString();
 
     if (file != cnameC) {
-      throw new IllegalStateException("File name " + file
-          + " does not match class name " + cnameC);
+      throw new ProgramDefinitionError("File name " + fname
+          + " does not match class name (" + cnameC + ") in it.");
     }
 
     return result;
@@ -79,10 +79,9 @@ public class SourcecodeCompiler {
 
   private som.vmobjects.SClass compile(final som.vmobjects.SClass systemClass,
       final Universe universe) throws ProgramDefinitionError {
-    ClassGenerationContext cgc = new ClassGenerationContext(universe);
 
     som.vmobjects.SClass result = systemClass;
-    parser.classdef(cgc);
+    ClassGenerationContext cgc = parser.classdef();
 
     if (systemClass == null) {
       result = cgc.assemble();

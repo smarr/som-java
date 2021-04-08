@@ -25,6 +25,24 @@
 
 package som.interpreter;
 
+import static som.interpreter.Bytecodes.DUP;
+import static som.interpreter.Bytecodes.HALT;
+import static som.interpreter.Bytecodes.POP;
+import static som.interpreter.Bytecodes.POP_ARGUMENT;
+import static som.interpreter.Bytecodes.POP_FIELD;
+import static som.interpreter.Bytecodes.POP_LOCAL;
+import static som.interpreter.Bytecodes.PUSH_ARGUMENT;
+import static som.interpreter.Bytecodes.PUSH_BLOCK;
+import static som.interpreter.Bytecodes.PUSH_CONSTANT;
+import static som.interpreter.Bytecodes.PUSH_FIELD;
+import static som.interpreter.Bytecodes.PUSH_GLOBAL;
+import static som.interpreter.Bytecodes.PUSH_LOCAL;
+import static som.interpreter.Bytecodes.RETURN_LOCAL;
+import static som.interpreter.Bytecodes.RETURN_NON_LOCAL;
+import static som.interpreter.Bytecodes.SEND;
+import static som.interpreter.Bytecodes.SUPER_SEND;
+import static som.interpreter.Bytecodes.getBytecodeLength;
+
 import som.compiler.ProgramDefinitionError;
 import som.vm.Universe;
 import som.vmobjects.SAbstractObject;
@@ -34,8 +52,6 @@ import som.vmobjects.SInvokable;
 import som.vmobjects.SMethod;
 import som.vmobjects.SObject;
 import som.vmobjects.SSymbol;
-
-import static som.interpreter.Bytecodes.*;
 
 
 public class Interpreter {
@@ -166,17 +182,17 @@ public class Interpreter {
     SAbstractObject result = getFrame().pop();
 
     // Compute the context for the non-local return
-    Frame context = getFrame().getOuterContext(universe.nilObject);
+    Frame context = getFrame().getOuterContext();
 
     // Make sure the block context is still on the stack
-    if (!context.hasPreviousFrame(universe.nilObject)) {
+    if (!context.hasPreviousFrame()) {
       // Try to recover by sending 'escapedBlock:' to the sending object
       // this can get a bit nasty when using nested blocks. In this case
       // the "sender" will be the surrounding block and not the object
       // that actually sent the 'value' message.
       SBlock block = (SBlock) getFrame().getArgument(0, 0);
       SAbstractObject sender =
-          getFrame().getPreviousFrame().getOuterContext(universe.nilObject).getArgument(0, 0);
+          getFrame().getPreviousFrame().getOuterContext().getArgument(0, 0);
 
       // pop the frame of the currently executing block...
       popFrame();
@@ -349,7 +365,7 @@ public class Interpreter {
 
   public SAbstractObject getSelf() {
     // Get the self object from the interpreter
-    return getFrame().getOuterContext(universe.nilObject).getArgument(0, 0);
+    return getFrame().getOuterContext().getArgument(0, 0);
   }
 
   private void send(final SSymbol selector, final SClass receiverClass,

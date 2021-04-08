@@ -75,24 +75,24 @@ public class ClassGenerationContext {
     }
   }
 
-  public void addInstanceMethod(final som.vmobjects.SInvokable meth) {
-    instanceMethods.add(meth);
+  public void addMethod(final som.vmobjects.SInvokable meth) {
+    if (classSide) {
+      classMethods.add(meth);
+    } else {
+      instanceMethods.add(meth);
+    }
   }
 
-  public void setClassSide(final boolean b) {
-    classSide = b;
+  public void startClassSide() {
+    classSide = true;
   }
 
-  public void addClassMethod(final som.vmobjects.SInvokable meth) {
-    classMethods.add(meth);
-  }
-
-  public void addInstanceField(final SSymbol field) {
-    instanceFields.add(field);
-  }
-
-  public void addClassField(final SSymbol field) {
-    classFields.add(field);
+  public void addField(final SSymbol field) {
+    if (classSide) {
+      classFields.add(field);
+    } else {
+      instanceFields.add(field);
+    }
   }
 
   public boolean hasField(final SSymbol field) {

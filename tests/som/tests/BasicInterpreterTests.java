@@ -73,6 +73,11 @@ public class BasicInterpreterTests {
         {"IfTrueIfFalse", "test2", 33, SInteger.class},
         {"IfTrueIfFalse", "test3", 4, SInteger.class},
 
+        {"IfTrueIfFalse", "testIfTrueTrueResult", "Integer", SClass.class},
+        {"IfTrueIfFalse", "testIfTrueFalseResult", "Nil", SClass.class},
+        {"IfTrueIfFalse", "testIfFalseTrueResult", "Nil", SClass.class},
+        {"IfTrueIfFalse", "testIfFalseFalseResult", "Integer", SClass.class},
+
         {"CompilerSimplification", "testReturnConstantSymbol", "constant", SSymbol.class},
         {"CompilerSimplification", "testReturnConstantInt", 42, SInteger.class},
         {"CompilerSimplification", "testReturnSelf", "CompilerSimplification", SClass.class},
@@ -96,8 +101,14 @@ public class BasicInterpreterTests {
         {"BlockInlining", "testOneLevelInliningWithLocalShadowTrue", 2, SInteger.class},
         {"BlockInlining", "testOneLevelInliningWithLocalShadowFalse", 1, SInteger.class},
 
+        {"BlockInlining", "testShadowDoesntStoreWrongLocal", 33, SInteger.class},
+        {"BlockInlining", "testShadowDoesntReadUnrelated", "Nil", SClass.class},
+
         {"BlockInlining", "testBlockNestedInIfTrue", 2, SInteger.class},
         {"BlockInlining", "testBlockNestedInIfFalse", 42, SInteger.class},
+
+        {"BlockInlining", "testStackDisciplineTrue", 1, SInteger.class},
+        {"BlockInlining", "testStackDisciplineFalse", 2, SInteger.class},
 
         {"BlockInlining", "testDeepNestedInlinedIfTrue", 3, SInteger.class},
         {"BlockInlining", "testDeepNestedInlinedIfFalse", 42, SInteger.class},
@@ -121,7 +132,7 @@ public class BasicInterpreterTests {
 
         {"BinaryOperation", "test", 3 + 8, SInteger.class},
 
-        {"NumberOfTests", "numberOfTests", 57, SInteger.class}
+        {"NumberOfTests", "numberOfTests", 65, SInteger.class}
     });
   }
 
@@ -162,13 +173,20 @@ public class BasicInterpreterTests {
       return;
     }
 
+    if (resultType == SClass.class) {
+      String expected = (String) expectedResult;
+      String actual = ((SClass) actualResult).getName().getEmbeddedString();
+      assertEquals(expected, actual);
+      return;
+    }
+
     if (resultType == SSymbol.class) {
       String expected = (String) expectedResult;
       String actual = ((SSymbol) actualResult).getEmbeddedString();
       assertEquals(expected, actual);
       return;
     }
-    fail("SOM Value handler missing");
+    fail("SOM Value handler missing for " + resultType);
   }
 
   @Test

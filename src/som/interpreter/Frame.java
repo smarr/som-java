@@ -66,12 +66,12 @@ public class Frame {
     previousFrame = null;
   }
 
-  public boolean hasPreviousFrame(final SAbstractObject nilObject) {
+  public boolean hasPreviousFrame() {
     return previousFrame != null;
   }
 
-  public boolean isBootstrapFrame(final SAbstractObject nilObject) {
-    return !hasPreviousFrame(nilObject);
+  public boolean isBootstrapFrame() {
+    return !hasPreviousFrame();
   }
 
   public Frame getContext() {
@@ -99,7 +99,7 @@ public class Frame {
     return frame;
   }
 
-  public Frame getOuterContext(final SAbstractObject nilObject) {
+  public Frame getOuterContext() {
     // Compute the outer context of this frame
     Frame frame = this;
 
@@ -145,8 +145,8 @@ public class Frame {
     localOffset = getMethod().getNumberOfArguments();
 
     // Set the stack pointer to its initial value thereby clearing the stack
-    setStackPointer(localOffset
-        + (int) getMethod().getNumberOfLocals().getEmbeddedInteger() - 1);
+    stackPointer =
+        (int) (localOffset + getMethod().getNumberOfLocals().getEmbeddedInteger() - 1);
   }
 
   public int getBytecodeIndex() {
@@ -217,14 +217,15 @@ public class Frame {
     }
   }
 
-  public void printStackTrace(final SAbstractObject nilObject) {
+  public void printStackTrace() {
     // Print a stack trace starting in this frame
-    Universe.print(getMethod().getHolder().getName().getEmbeddedString());
-    Universe.print(getBytecodeIndex() + "@"
-        + getMethod().getSignature().getEmbeddedString());
-    if (hasPreviousFrame(nilObject)) {
-      getPreviousFrame().printStackTrace(nilObject);
+    if (hasPreviousFrame()) {
+      getPreviousFrame().printStackTrace();
     }
+
+    String className = getMethod().getHolder().getName().getEmbeddedString();
+    String methodName = getMethod().getSignature().getEmbeddedString();
+    Universe.println(className + ">>#" + methodName + " @bi: " + bytecodeIndex);
   }
 
   // Private variables holding the stack pointer and the bytecode index
