@@ -307,7 +307,7 @@ public class Universe {
   private SMethod createBootstrapMethod() {
     // Create a fake bootstrap method to simplify later frame traversal
     SMethod bootstrapMethod =
-        newMethod(symbolFor("bootstrap"), 1, 0, newInteger(0), newInteger(2), null);
+        newMethod(symbolFor("bootstrap"), 1, 0, 2, null);
     bootstrapMethod.setBytecode(0, HALT);
     bootstrapMethod.setHolder(systemClass);
     return bootstrapMethod;
@@ -477,25 +477,21 @@ public class Universe {
     // locals and extra buffer to support doesNotUnderstand) and set the number
     // of indexable fields accordingly
     long length = method.getNumberOfArguments()
-        + method.getNumberOfLocals().getEmbeddedInteger()
-        + method.getMaximumNumberOfStackElements().getEmbeddedInteger() + 2;
+        + method.getNumberOfLocals()
+        + method.getMaximumNumberOfStackElements() + 2;
 
     Frame result = new Frame(nilObject, previousFrame, context, method, length);
-
-    // Reset the stack pointer and the bytecode index
-    result.resetStackPointer();
-    result.setBytecodeIndex(0);
 
     // Return the freshly allocated frame
     return result;
   }
 
   public SMethod newMethod(final SSymbol signature, final int numberOfBytecodes,
-      final int numberOfLiterals, final SInteger numberOfLocals,
-      final SInteger maxNumStackElements, final List<SAbstractObject> literals) {
+      final int numberOfLocals,
+      final int maxNumStackElements, final List<SAbstractObject> literals) {
     // Allocate a new method and set its class to be the method class
-    SMethod result = new SMethod(nilObject, signature, numberOfBytecodes,
-        numberOfLocals, maxNumStackElements, numberOfLiterals, literals);
+    SMethod result = new SMethod(signature, numberOfBytecodes,
+        numberOfLocals, maxNumStackElements, literals);
     return result;
   }
 
@@ -683,8 +679,8 @@ public class Universe {
         SClass result = SourcecodeCompiler.compileClass(cpEntry,
             name.getEmbeddedString(), systemClass, this);
         if (dumpBytecodes) {
-          Disassembler.dump(result.getSOMClass());
-          Disassembler.dump(result);
+          Disassembler.dump(result.getSOMClass(), this);
+          Disassembler.dump(result, this);
         }
         return result;
 
@@ -705,7 +701,7 @@ public class Universe {
     try {
       SClass result = SourcecodeCompiler.compileClass(stmt, null, this);
       if (dumpBytecodes) {
-        Disassembler.dump(result);
+        Disassembler.dump(result, this);
       }
       return result;
     } catch (ProgramDefinitionError e) {

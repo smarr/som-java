@@ -721,7 +721,6 @@ public class Parser {
     if (sym == Integer) {
       return literalInteger(isNegative);
     } else {
-      assert sym == Double;
       return literalDouble(isNegative);
     }
   }

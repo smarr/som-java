@@ -26,6 +26,20 @@
 
 package som.compiler;
 
+import static som.interpreter.Bytecodes.POP_ARGUMENT;
+import static som.interpreter.Bytecodes.POP_FIELD;
+import static som.interpreter.Bytecodes.POP_LOCAL;
+import static som.interpreter.Bytecodes.PUSH_ARGUMENT;
+import static som.interpreter.Bytecodes.PUSH_BLOCK;
+import static som.interpreter.Bytecodes.PUSH_CONSTANT;
+import static som.interpreter.Bytecodes.PUSH_FIELD;
+import static som.interpreter.Bytecodes.PUSH_GLOBAL;
+import static som.interpreter.Bytecodes.PUSH_LOCAL;
+import static som.interpreter.Bytecodes.SEND;
+import static som.interpreter.Bytecodes.SUPER_SEND;
+import static som.interpreter.Bytecodes.getBytecodeLength;
+import static som.interpreter.Bytecodes.getPaddedBytecodeName;
+
 import som.vm.Universe;
 import som.vmobjects.SAbstractObject;
 import som.vmobjects.SClass;
@@ -33,12 +47,10 @@ import som.vmobjects.SInvokable;
 import som.vmobjects.SMethod;
 import som.vmobjects.SSymbol;
 
-import static som.interpreter.Bytecodes.*;
-
 
 public class Disassembler {
 
-  public static void dump(final SClass cl) {
+  public static void dump(final SClass cl, final Universe universe) {
     for (int i = 0; i < cl.getNumberOfInstanceInvokables(); i++) {
       SInvokable inv = cl.getInstanceInvokable(i);
 
@@ -51,11 +63,12 @@ public class Disassembler {
         continue;
       }
       // output actual method
-      dumpMethod((SMethod) inv, "\t");
+      dumpMethod((SMethod) inv, "\t", universe);
     }
   }
 
-  public static void dumpMethod(final SMethod m, final String indent) {
+  public static void dumpMethod(final SMethod m, final String indent,
+      final Universe universe) {
     Universe.errorPrintln("(");
 
     // output stack information
@@ -105,12 +118,12 @@ public class Disassembler {
         }
         case PUSH_BLOCK:
           Universe.errorPrint("block: (index: " + m.getBytecode(b + 1) + ") ");
-          dumpMethod((SMethod) m.getConstant(b), indent + "\t");
+          dumpMethod((SMethod) m.getConstant(b), indent + "\t", universe);
           break;
         case PUSH_CONSTANT:
           SAbstractObject constant = m.getConstant(b);
           Universe.errorPrintln("(index: " + m.getBytecode(b + 1) + ") value: "
-              + "(" + constant.getSOMClass(Universe.current()).getName().toString() + ") "
+              + "(" + constant.getSOMClass(universe).getName().toString() + ") "
               + constant.toString());
           break;
         case PUSH_GLOBAL:

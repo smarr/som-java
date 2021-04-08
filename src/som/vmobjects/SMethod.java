@@ -33,24 +33,17 @@ import som.vm.Universe;
 
 public class SMethod extends SAbstractObject implements SInvokable {
 
-  public SMethod(SObject nilObject, SSymbol signature, int numberOfBytecodes,
-      SInteger numberOfLocals, SInteger maxNumStackElements,
-      int numberOfLiterals, List<SAbstractObject> literals) {
+  public SMethod(final SSymbol signature, final int numberOfBytecodes,
+      final int numberOfLocals, final int maxNumStackElements,
+      final List<SAbstractObject> literals) {
     this.signature = signature;
     this.numberOfLocals = numberOfLocals;
     this.bytecodes = new byte[numberOfBytecodes];
     inlineCacheClass = new SClass[numberOfBytecodes];
     inlineCacheInvokable = new SInvokable[numberOfBytecodes];
     maximumNumberOfStackElements = maxNumStackElements;
-    this.literals = new SAbstractObject[numberOfLiterals];
-
-    // copy literals into the method
-    if (numberOfLiterals > 0) {
-      int i = 0;
-      for (SAbstractObject l : literals) {
-        this.literals[i++] = l;
-      }
-    }
+    this.literals =
+        literals == null ? null : literals.toArray(new SAbstractObject[literals.size()]);
   }
 
   @Override
@@ -58,14 +51,11 @@ public class SMethod extends SAbstractObject implements SInvokable {
     return false;
   }
 
-  public SInteger getNumberOfLocals() {
-    // Get the number of locals (converted to a Java integer)
+  public int getNumberOfLocals() {
     return numberOfLocals;
   }
 
-  public SInteger getMaximumNumberOfStackElements() {
-    // Get the maximum number of stack elements (converted to a Java
-    // integer)
+  public int getMaximumNumberOfStackElements() {
     return maximumNumberOfStackElements;
   }
 
@@ -76,13 +66,16 @@ public class SMethod extends SAbstractObject implements SInvokable {
 
   @Override
   public SClass getHolder() {
-    // Get the holder of this method by reading the field with holder index
     return holder;
   }
 
   @Override
-  public void setHolder(SClass value) {
+  public void setHolder(final SClass value) {
     holder = value;
+
+    if (literals == null) {
+      return;
+    }
 
     // Make sure all nested invokables have the same holder
     for (int i = 0; i < literals.length; i++) {
@@ -92,9 +85,9 @@ public class SMethod extends SAbstractObject implements SInvokable {
     }
   }
 
-  public SAbstractObject getConstant(int bytecodeIndex) {
+  public SAbstractObject getConstant(final int bytecodeIndex) {
     // Get the constant associated to a given bytecode index
-    return literals[getBytecode(bytecodeIndex + 1)];
+    return literals[bytecodes[bytecodeIndex + 1]];
   }
 
   public int getNumberOfArguments() {
@@ -107,12 +100,12 @@ public class SMethod extends SAbstractObject implements SInvokable {
     return bytecodes.length;
   }
 
-  public byte getBytecode(int index) {
+  public byte getBytecode(final int index) {
     // Get the bytecode at the given index
     return bytecodes[index];
   }
 
-  public void setBytecode(int index, byte value) {
+  public void setBytecode(final int index, final byte value) {
     // Set the bytecode at the given index to the given value
     bytecodes[index] = value;
   }
@@ -130,21 +123,22 @@ public class SMethod extends SAbstractObject implements SInvokable {
         + getSignature().toString() + ")";
   }
 
-  public SClass getInlineCacheClass(int bytecodeIndex) {
+  public SClass getInlineCacheClass(final int bytecodeIndex) {
     return inlineCacheClass[bytecodeIndex];
   }
 
-  public SInvokable getInlineCacheInvokable(int bytecodeIndex) {
+  public SInvokable getInlineCacheInvokable(final int bytecodeIndex) {
     return inlineCacheInvokable[bytecodeIndex];
   }
 
-  public void setInlineCache(int bytecodeIndex, SClass receiverClass, SInvokable invokable) {
+  public void setInlineCache(final int bytecodeIndex, final SClass receiverClass,
+      final SInvokable invokable) {
     inlineCacheClass[bytecodeIndex] = receiverClass;
     inlineCacheInvokable[bytecodeIndex] = invokable;
   }
 
   @Override
-  public SClass getSOMClass(Universe universe) {
+  public SClass getSOMClass(final Universe universe) {
     return universe.methodClass;
   }
 
@@ -159,6 +153,6 @@ public class SMethod extends SAbstractObject implements SInvokable {
   private SClass        holder;
 
   // Meta information
-  private final SInteger numberOfLocals;
-  private final SInteger maximumNumberOfStackElements;
+  private final int numberOfLocals;
+  private final int maximumNumberOfStackElements;
 }

@@ -102,13 +102,11 @@ public class MethodGenerationContext {
   }
 
   public SMethod assembleMethod(final Universe universe) {
-    // create a method instance with the given number of bytecodes and
-    // literals
-    int numLiterals = literals.size();
+    // create a method instance with the given number of bytecodes
     int numLocals = locals.size();
 
-    SMethod meth = universe.newMethod(signature, bytecode.size(), numLiterals,
-        universe.newInteger(numLocals), universe.newInteger(computeStackDepth()),
+    SMethod meth = universe.newMethod(signature, bytecode.size(),
+        numLocals, computeStackDepth(),
         literals);
 
     // copy bytecodes into method

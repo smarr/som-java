@@ -14,7 +14,7 @@ public class SObject extends SAbstractObject {
     }
   }
 
-  public SObject(int numberOfFields, final SObject nilObject) {
+  public SObject(final int numberOfFields, final SObject nilObject) {
     fields = new SAbstractObject[numberOfFields];
 
     // Clear each and every field by putting nil into them
@@ -27,17 +27,17 @@ public class SObject extends SAbstractObject {
     return clazz;
   }
 
-  public void setClass(SClass value) {
+  public void setClass(final SClass value) {
     // Set the class of this object by writing to the field with class index
     clazz = value;
   }
 
-  public SSymbol getFieldName(int index) {
+  public SSymbol getFieldName(final int index) {
     // Get the name of the field with the given index
     return getSOMClass().getInstanceFieldName(index);
   }
 
-  public int getFieldIndex(SSymbol name) {
+  public int getFieldIndex(final SSymbol name) {
     // Get the index for the field with the given name
     return getSOMClass().lookupFieldIndex(name);
   }
@@ -52,12 +52,12 @@ public class SObject extends SAbstractObject {
     return numberOfObjectFields;
   }
 
-  public SAbstractObject getField(long index) {
+  public SAbstractObject getField(final long index) {
     // Get the field with the given index
     return fields[(int) index];
   }
 
-  public void setField(long index, SAbstractObject value) {
+  public void setField(final long index, final SAbstractObject value) {
     // Set the field with the given index to the given value
     fields[(int) index] = value;
   }
@@ -65,6 +65,19 @@ public class SObject extends SAbstractObject {
   @Override
   public SClass getSOMClass(final Universe universe) {
     return clazz;
+  }
+
+  @Override
+  public String toString() {
+    if (clazz.getName().getEmbeddedString().equals("SObject")) {
+      if (fields[1] instanceof SObject) {
+        SObject somClazz = (SObject) fields[1];
+        SObject nameSymbolObj = (SObject) somClazz.fields[4];
+        SString nameString = (SString) nameSymbolObj.fields[0];
+        return "SomSom: a " + nameString.getEmbeddedString();
+      }
+    }
+    return "a " + getSOMClass(Universe.current()).getName().getEmbeddedString();
   }
 
   // Private array of fields
