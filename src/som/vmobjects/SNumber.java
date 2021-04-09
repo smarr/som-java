@@ -8,6 +8,8 @@ import som.vm.Universe;
 public abstract class SNumber extends SAbstractObject {
   public abstract SString primAsString(Universe universe);
 
+  public abstract SNumber primAsDouble(Universe universe);
+
   public abstract SNumber primSqrt(Universe universe);
 
   public abstract SNumber primAdd(SNumber right, Universe universe);
