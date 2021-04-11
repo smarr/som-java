@@ -661,8 +661,14 @@ public class Universe {
   }
 
   public void loadSystemClass(final SClass systemClass) throws ProgramDefinitionError {
-    // Load the system class
     SClass result = loadClass(systemClass.getName(), systemClass);
+
+    if (result == null) {
+      throw new ProgramDefinitionError("Failed to load the "
+          + systemClass.getName().getEmbeddedString() + " class."
+          + " This is unexpected and may indicate that the classpath is not set correctly,"
+          + " or that the core library is not available.");
+    }
 
     // Load primitives if necessary
     if (result.hasPrimitives()) {
