@@ -13,6 +13,7 @@ som:
   script:
     - ant test
     - ./som.sh -cp ./Smalltalk ./TestSuite/TestHarness.som
+    - ./som.sh -cp core-lib/Smalltalk:core-lib/TestSuite:core-lib/SomSom/src/compiler:core-lib/SomSom/src/vm:core-lib/SomSom/src/vmobjects:core-lib/SomSom/src/interpreter:core-lib/SomSom/src/primitives core-lib/SomSom/tests/SomSomTests.som
     - ant checkstyle
     
     - rebench --experiment="CI ID $CI_PIPELINE_ID" --branch="$CI_COMMIT_REF_NAME" -c rebench.conf all
