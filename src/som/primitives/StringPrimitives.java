@@ -75,11 +75,11 @@ public class StringPrimitives extends Primitives {
 
       @Override
       public void invoke(final Frame frame, final Interpreter interpreter) {
-        SAbstractObject op1 = frame.pop();
-        SString op2 = (SString) frame.pop(); // self
-        if (op1.getSOMClass(universe) == universe.stringClass) {
-          SString s = (SString) op1;
-          if (s.getEmbeddedString().equals(op2.getEmbeddedString())) {
+        SAbstractObject op2 = frame.pop();
+        SString op1 = (SString) frame.pop(); // self
+        if (op2 instanceof SString) {
+          SString s = (SString) op2;
+          if (s.getEmbeddedString().equals(op1.getEmbeddedString())) {
             frame.push(universe.trueObject);
             return;
           }
