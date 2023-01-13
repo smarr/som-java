@@ -29,6 +29,7 @@ import som.interpreter.Interpreter;
 import som.vm.Universe;
 import som.vmobjects.SAbstractObject;
 import som.vmobjects.SPrimitive;
+import som.vmobjects.SString;
 import som.vmobjects.SSymbol;
 
 
@@ -57,9 +58,17 @@ public class SymbolPrimitives extends Primitives {
         SSymbol op2 = (SSymbol) frame.pop(); // self
         if (op1 == op2) {
           frame.push(universe.trueObject);
-        } else {
-          frame.push(universe.falseObject);
+          return;
         }
+
+        if (op1 instanceof SString) {
+          SString s = (SString) op1;
+          if (s.getEmbeddedString().equals(op2.getEmbeddedString())) {
+            frame.push(universe.trueObject);
+            return;
+          }
+        }
+        frame.push(universe.falseObject);
       }
     }, true);
   }
