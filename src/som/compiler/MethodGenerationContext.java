@@ -67,6 +67,7 @@ public class MethodGenerationContext {
   private final List<SAbstractObject> literals  = new ArrayList<SAbstractObject>();
   private boolean                     finished;
   private final ArrayList<Byte>       bytecode  = new ArrayList<>();
+  private final ArrayList<int[]>      coords = new ArrayList<>();
 
   /**
    * Constructor used for block methods.
@@ -110,9 +111,9 @@ public class MethodGenerationContext {
         literals);
 
     // copy bytecodes into method
-    int i = 0;
-    for (byte bc : bytecode) {
-      meth.setBytecode(i++, bc);
+    for (int i = 0; i < bytecode.size(); i++) {
+      meth.setBytecode(i, bytecode.get(i));
+      meth.setCoord(i, coords.get(i));
     }
 
     // return the method - the holder field is to be set later on!
@@ -309,6 +310,11 @@ public class MethodGenerationContext {
 
   public void addBytecode(final byte code) {
     bytecode.add(code);
+  }
+
+  public void addCoord(final int[] coord) {
+    // coord should be of length 2
+    coords.add(coord);
   }
 
   public byte findLiteralIndex(final SAbstractObject lit) {

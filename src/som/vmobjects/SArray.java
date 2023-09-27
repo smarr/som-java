@@ -25,29 +25,25 @@
 package som.vmobjects;
 
 import som.vm.Universe;
-
+import som.vmobjects.storagestrategies.sarray.*;
 
 public class SArray extends SAbstractObject {
 
-  public SArray(final SObject nilObject, long numElements) {
-    indexableFields = new SAbstractObject[(int) numElements];
-
-    // Clear each and every field by putting nil into them
-    for (int i = 0; i < getNumberOfIndexableFields(); i++) {
-      setIndexableField(i, nilObject);
-    }
+  public SArray(long numElements) {
+    strategy = Universe.current().getEmptyArrayStrategy();
+    ((EmptyArrayStrategy) strategy).initialize(this, (int) numElements);
   }
 
   public SAbstractObject getIndexableField(long index) {
-    return indexableFields[(int) index];
+    return strategy.getIndexableField(this, (int) index);
   }
 
   public void setIndexableField(long index, SAbstractObject value) {
-    indexableFields[(int) index] = value;
+    strategy = strategy.setIndexableFieldMaybeTransition(this, (int) index, value);
   }
 
   public int getNumberOfIndexableFields() {
-    return indexableFields.length;
+    return strategy.getNumberOfIndexableFields(this);
   }
 
   public SArray copyAndExtendWith(SAbstractObject value, final Universe universe) {
@@ -76,6 +72,7 @@ public class SArray extends SAbstractObject {
     return universe.arrayClass;
   }
 
-  // Private array of indexable fields
-  private final SAbstractObject[] indexableFields;
+  private ArrayStorageStrategy strategy;
+  public Object storage;
+
 }

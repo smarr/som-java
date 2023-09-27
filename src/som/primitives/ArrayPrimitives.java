@@ -25,10 +25,7 @@
 package som.primitives;
 
 import som.vm.Universe;
-import som.vmobjects.SArray;
-import som.vmobjects.SInteger;
-import som.vmobjects.SAbstractObject;
-import som.vmobjects.SPrimitive;
+import som.vmobjects.*;
 import som.interpreter.Interpreter;
 import som.interpreter.Frame;
 

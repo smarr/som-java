@@ -367,15 +367,17 @@ public class Parser {
   }
 
   private void methodBlock(final MethodGenerationContext mgenc) throws ProgramDefinitionError {
+    final int[] coord = new int[] {lexer.getCurrentLineNumber(), lexer.getCurrentColumn()};
+
     expect(NewTerm);
     blockContents(mgenc);
     // if no return has been generated so far, we can be sure there was no .
     // terminating the last expression, so the last expression's value must
     // be popped off the stack and a ^self be generated
     if (!mgenc.isFinished()) {
-      bcGen.emitPOP(mgenc);
-      bcGen.emitPUSHARGUMENT(mgenc, (byte) 0, (byte) 0);
-      bcGen.emitRETURNLOCAL(mgenc);
+      bcGen.emitPOP(mgenc, coord);
+      bcGen.emitPUSHARGUMENT(mgenc, (byte) 0, (byte) 0, coord);
+      bcGen.emitRETURNLOCAL(mgenc, coord);
       mgenc.setFinished();
     }
 
@@ -435,6 +437,8 @@ public class Parser {
 
   private void blockBody(final MethodGenerationContext mgenc, final boolean seenPeriod)
       throws ProgramDefinitionError {
+    final int[] coord = new int[] {lexer.getCurrentLineNumber(), lexer.getCurrentColumn()};
+
     if (accept(Exit)) {
       result(mgenc);
     } else if (sym == EndBlock) {
@@ -449,33 +453,35 @@ public class Parser {
         // if the block is empty, we need to return nil
         SSymbol nilSym = universe.symbolFor("nil");
         mgenc.addLiteralIfAbsent(nilSym, this);
-        bcGen.emitPUSHGLOBAL(mgenc, nilSym);
+        bcGen.emitPUSHGLOBAL(mgenc, nilSym, coord);
       }
-      bcGen.emitRETURNLOCAL(mgenc);
+      bcGen.emitRETURNLOCAL(mgenc, coord);
       mgenc.setFinished();
     } else if (sym == EndTerm) {
       // it does not matter whether a period has been seen, as the end of
       // the method has been found (EndTerm) - so it is safe to emit a "return
       // self"
-      bcGen.emitPUSHARGUMENT(mgenc, (byte) 0, (byte) 0);
-      bcGen.emitRETURNLOCAL(mgenc);
+      bcGen.emitPUSHARGUMENT(mgenc, (byte) 0, (byte) 0, coord);
+      bcGen.emitRETURNLOCAL(mgenc, coord);
       mgenc.setFinished();
     } else {
       expression(mgenc);
       if (accept(Period)) {
-        bcGen.emitPOP(mgenc);
+        bcGen.emitPOP(mgenc, coord);
         blockBody(mgenc, true);
       }
     }
   }
 
   private void result(final MethodGenerationContext mgenc) throws ProgramDefinitionError {
+    final int[] coord = new int[] {lexer.getCurrentLineNumber(), lexer.getCurrentColumn()};
+
     expression(mgenc);
 
     if (mgenc.isBlockMethod()) {
-      bcGen.emitRETURNNONLOCAL(mgenc);
+      bcGen.emitRETURNNONLOCAL(mgenc, coord);
     } else {
-      bcGen.emitRETURNLOCAL(mgenc);
+      bcGen.emitRETURNLOCAL(mgenc, coord);
     }
 
     mgenc.markAsFinished();
@@ -493,13 +499,15 @@ public class Parser {
   }
 
   private void assignation(final MethodGenerationContext mgenc) throws ProgramDefinitionError {
+    final int[] coord = new int[] {lexer.getCurrentLineNumber(), lexer.getCurrentColumn()};
+
     List<String> l = new ArrayList<String>();
 
     assignments(mgenc, l);
     evaluation(mgenc);
 
     for (int i = 1; i <= l.size(); i++) {
-      bcGen.emitDUP(mgenc);
+      bcGen.emitDUP(mgenc, coord);
     }
     for (String s : l) {
       genPopVariable(mgenc, s);
@@ -532,6 +540,8 @@ public class Parser {
 
   private boolean primary(final MethodGenerationContext mgenc)
       throws ProgramDefinitionError {
+    final int[] coord = new int[] {lexer.getCurrentLineNumber(), lexer.getCurrentColumn()};
+
     boolean superSend = false;
     switch (sym) {
       case Identifier: {
@@ -554,7 +564,7 @@ public class Parser {
 
         SMethod blockMethod = bgenc.assembleMethod(universe);
         mgenc.addLiteral(blockMethod, this);
-        bcGen.emitPUSHBLOCK(mgenc, blockMethod);
+        bcGen.emitPUSHBLOCK(mgenc, blockMethod, coord);
         break;
       }
       default:
@@ -601,27 +611,31 @@ public class Parser {
 
   private void unaryMessage(final MethodGenerationContext mgenc,
       final boolean superSend) throws ParseError {
+    final int[] coord = new int[] {lexer.getCurrentLineNumber(), lexer.getCurrentColumn()};
+
     SSymbol msg = unarySelector();
     mgenc.addLiteralIfAbsent(msg, this);
 
     if (superSend) {
-      bcGen.emitSUPERSEND(mgenc, msg);
+      bcGen.emitSUPERSEND(mgenc, msg, coord);
     } else {
-      bcGen.emitSEND(mgenc, msg);
+      bcGen.emitSEND(mgenc, msg, coord);
     }
   }
 
   private void binaryMessage(final MethodGenerationContext mgenc,
       final boolean superSend) throws ProgramDefinitionError {
+    final int[] coord = new int[] {lexer.getCurrentLineNumber(), lexer.getCurrentColumn()};
+
     SSymbol msg = binarySelector();
     mgenc.addLiteralIfAbsent(msg, this);
 
     binaryOperand(mgenc);
 
     if (superSend) {
-      bcGen.emitSUPERSEND(mgenc, msg);
+      bcGen.emitSUPERSEND(mgenc, msg, coord);
     } else {
-      bcGen.emitSEND(mgenc, msg);
+      bcGen.emitSEND(mgenc, msg, coord);
     }
   }
 
@@ -639,6 +653,8 @@ public class Parser {
 
   private void keywordMessage(final MethodGenerationContext mgenc,
       final boolean superSend) throws ProgramDefinitionError {
+    final int[] coord = new int[] {lexer.getCurrentLineNumber(), lexer.getCurrentColumn()};
+
     StringBuilder kw = new StringBuilder();
     do {
       kw.append(keyword());
@@ -650,9 +666,9 @@ public class Parser {
     mgenc.addLiteralIfAbsent(msg, this);
 
     if (superSend) {
-      bcGen.emitSUPERSEND(mgenc, msg);
+      bcGen.emitSUPERSEND(mgenc, msg, coord);
     } else {
-      bcGen.emitSEND(mgenc, msg);
+      bcGen.emitSEND(mgenc, msg, coord);
     }
   }
 
@@ -698,6 +714,8 @@ public class Parser {
   }
 
   private void literalNumber(final MethodGenerationContext mgenc) throws ParseError {
+    final int[] coord = new int[] {lexer.getCurrentLineNumber(), lexer.getCurrentColumn()};
+
     SAbstractObject lit;
 
     if (sym == Minus) {
@@ -706,7 +724,7 @@ public class Parser {
       lit = literalDecimal(false);
     }
     mgenc.addLiteralIfAbsent(lit, this);
-    bcGen.emitPUSHCONSTANT(mgenc, lit);
+    bcGen.emitPUSHCONSTANT(mgenc, lit, coord);
   }
 
   private SAbstractObject literalDecimal(final boolean isNegative) throws ParseError {
@@ -763,6 +781,8 @@ public class Parser {
   }
 
   private void literalSymbol(final MethodGenerationContext mgenc) throws ParseError {
+    final int[] coord = new int[] {lexer.getCurrentLineNumber(), lexer.getCurrentColumn()};
+
     SSymbol symb;
     expect(Pound);
     if (sym == STString) {
@@ -773,19 +793,23 @@ public class Parser {
     }
 
     mgenc.addLiteralIfAbsent(symb, this);
-    bcGen.emitPUSHCONSTANT(mgenc, symb);
+    bcGen.emitPUSHCONSTANT(mgenc, symb, coord);
   }
 
   private void literalString(final MethodGenerationContext mgenc) throws ParseError {
+    final int[] coord = new int[] {lexer.getCurrentLineNumber(), lexer.getCurrentColumn()};
+
     String s = string();
 
     SString str = universe.newString(s);
     mgenc.addLiteralIfAbsent(str, this);
 
-    bcGen.emitPUSHCONSTANT(mgenc, str);
+    bcGen.emitPUSHCONSTANT(mgenc, str, coord);
   }
 
   private void literalArray(final MethodGenerationContext mgenc) throws ParseError {
+    final int[] coord = new int[] {lexer.getCurrentLineNumber(), lexer.getCurrentColumn()};
+
     expect(Pound);
     expect(NewTerm);
 
@@ -800,18 +824,18 @@ public class Parser {
     final byte arraySizeLiteralIndex = mgenc.addLiteral(arraySizePlaceholder, this);
 
     // create empty array
-    bcGen.emitPUSHGLOBAL(mgenc, arrayClassName);
-    bcGen.emitPUSHCONSTANT(mgenc, arraySizeLiteralIndex);
-    bcGen.emitSEND(mgenc, newMessage);
+    bcGen.emitPUSHGLOBAL(mgenc, arrayClassName, coord);
+    bcGen.emitPUSHCONSTANT(mgenc, arraySizeLiteralIndex, coord);
+    bcGen.emitSEND(mgenc, newMessage, coord);
 
     int i = 1;
 
     while (sym != EndTerm) {
       SInteger pushIndex = universe.newInteger(i);
       mgenc.addLiteralIfAbsent(pushIndex, this);
-      bcGen.emitPUSHCONSTANT(mgenc, pushIndex);
+      bcGen.emitPUSHCONSTANT(mgenc, pushIndex, coord);
       literal(mgenc);
-      bcGen.emitSEND(mgenc, atPutMessage);
+      bcGen.emitSEND(mgenc, atPutMessage, coord);
       i += 1;
     }
 
@@ -845,6 +869,8 @@ public class Parser {
   }
 
   private void nestedBlock(final MethodGenerationContext mgenc) throws ProgramDefinitionError {
+    final int[] coord = new int[] {lexer.getCurrentLineNumber(), lexer.getCurrentColumn()};
+
     mgenc.addArgumentIfAbsent("$block self");
 
     expect(NewBlock);
@@ -871,9 +897,9 @@ public class Parser {
         // if the block is empty, we need to return nil
         SSymbol nilSym = universe.symbolFor("nil");
         mgenc.addLiteralIfAbsent(nilSym, this);
-        bcGen.emitPUSHGLOBAL(mgenc, nilSym);
+        bcGen.emitPUSHGLOBAL(mgenc, nilSym, coord);
       }
-      bcGen.emitRETURNLOCAL(mgenc);
+      bcGen.emitRETURNLOCAL(mgenc, coord);
       mgenc.markAsFinished();
     }
 
@@ -894,6 +920,8 @@ public class Parser {
 
   private void genPushVariable(final MethodGenerationContext mgenc,
       final String var) throws ParseError {
+    final int[] coord = new int[] {lexer.getCurrentLineNumber(), lexer.getCurrentColumn()};
+
     // The purpose of this function is to find out whether the variable to be
     // pushed on the stack is a local variable, argument, or object field.
     // This is done by examining all available lexical contexts, starting with
@@ -905,26 +933,28 @@ public class Parser {
 
     if (mgenc.findVar(var, tri)) {
       if (tri.getZ()) {
-        bcGen.emitPUSHARGUMENT(mgenc, tri.getX(), tri.getY());
+        bcGen.emitPUSHARGUMENT(mgenc, tri.getX(), tri.getY(), coord);
       } else {
-        bcGen.emitPUSHLOCAL(mgenc, tri.getX(), tri.getY());
+        bcGen.emitPUSHLOCAL(mgenc, tri.getX(), tri.getY(), coord);
       }
     } else {
       SSymbol identifier = universe.symbolFor(var);
       if (mgenc.hasField(identifier)) {
         SSymbol fieldName = identifier;
         mgenc.addLiteralIfAbsent(fieldName, this);
-        bcGen.emitPUSHFIELD(mgenc, fieldName);
+        bcGen.emitPUSHFIELD(mgenc, fieldName, coord);
       } else {
         SSymbol global = identifier;
         mgenc.addLiteralIfAbsent(global, this);
-        bcGen.emitPUSHGLOBAL(mgenc, global);
+        bcGen.emitPUSHGLOBAL(mgenc, global, coord);
       }
     }
   }
 
   private void genPopVariable(final MethodGenerationContext mgenc,
       final String var) throws ParseError {
+    final int[] coord = new int[] {lexer.getCurrentLineNumber(), lexer.getCurrentColumn()};
+
     // The purpose of this function is to find out whether the variable to be
     // popped off the stack is a local variable, argument, or object field.
     // This is done by examining all available lexical contexts, starting with
@@ -936,9 +966,9 @@ public class Parser {
 
     if (mgenc.findVar(var, tri)) {
       if (tri.getZ()) {
-        bcGen.emitPOPARGUMENT(mgenc, tri.getX(), tri.getY());
+        bcGen.emitPOPARGUMENT(mgenc, tri.getX(), tri.getY(), coord);
       } else {
-        bcGen.emitPOPLOCAL(mgenc, tri.getX(), tri.getY());
+        bcGen.emitPOPLOCAL(mgenc, tri.getX(), tri.getY(), coord);
       }
     } else {
       SSymbol varName = universe.symbolFor(var);
@@ -946,7 +976,7 @@ public class Parser {
         throw new ParseError("Trying to write to field with the name '" + var
             + "', but field does not seem exist in class.", Symbol.NONE, this);
       }
-      bcGen.emitPOPFIELD(mgenc, varName);
+      bcGen.emitPOPFIELD(mgenc, varName, coord);
     }
   }
 

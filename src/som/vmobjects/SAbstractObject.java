@@ -55,6 +55,8 @@ public abstract class SAbstractObject {
 
   public void sendDoesNotUnderstand(final SSymbol selector,
       final Universe universe, final Interpreter interpreter) {
+    interpreter.getFrame().printStackTrace();
+
     // Compute the number of arguments
     int numberOfArguments = selector.getNumberOfSignatureArguments();
 

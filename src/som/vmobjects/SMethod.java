@@ -39,6 +39,7 @@ public class SMethod extends SAbstractObject implements SInvokable {
     this.signature = signature;
     this.numberOfLocals = numberOfLocals;
     this.bytecodes = new byte[numberOfBytecodes];
+    coords = new int[numberOfBytecodes][];
     inlineCacheClass = new SClass[numberOfBytecodes];
     inlineCacheInvokable = new SInvokable[numberOfBytecodes];
     maximumNumberOfStackElements = maxNumStackElements;
@@ -110,6 +111,10 @@ public class SMethod extends SAbstractObject implements SInvokable {
     bytecodes[index] = value;
   }
 
+  public void setCoord(final int index, final int[] coord) {
+    coords[index] = coord;
+  }
+
   @Override
   public void invoke(final Frame frame, final Interpreter interpreter) {
     // Allocate and push a new frame on the interpreter stack
@@ -144,6 +149,7 @@ public class SMethod extends SAbstractObject implements SInvokable {
 
   // Private variable holding byte array of bytecodes
   private final byte[]       bytecodes;
+  private final int[][]      coords;
   private final SClass[]     inlineCacheClass;
   private final SInvokable[] inlineCacheInvokable;
 
