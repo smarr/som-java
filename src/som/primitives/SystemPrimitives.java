@@ -25,20 +25,19 @@
 package som.primitives;
 
 import java.io.IOException;
+import java.lang.management.GarbageCollectorMXBean;
+import java.lang.management.ManagementFactory;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
+import com.sun.management.ThreadMXBean;
 import som.compiler.ProgramDefinitionError;
 import som.interpreter.Frame;
 import som.interpreter.Interpreter;
 import som.vm.Universe;
-import som.vmobjects.SAbstractObject;
-import som.vmobjects.SClass;
-import som.vmobjects.SInteger;
-import som.vmobjects.SPrimitive;
-import som.vmobjects.SString;
-import som.vmobjects.SSymbol;
+import som.vmobjects.*;
 
 
 public class SystemPrimitives extends Primitives {
@@ -159,6 +158,41 @@ public class SystemPrimitives extends Primitives {
         frame.pop();
         System.gc();
         frame.push(universe.trueObject);
+      }
+    });
+
+    installInstancePrimitive(new SPrimitive("gcStats", universe) {
+
+      @Override
+      public void invoke(Frame frame, Interpreter interpreter) {
+        frame.pop();
+
+        final List<GarbageCollectorMXBean> gcBeans = ManagementFactory.getGarbageCollectorMXBeans();
+        final ThreadMXBean threadBean = (ThreadMXBean) ManagementFactory.getThreadMXBean();
+        threadBean.setThreadAllocatedMemoryEnabled(true);
+
+        final long allocatedBytes = threadBean.getCurrentThreadAllocatedBytes();
+        long counts = 0;
+        long time = 0;
+
+        for (GarbageCollectorMXBean b : gcBeans) {
+          long c = b.getCollectionCount();
+          if (c != -1) {
+            counts += c;
+          }
+
+          long t = b.getCollectionTime();
+          if (t != -1) {
+            time += t;
+          }
+        }
+
+        final SArray arr = new SArray(universe.nilObject, 3L);
+        arr.setIndexableField(0L, SInteger.getInteger(counts));
+        arr.setIndexableField(1L, SInteger.getInteger(time));
+        arr.setIndexableField(2L, SInteger.getInteger(allocatedBytes));
+
+        frame.push(arr);
       }
     });
 
