@@ -173,7 +173,8 @@ public class SystemPrimitives extends Primitives {
       public void invoke(Frame frame, Interpreter interpreter) {
         frame.pop();
 
-        final List<GarbageCollectorMXBean> gcBeans = ManagementFactory.getGarbageCollectorMXBeans();
+        final List<GarbageCollectorMXBean> gcBeans =
+            ManagementFactory.getGarbageCollectorMXBeans();
         final ThreadMXBean threadBean = (ThreadMXBean) ManagementFactory.getThreadMXBean();
         threadBean.setThreadAllocatedMemoryEnabled(true);
 
