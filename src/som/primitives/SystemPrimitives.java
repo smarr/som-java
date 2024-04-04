@@ -37,7 +37,13 @@ import som.compiler.ProgramDefinitionError;
 import som.interpreter.Frame;
 import som.interpreter.Interpreter;
 import som.vm.Universe;
-import som.vmobjects.*;
+import som.vmobjects.SAbstractObject;
+import som.vmobjects.SArray;
+import som.vmobjects.SClass;
+import som.vmobjects.SInteger;
+import som.vmobjects.SPrimitive;
+import som.vmobjects.SString;
+import som.vmobjects.SSymbol;
 
 
 public class SystemPrimitives extends Primitives {
