@@ -4,10 +4,10 @@ on: [push, pull_request]
 
 jobs:
   test_som:
-    runs-on: ubuntu-20.04 # ubuntu-latest
+    runs-on: ubuntu-24.04 # ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           submodules: true
 
@@ -37,7 +37,7 @@ jobs:
           ant eclipseformat
 
       - name: Checkout AWFY
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: smarr/are-we-fast-yet
           path: are-we-fast-yet
