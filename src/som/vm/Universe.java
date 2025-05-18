@@ -52,6 +52,14 @@ import som.vmobjects.SMethod;
 import som.vmobjects.SObject;
 import som.vmobjects.SString;
 import som.vmobjects.SSymbol;
+import som.vmobjects.storagestrategies.sarray.AbstractObjectArrayStrategy;
+import som.vmobjects.storagestrategies.sarray.DoubleArrayStrategy;
+import som.vmobjects.storagestrategies.sarray.EmptyArrayStrategy;
+import som.vmobjects.storagestrategies.sarray.IntegerArrayStrategy;
+import som.vmobjects.storagestrategies.svector.AbstractObjectVectorStrategy;
+import som.vmobjects.storagestrategies.svector.DoubleVectorStrategy;
+import som.vmobjects.storagestrategies.svector.EmptyVectorStrategy;
+import som.vmobjects.storagestrategies.svector.IntegerVectorStrategy;
 
 
 public class Universe {
@@ -336,6 +344,15 @@ public class Universe {
     // Allocate the nil object
     nilObject = new SObject(null);
 
+    emptyArrayStrategy = new EmptyArrayStrategy(nilObject);
+    abstractObjectArrayStrategy = new AbstractObjectArrayStrategy(nilObject);
+    integerArrayStrategy = new IntegerArrayStrategy();
+    doubleArrayStrategy = new DoubleArrayStrategy();
+    emptyVectorStrategy = new EmptyVectorStrategy(nilObject);
+    abstractObjectVectorStrategy = new AbstractObjectVectorStrategy(nilObject);
+    integerVectorStrategy = new IntegerVectorStrategy();
+    doubleVectorStrategy = new DoubleVectorStrategy();
+
     // Allocate the Metaclass classes
     metaclassClass = newMetaclassClass();
 
@@ -350,6 +367,7 @@ public class Universe {
     primitiveClass = newSystemClass();
     stringClass = newSystemClass();
     doubleClass = newSystemClass();
+    vectorClass = newSystemClass();
 
     // Setup the class reference for the nil object
     nilObject.setClass(nilClass);
@@ -366,6 +384,7 @@ public class Universe {
     initializeSystemClass(integerClass, objectClass, "Integer");
     initializeSystemClass(primitiveClass, objectClass, "Primitive");
     initializeSystemClass(doubleClass, objectClass, "Double");
+    initializeSystemClass(vectorClass, objectClass, "Vector");
 
     // Load methods and fields into the system classes
     loadSystemClass(objectClass);
@@ -379,6 +398,7 @@ public class Universe {
     loadSystemClass(primitiveClass);
     loadSystemClass(stringClass);
     loadSystemClass(doubleClass);
+    loadSystemClass(vectorClass);
 
     // Fix up objectClass
     objectClass.setSuperClass(nilObject);
@@ -425,7 +445,7 @@ public class Universe {
   }
 
   public SArray newArray(final long length) {
-    return new SArray(nilObject, length);
+    return new SArray(length);
   }
 
   public SArray newArray(final List<?> list) {
@@ -452,6 +472,14 @@ public class Universe {
 
     // Return the allocated and initialized array
     return result;
+  }
+
+  public SVector newVector(final long length) {
+    return new SVector(length, nilObject, this);
+  }
+
+  public SObject newBoolean(final boolean bool) {
+    return bool ? trueObject : falseObject;
   }
 
   public SBlock newBlock(final SMethod method, final Frame context, final int arguments)
@@ -671,7 +699,7 @@ public class Universe {
     }
 
     // Load primitives if necessary
-    if (result.hasPrimitives()) {
+    if (result.hasPrimitives() || result.getName().getEmbeddedString().equals("Vector")) {
       result.loadPrimitives();
     }
   }
@@ -714,6 +742,38 @@ public class Universe {
       errorExit(e.toString());
       throw new RuntimeException(e);
     }
+  }
+
+  public EmptyArrayStrategy getEmptyArrayStrategy() {
+    return emptyArrayStrategy;
+  }
+
+  public AbstractObjectArrayStrategy getAbstractObjectArrayStrategy() {
+    return abstractObjectArrayStrategy;
+  }
+
+  public IntegerArrayStrategy getIntegerArrayStrategy() {
+    return integerArrayStrategy;
+  }
+
+  public DoubleArrayStrategy getDoubleArrayStrategy() {
+    return doubleArrayStrategy;
+  }
+
+  public AbstractObjectVectorStrategy getAbstractObjectVectorStrategy() {
+    return abstractObjectVectorStrategy;
+  }
+
+  public EmptyVectorStrategy getEmptyVectorStrategy() {
+    return emptyVectorStrategy;
+  }
+
+  public IntegerVectorStrategy getIntegerVectorStrategy() {
+    return integerVectorStrategy;
+  }
+
+  public DoubleVectorStrategy getDoubleVectorStrategy() {
+    return doubleVectorStrategy;
   }
 
   public static void errorPrint(final String msg) {
@@ -770,6 +830,7 @@ public class Universe {
   public SClass systemClass;
   public SClass blockClass;
   public SClass doubleClass;
+  public SClass vectorClass;
 
   public SClass trueClass;
   public SClass falseClass;
@@ -783,6 +844,15 @@ public class Universe {
   public static final String             fileSeparator;
   private final Interpreter              interpreter;
   private final HashMap<String, SSymbol> symbolTable;
+
+  private EmptyArrayStrategy emptyArrayStrategy;
+  private AbstractObjectArrayStrategy abstractObjectArrayStrategy;
+  private IntegerArrayStrategy integerArrayStrategy;
+  private DoubleArrayStrategy doubleArrayStrategy;
+  private AbstractObjectVectorStrategy abstractObjectVectorStrategy;
+  private EmptyVectorStrategy emptyVectorStrategy;
+  private IntegerVectorStrategy integerVectorStrategy;
+  private DoubleVectorStrategy doubleVectorStrategy;
 
   // TODO: this is not how it is supposed to be... it is just a hack to cope
   // with the use of system.exit in SOM to enable testing
