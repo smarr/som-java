@@ -9,7 +9,7 @@ before_script:
   
 som:
   stage: test-benchmark
-  tags: [benchmarks, infinity]
+  tags: [kent-yuria]
   script:
     - ant test
     - ./som.sh -cp ./Smalltalk ./TestSuite/TestHarness.som

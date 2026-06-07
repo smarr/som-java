@@ -49,8 +49,9 @@ distributed under the MIT License. Please see the LICENSE file for details.
 Build Status
 ------------
 
-Thanks to Travis CI, all commits of this repository are tested.
-The current build status is: [![Build Status](https://travis-ci.org/SOM-st/som-java.png?branch=master)](https://travis-ci.org/SOM-st/som-java)
+This repo has CI setups for GitLab CI and GitHub Actions.
+
+[![Build Status](https://github.com/SOM-st/SOM-java/actions/workflows/ci.yml/badge.svg)](https://github.com/SOM-st/SOM-java/actions)
 
  [SOM]: http://www.hpi.uni-potsdam.de/hirschfeld/projects/som/
- [SOMst]: https://travis-ci.org/SOM-st/
+ [SOMst]: https://som-st.github.io
