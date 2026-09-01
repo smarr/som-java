@@ -91,8 +91,8 @@ public class Parser {
   private static final List<Symbol> keywordSelectorSyms = new ArrayList<Symbol>();
 
   static {
-    for (Symbol s : new Symbol[] {Or, Comma, Minus, Equal, Not, And, Or, Star,
-        Div, Mod, Plus, Equal, More, Less, Comma, At, Per, NONE}) {
+    for (Symbol s : new Symbol[] {Or, Comma, Minus, Equal, Not, And, Star,
+        Div, Mod, Plus, More, Less, At, Per, NONE}) {
       opSyms.add(s);
     }
     for (Symbol s : new Symbol[] {Keyword, KeywordSequence}) {
