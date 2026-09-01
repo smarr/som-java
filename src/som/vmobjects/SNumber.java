@@ -1,7 +1,6 @@
 package som.vmobjects;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 
 import som.vm.Universe;
 
