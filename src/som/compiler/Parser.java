@@ -87,18 +87,13 @@ public class Parser {
   private String text;
   private Symbol nextSym;
 
-  private static final List<Symbol> singleOpSyms        = new ArrayList<Symbol>();
-  private static final List<Symbol> binaryOpSyms        = new ArrayList<Symbol>();
+  private static final List<Symbol> opSyms              = new ArrayList<Symbol>();
   private static final List<Symbol> keywordSelectorSyms = new ArrayList<Symbol>();
 
   static {
-    for (Symbol s : new Symbol[] {Not, And, Or, Star, Div, Mod, Plus, Equal,
-        More, Less, Comma, At, Per, Minus, NONE}) {
-      singleOpSyms.add(s);
-    }
     for (Symbol s : new Symbol[] {Or, Comma, Minus, Equal, Not, And, Or, Star,
         Div, Mod, Plus, Equal, More, Less, Comma, At, Per, NONE}) {
-      binaryOpSyms.add(s);
+      opSyms.add(s);
     }
     for (Symbol s : new Symbol[] {Keyword, KeywordSequence}) {
       keywordSelectorSyms.add(s);
@@ -225,7 +220,7 @@ public class Parser {
 
   private boolean symIsMethod() {
     return sym == Identifier || sym == Keyword || sym == OperatorSequence
-        || symIn(binaryOpSyms);
+        || symIn(opSyms);
   }
 
   private void superclass() throws ProgramDefinitionError {
@@ -392,7 +387,7 @@ public class Parser {
     String s = text;
 
     // Checkstyle: stop @formatter:off
-    if (acceptOneOf(singleOpSyms)) {
+    if (acceptOneOf(opSyms)) {
     } else if (accept(OperatorSequence)) {
     } else { expect(NONE); }
     // Checkstyle: resume @formatter:on
@@ -579,19 +574,19 @@ public class Parser {
         superSend = false;
       } while (sym == Identifier);
 
-      while (sym == OperatorSequence || symIn(binaryOpSyms)) {
+      while (sym == OperatorSequence || symIn(opSyms)) {
         binaryMessage(mgenc, false);
       }
 
       if (sym == Keyword) {
         keywordMessage(mgenc, false);
       }
-    } else if (sym == OperatorSequence || symIn(binaryOpSyms)) {
+    } else if (sym == OperatorSequence || symIn(opSyms)) {
       do {
         // only the first message in a sequence can be a super send
         binaryMessage(mgenc, superSend);
         superSend = false;
-      } while (sym == OperatorSequence || symIn(binaryOpSyms));
+      } while (sym == OperatorSequence || symIn(opSyms));
 
       if (sym == Keyword) {
         keywordMessage(mgenc, false);
@@ -662,11 +657,11 @@ public class Parser {
     boolean superSend = binaryOperand(mgenc);
 
     // only the first message in a sequence can be a super send
-    if (sym == OperatorSequence || symIn(binaryOpSyms)) {
+    if (sym == OperatorSequence || symIn(opSyms)) {
       binaryMessage(mgenc, superSend);
     }
 
-    while (sym == OperatorSequence || symIn(binaryOpSyms)) {
+    while (sym == OperatorSequence || symIn(opSyms)) {
       binaryMessage(mgenc, false);
     }
   }
@@ -824,7 +819,7 @@ public class Parser {
   }
 
   private SSymbol selector() {
-    if (sym == OperatorSequence || symIn(singleOpSyms)) {
+    if (sym == OperatorSequence || symIn(opSyms)) {
       return binarySelector();
     } else if (sym == Keyword || sym == KeywordSequence) {
       return keywordSelector();
