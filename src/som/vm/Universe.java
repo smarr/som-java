@@ -333,7 +333,7 @@ public class Universe {
     return interpreter.start();
   }
 
-  private SAbstractObject initializeObjectSystem() throws ProgramDefinitionError {
+  public SAbstractObject initializeObjectSystem() throws ProgramDefinitionError {
     // Allocate the nil object
     nilObject = new SObject(null);
 
