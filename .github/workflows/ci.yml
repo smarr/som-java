@@ -3,15 +3,17 @@ name: Tests
 on: [push, pull_request]
 
 jobs:
-  test_som:
+  part1:
     runs-on: ubuntu-24.04 # ubuntu-latest
     steps:
-      - name: Checkout
+      - &checkout
+        name: Checkout
         uses: actions/checkout@v7
         with:
           submodules: true
 
-      - uses: actions/setup-java@v6
+      - &setup-java
+        uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: '25'
@@ -24,6 +26,15 @@ jobs:
         run: |
           ./som.sh -cp core-lib/Smalltalk:core-lib/TestSuite:core-lib/SomSom/src/compiler:core-lib/SomSom/src/vm:core-lib/SomSom/src/vmobjects:core-lib/SomSom/src/interpreter:core-lib/SomSom/src/primitives \
             core-lib/SomSom/tests/SomSomTests.som
+
+  part2:
+    runs-on: ubuntu-24.04 # ubuntu-latest
+    steps:
+      - *checkout
+
+      - name: Compile
+        run: |
+          ant jar
 
       - name: Integration Tests
         run: |
@@ -46,6 +57,10 @@ jobs:
           wget --progress=dot:giga ${ECLIPSE_URL} -O ${ECLIPSE_TAR}
           tar -C ${GITHUB_WORKSPACE}/.. -xzf ${ECLIPSE_TAR}
 
+      # Setup Java only here, use the system java for compiling
+      # then we don't have to worry about env vars for rebench
+      - *setup-java
+
       - name: Check Eclipse Format
         run: |
           export ECLIPSE_EXE=${GITHUB_WORKSPACE}/../eclipse/eclipse
@@ -60,4 +75,4 @@ jobs:
       - name: AWFY Test Run
         run: |
           pip install ReBench
-          rebench awfy-test.conf
+          rebench -D awfy-test.conf
