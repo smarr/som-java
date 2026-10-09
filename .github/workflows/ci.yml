@@ -3,13 +3,20 @@ name: Tests
 on: [push, pull_request]
 
 jobs:
-  test_som:
+  part1:
     runs-on: ubuntu-24.04 # ubuntu-latest
     steps:
-      - name: Checkout
+      - &checkout
+        name: Checkout
         uses: actions/checkout@v7
         with:
           submodules: true
+
+      - &setup-java
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '25'
 
       - name: Tests
         run: |
@@ -19,6 +26,15 @@ jobs:
         run: |
           ./som.sh -cp core-lib/Smalltalk:core-lib/TestSuite:core-lib/SomSom/src/compiler:core-lib/SomSom/src/vm:core-lib/SomSom/src/vmobjects:core-lib/SomSom/src/interpreter:core-lib/SomSom/src/primitives \
             core-lib/SomSom/tests/SomSomTests.som
+
+  part2:
+    runs-on: ubuntu-24.04 # ubuntu-latest
+    steps:
+      - *checkout
+
+      - name: Compile
+        run: |
+          ant jar
 
       - name: Integration Tests
         run: |
@@ -37,9 +53,13 @@ jobs:
       - name: Download Eclipse
         run: |
           export ECLIPSE_TAR=eclipse.tar.gz
-          export ECLIPSE_URL='https://www.eclipse.org/downloads/download.php?file=/eclipse/downloads/drops4/R-4.38-202512010920/eclipse-SDK-4.38-linux-gtk-x86_64.tar.gz&r=1'
+          export ECLIPSE_URL='https://www.eclipse.org/downloads/download.php?file=/eclipse/downloads/drops4/R-4.41-202608281142/eclipse-SDK-4.41-linux-gtk-x86_64.tar.gz&r=1'
           wget --progress=dot:giga ${ECLIPSE_URL} -O ${ECLIPSE_TAR}
           tar -C ${GITHUB_WORKSPACE}/.. -xzf ${ECLIPSE_TAR}
+
+      # Setup Java only here, use the system java for compiling
+      # then we don't have to worry about env vars for rebench
+      - *setup-java
 
       - name: Check Eclipse Format
         run: |
@@ -54,7 +74,5 @@ jobs:
 
       - name: AWFY Test Run
         run: |
-          pwd
-          export JAVA_HOME=$JAVA_HOME_8_X64
           pip install ReBench
-          rebench awfy-test.conf
+          rebench -D awfy-test.conf

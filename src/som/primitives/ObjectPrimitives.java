@@ -176,6 +176,18 @@ public class ObjectPrimitives extends Primitives {
       }
     });
 
+    installInstancePrimitive(new SPrimitive("instVarNamed:", universe) {
+      @Override
+      public void invoke(final Frame frame, final Interpreter interpreter) {
+        SSymbol sym = (SSymbol) frame.pop();
+        SObject self = (SObject) frame.pop();
+
+        int idx = self.getFieldIndex(sym);
+
+        frame.push(self.getField(idx));
+      }
+    });
+
     installInstancePrimitive(new SPrimitive("class", universe) {
       @Override
       public void invoke(final Frame frame, final Interpreter interpreter) {
