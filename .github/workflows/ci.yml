@@ -11,6 +11,11 @@ jobs:
         with:
           submodules: true
 
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '25'
+
       - name: Tests
         run: |
           ant test
@@ -54,7 +59,5 @@ jobs:
 
       - name: AWFY Test Run
         run: |
-          pwd
-          export JAVA_HOME=$JAVA_HOME_8_X64
           pip install ReBench
           rebench awfy-test.conf
