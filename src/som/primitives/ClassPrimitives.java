@@ -71,7 +71,7 @@ public class ClassPrimitives extends Primitives {
       @Override
       public void invoke(final Frame frame, final Interpreter interpreter) {
         SClass self = (SClass) frame.pop();
-        frame.push(self.getInstanceFields());
+        frame.push(self.getInstanceFields().copy(universe));
       }
     });
 

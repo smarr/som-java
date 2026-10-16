@@ -116,10 +116,6 @@ failing_as_unspecified:
   - Tests/test_literals_limit_2.som
   - Tests/unknown_field_write.som
 
-  # This should be specified so that the "set" of fields cannot be changed reflectively
-  # they obtained array can be changed, but it is expected to have no effect.
-  - Tests/mutate_fields.som
-
 
 unsupported: []
 
