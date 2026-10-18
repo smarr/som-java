@@ -133,8 +133,7 @@ public class DoublePrimitives extends Primitives {
       @Override
       public void invoke(final Frame frame, final Interpreter interpreter) {
         SDouble rcvr = (SDouble) frame.pop();
-        long result = Math.round(rcvr.getEmbeddedDouble());
-        frame.push(universe.newInteger(result));
+        frame.push(rcvr.primRound(universe));
       }
     });
 

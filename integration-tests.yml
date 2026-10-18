@@ -21,7 +21,6 @@ failing_as_unspecified:
 
   # I think IEEE allows for infinities here, and we probably want that
   - Tests/double3.som
-  - Tests/double4.som
   - Tests/double5.som
   - Tests/double6.som
   - Tests/double7.som
@@ -30,16 +29,11 @@ failing_as_unspecified:
   - Tests/double11.som
   - Tests/double13.som
 
-  # Java seems to do some rounding in the transition, but it's also requiring bigints
-  - Tests/double_asinteger.som
-
-
   - Tests/double_double_div_err.som
   - Tests/double_double_div_zero_err1.som
   - Tests/double_double_div_zero_err2.som
   - Tests/double_double_div_zero_err3.som
   - Tests/double_double_div_zero_err4.som
-  - Tests/double_modulus.som
   - Tests/double_modulus_err.som
 
   - Tests/exit_double.som
@@ -48,8 +42,6 @@ failing_as_unspecified:
 
   - Tests/fromstring_double_err.som
   - Tests/fromstring_err.som
-
-  - Tests/hashcode2.som
 
   - Tests/inst_var_at_bad_idx.som
   - Tests/inst_var_at_put_bad_idx.som
@@ -83,7 +75,6 @@ failing_as_unspecified:
 
   - Tests/int_double_div_err.som
   - Tests/int_double_div_zero_err.som
-  - Tests/int_modulus.som
   - Tests/int_modulus_err.som
 
   - Tests/load_string.som
@@ -102,7 +93,6 @@ failing_as_unspecified:
   - Tests/remainder_zero.som
   - Tests/round.som
 
-  - Tests/shift_right.som
   - Tests/shift_right_too_big.som
   - Tests/shift_right_type_err.som
 

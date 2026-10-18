@@ -43,6 +43,13 @@ public abstract class SNumber extends SAbstractObject {
     }
   }
 
+  protected static SNumber fitIntoInteger(final double value, final Universe universe) {
+    if (value >= Long.MAX_VALUE || value < Long.MIN_VALUE) {
+      return universe.newBigInteger(new BigDecimal(value).toBigInteger());
+    }
+    return universe.newInteger((long) value);
+  }
+
   protected final SObject asSBoolean(final boolean result, final Universe universe) {
     if (result) {
       return universe.trueObject;

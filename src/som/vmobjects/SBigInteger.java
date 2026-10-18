@@ -133,6 +133,10 @@ public final class SBigInteger extends SNumber {
 
   @Override
   public SNumber primIntegerDivide(final SNumber right, final Universe universe) {
+    if (right instanceof SDouble d) {
+      return fitIntoInteger(
+          embeddedBiginteger.doubleValue() / d.getEmbeddedDouble(), universe);
+    }
     BigInteger r = asBigInteger(right);
     BigInteger result = embeddedBiginteger.divide(r);
     return asSNumber(result, universe);

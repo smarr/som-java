@@ -26,9 +26,6 @@ package som.vmobjects;
 
 import som.vm.Universe;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
-
 
 public final class SDouble extends SNumber {
 
@@ -77,11 +74,14 @@ public final class SDouble extends SNumber {
   }
 
   public SNumber primAsInteger(final Universe universe) {
-    if (embeddedDouble > Long.MAX_VALUE || embeddedDouble < Long.MIN_VALUE) {
-      BigInteger bigInteger = BigDecimal.valueOf(embeddedDouble).toBigInteger();
-      return universe.newBigInteger(bigInteger);
+    return fitIntoInteger(embeddedDouble, universe);
+  }
+
+  public SNumber primRound(final Universe universe) {
+    if (embeddedDouble >= Long.MAX_VALUE || embeddedDouble < Long.MIN_VALUE) {
+      return fitIntoInteger(embeddedDouble, universe);
     }
-    return universe.newInteger((long) embeddedDouble);
+    return universe.newInteger(Math.round(embeddedDouble));
   }
 
   @Override
