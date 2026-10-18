@@ -91,7 +91,6 @@ failing_as_unspecified:
   - Tests/perform_witharguments_wrong.som
 
   - Tests/remainder_zero.som
-  - Tests/round.som
 
   - Tests/shift_right_too_big.som
   - Tests/shift_right_type_err.som
