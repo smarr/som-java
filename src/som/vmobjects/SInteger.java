@@ -265,6 +265,12 @@ public final class SInteger extends SNumber {
   }
 
   @Override
+  public SNumber primShiftRight(final SInteger right, final Universe universe) {
+    return universe.newInteger(
+        embeddedInteger >>> right.getEmbeddedInteger());
+  }
+
+  @Override
   public SObject primEqual(final SAbstractObject right, final Universe universe) {
     boolean result;
 

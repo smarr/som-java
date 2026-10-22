@@ -199,6 +199,12 @@ public final class SBigInteger extends SNumber {
   }
 
   @Override
+  public SNumber primShiftRight(final SInteger right, final Universe universe) {
+    return asSNumber(embeddedBiginteger.shiftRight((int) right.getEmbeddedInteger()),
+        universe);
+  }
+
+  @Override
   public SNumber primBitXor(final SNumber right, final Universe universe) {
     BigInteger r = asBigInteger(right);
     BigInteger result = embeddedBiginteger.xor(r);

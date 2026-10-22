@@ -1,6 +1,7 @@
 package som.vmobjects;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 import som.vm.Universe;
 
@@ -29,6 +30,8 @@ public abstract class SNumber extends SAbstractObject {
   public abstract SNumber primBitXor(SNumber right, Universe universe);
 
   public abstract SNumber primLeftShift(SNumber right, Universe universe);
+
+  public abstract SNumber primShiftRight(SInteger right, Universe universe);
 
   public abstract SObject primEqual(SAbstractObject right, Universe universe);
 

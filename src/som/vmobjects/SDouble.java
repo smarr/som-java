@@ -140,6 +140,11 @@ public final class SDouble extends SNumber {
   }
 
   @Override
+  public SNumber primShiftRight(final SInteger right, final Universe universe) {
+    throw new RuntimeException("Not supported for doubles");
+  }
+
+  @Override
   public SObject primEqual(final SAbstractObject right, final Universe universe) {
     if (!(right instanceof SNumber)) {
       return universe.falseObject;
