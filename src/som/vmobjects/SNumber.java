@@ -53,6 +53,22 @@ public abstract class SNumber extends SAbstractObject {
     return universe.newInteger((long) value);
   }
 
+  public static SNumber asSNumber(final BigInteger result, final Universe universe) {
+    if (result.bitLength() >= Long.SIZE) {
+      return universe.newBigInteger(result);
+    } else {
+      return universe.newInteger(result.longValue());
+    }
+  }
+
+  protected static BigInteger floorMod(final BigInteger left, final BigInteger right) {
+    BigInteger result = left.remainder(right);
+    if (result.signum() != 0 && result.signum() != right.signum()) {
+      result = result.add(right);
+    }
+    return result;
+  }
+
   protected final SObject asSBoolean(final boolean result, final Universe universe) {
     if (result) {
       return universe.trueObject;

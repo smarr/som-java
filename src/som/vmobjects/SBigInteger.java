@@ -64,14 +64,6 @@ public final class SBigInteger extends SNumber {
     return universe.newDouble(embeddedBiginteger.doubleValue());
   }
 
-  private SNumber asSNumber(final BigInteger result, final Universe universe) {
-    if (result.bitLength() >= Long.SIZE) {
-      return universe.newBigInteger(result);
-    } else {
-      return universe.newInteger(result.longValue());
-    }
-  }
-
   private BigInteger asBigInteger(final SNumber right) {
     BigInteger r;
     if (right instanceof SInteger r1) {
@@ -144,8 +136,11 @@ public final class SBigInteger extends SNumber {
 
   @Override
   public SNumber primModulo(final SNumber right, final Universe universe) {
+    if (right instanceof SDouble d) {
+      return universe.newDouble(embeddedBiginteger.doubleValue() % d.getEmbeddedDouble());
+    }
     BigInteger r = asBigInteger(right);
-    BigInteger result = embeddedBiginteger.mod(r);
+    BigInteger result = floorMod(embeddedBiginteger, r);
     return asSNumber(result, universe);
   }
 
