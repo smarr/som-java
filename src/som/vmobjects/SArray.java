@@ -64,6 +64,12 @@ public class SArray extends SAbstractObject {
     return result;
   }
 
+  public SArray copy(final Universe universe) {
+    SArray result = universe.newArray(getNumberOfIndexableFields());
+    copyIndexableFieldsTo(result);
+    return result;
+  }
+
   protected void copyIndexableFieldsTo(SArray destination) {
     // Copy all indexable fields from this array to the destination array
     for (int i = 0; i < getNumberOfIndexableFields(); i++) {

@@ -196,13 +196,9 @@ public final class SInteger extends SNumber {
   @Override
   public SNumber primModulo(final SNumber right, final Universe universe) {
     if (right instanceof SBigInteger) {
-      // Note: modulo semantics of SOM differ from Java, with respect to
-      // negative operands, but BigInteger doesn't support a negative
-      // second operand, so, we should get an exception, which we can
-      // properly handle once an application actually needs it.
-      BigInteger result = BigInteger.valueOf(embeddedInteger).mod(
+      BigInteger result = floorMod(BigInteger.valueOf(embeddedInteger),
           ((SBigInteger) right).getEmbeddedBiginteger());
-      return universe.newBigInteger(result);
+      return asSNumber(result, universe);
     } else if (right instanceof SDouble) {
       double result = embeddedInteger % ((SDouble) right).getEmbeddedDouble();
       return universe.newDouble(result);
@@ -262,6 +258,12 @@ public final class SInteger extends SNumber {
 
     long result = embeddedInteger << r;
     return universe.newInteger(result);
+  }
+
+  @Override
+  public SNumber primShiftRight(final SInteger right, final Universe universe) {
+    return universe.newInteger(
+        embeddedInteger >>> right.getEmbeddedInteger());
   }
 
   @Override

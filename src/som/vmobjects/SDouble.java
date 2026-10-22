@@ -26,9 +26,6 @@ package som.vmobjects;
 
 import som.vm.Universe;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
-
 
 public final class SDouble extends SNumber {
 
@@ -41,6 +38,17 @@ public final class SDouble extends SNumber {
   public double getEmbeddedDouble() {
     // Get the embedded double
     return embeddedDouble;
+  }
+
+  @Override
+  public int hashCode() {
+    return Double.hashCode(embeddedDouble);
+  }
+
+  @Override
+  public boolean equals(final Object o) {
+    return o instanceof SDouble d
+        && Double.compare(embeddedDouble, d.embeddedDouble) == 0;
   }
 
   @Override
@@ -77,11 +85,14 @@ public final class SDouble extends SNumber {
   }
 
   public SNumber primAsInteger(final Universe universe) {
-    if (embeddedDouble > Long.MAX_VALUE || embeddedDouble < Long.MIN_VALUE) {
-      BigInteger bigInteger = BigDecimal.valueOf(embeddedDouble).toBigInteger();
-      return universe.newBigInteger(bigInteger);
+    return fitIntoInteger(embeddedDouble, universe);
+  }
+
+  public SNumber primRound(final Universe universe) {
+    if (embeddedDouble >= Long.MAX_VALUE || embeddedDouble < Long.MIN_VALUE) {
+      return fitIntoInteger(embeddedDouble, universe);
     }
-    return universe.newInteger((long) embeddedDouble);
+    return universe.newInteger(Math.round(embeddedDouble));
   }
 
   @Override
@@ -136,6 +147,11 @@ public final class SDouble extends SNumber {
 
   @Override
   public SNumber primLeftShift(final SNumber right, final Universe universe) {
+    throw new RuntimeException("Not supported for doubles");
+  }
+
+  @Override
+  public SNumber primShiftRight(final SInteger right, final Universe universe) {
     throw new RuntimeException("Not supported for doubles");
   }
 
