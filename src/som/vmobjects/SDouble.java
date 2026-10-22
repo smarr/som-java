@@ -41,6 +41,17 @@ public final class SDouble extends SNumber {
   }
 
   @Override
+  public int hashCode() {
+    return Double.hashCode(embeddedDouble);
+  }
+
+  @Override
+  public boolean equals(final Object o) {
+    return o instanceof SDouble d
+        && Double.compare(embeddedDouble, d.embeddedDouble) == 0;
+  }
+
+  @Override
   public String toString() {
     return super.toString() + "(" + embeddedDouble + ")";
   }
